@@ -7,6 +7,8 @@
     title: string;
     description: string;
     href?: string;
+    hrefLabel?: string;
+    hrefAria?: string;
   }[] = [
     {
       date: Temporal.PlainDate.from("2024-03-13"),
@@ -27,6 +29,7 @@ Per project => You need a defined scope (& timeline), agree and proceed.
 <br />
 So it's all about where you put the cursor on Risk/Trust/Flexibility/... both sides.`,
       href: "https://twitter.com/TejasKumar_/status/1767165463954374737",
+      hrefAria: "Tejas Kumar's tweet",
     },
   ];
 </script>
@@ -54,8 +57,9 @@ So it's all about where you put the cursor on Risk/Trust/Flexibility/... both si
               class="link link-primary italic"
               href={item.href}
               target="_blank"
+              aria-label={item.hrefAria}
             >
-              Source
+              {item.hrefLabel ?? "Source"}
             </a>
           </div>
         {/if}
