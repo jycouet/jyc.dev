@@ -6,7 +6,17 @@ const config = {
     extend: {},
   },
 
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        jyc: {
+          ...require("daisyui/src/theming/themes")["sunset"],
+        },
+      },
+    ],
+    logs: false, // Shows info about daisyUI version and used config in the console when building your CSS
+  },
 };
 
 module.exports = config;
