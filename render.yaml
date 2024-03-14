@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: jyc.dev
+    env: static
+    repo: https://github.com/jycouet/jyc.dev
+    branch: main
+    buildCommand: npm i -g pnpm; pnpm install --production=false; pnpm build
+    staticPublishPath: ./build
+    envVars:
+      - key: NODE_VERSION
+        value: 21.2.0

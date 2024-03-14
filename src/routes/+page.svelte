@@ -1,2 +1,9 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+  import Timeline from "$lib/components/Timeline.svelte";
+</script>
+
+<h1 class="text-primary text-3xl">jyc.dev</h1>
+
+<span class="italic text-sm">Some takes about web devs!</span>
+
+<Timeline></Timeline>
