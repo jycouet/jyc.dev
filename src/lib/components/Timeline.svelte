@@ -46,8 +46,9 @@ So it's all about where you put the cursor on Risk/Trust/Flexibility/... both si
           ? 'timeline-start md:text-end'
           : 'timeline-end'} "
       >
-        <time class="font-mono italic">
-          {item.date.toLocaleString(undefined, { dateStyle: "long" })}
+        <time class="font-mono italic" title="Yes, I display year-month-day">
+          <!-- {item.date.toLocaleString(undefined, { dateStyle: "long" })} -->
+          {item.date.toJSON()}
         </time>
         <div class="text-lg font-black">{item.title}</div>
         {@html item.description}
