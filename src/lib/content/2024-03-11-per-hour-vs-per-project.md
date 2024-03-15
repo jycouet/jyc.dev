@@ -9,3 +9,5 @@ Let's look at **Per hour** first. It's a good way to bill when the scope is not 
 > I feel that per hour less engaging.
 
 On the other end, **Per project** you need to do a few go and back prior starting to define a scope, a timeline, and a price with the client. In the end, this preparation doesn't bring value to the product itself and it's time consuming before even starting. It's also less flexibility during developement as the scope is agreed and fixed.
+
+... TO BE CONTINUED
