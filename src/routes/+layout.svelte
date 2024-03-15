@@ -11,6 +11,10 @@
     content="jyc.dev - a thing where I share my thoughts..."
   />
   <meta property="og:title" content="jyc.dev" />
+  <meta
+    property="og:description"
+    content="A thing where I share my thoughts..."
+  />
   <meta property="og:type" content="blog" />
   <meta property="og:url" content="https://jyc.dev" />
   <meta property="og:image" content={fav} />
