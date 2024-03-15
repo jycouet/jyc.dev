@@ -1,6 +1,20 @@
 <script>
   import "../app.pcss";
   import fav from "$lib/assets/favicon.png";
+  import { onNavigate } from "$app/navigation";
+
+  onNavigate((navigation) => {
+    // @ts-ignore
+    if (!document.startViewTransition) return;
+
+    return new Promise((resolve) => {
+      // @ts-ignore
+      document.startViewTransition(async () => {
+        resolve();
+        await navigation.complete;
+      });
+    });
+  });
 </script>
 
 <svelte:head>
@@ -21,7 +35,9 @@
 </svelte:head>
 
 <div class="w-[800px] mx-auto p-4 flex flex-col gap-4 h-screen">
-  <h1 class="text-primary text-3xl">jyc.dev</h1>
+  <h1 class="text-primary text-3xl">
+    <a href="/" aria-label="Back home">jyc.dev</a>
+  </h1>
 
   <span class="italic text-sm">Some takes about web devs!</span>
 
