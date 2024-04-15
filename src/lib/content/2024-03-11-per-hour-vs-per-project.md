@@ -1,5 +1,5 @@
 ---
-title: Per hour vs Per project 💡
+title: Per hour vs Per project
 ---
 
 The topic arrived with [Tejas Kumar tweets](https://twitter.com/TejasKumar_/status/1767165463954374737) about how to bill contracts... Per hour or Per project?
