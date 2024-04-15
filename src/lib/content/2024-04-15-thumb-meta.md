@@ -11,3 +11,5 @@ Features built so far:
 - [x] Available on [https://jyc.dev/thumb-meta](/thumb-meta)
 - [x] Prefix the current youtube video to be able to go to the png preview. So if you are on `https://www.youtube.com/watch?v=WL95jQGMPX0` just add `jyc.dev/` infront and it should bring you to the png preview. Check out this: [https://jyc.dev/https://www.youtube.com/watch?v=WL95jQGMPX0](/https://www.youtube.com/watch?v=WL95jQGMPX0)
 - [x] You can choose between light & drak mode
+
+Some more ideas? Do not hesitate to add them [here](https://twitter.com/jycouet/status/1780021315656651261), I will see what to do with them 😉.
