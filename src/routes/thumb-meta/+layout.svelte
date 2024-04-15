@@ -1,4 +1,4 @@
-<div class="m-auto flex flex-col w-[{480}px] gap-8 py-4">
+<div class="m-auto flex flex-col gap-8 py-4" style="width: 480px">
   <h1 class="text-primary text-2xl">
     <center>
       <a href="/thumb-meta"> Thumbnail & metadata </a>

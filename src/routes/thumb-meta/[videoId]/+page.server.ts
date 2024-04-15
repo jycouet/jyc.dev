@@ -1,7 +1,8 @@
 import { YOUTUBE_API_KEY } from "$env/static/private";
-import { fail, redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { google } from "googleapis";
+import { dev } from "$app/environment";
 
 async function fetchImageAsBase64(url: string) {
   try {
@@ -18,7 +19,21 @@ async function fetchImageAsBase64(url: string) {
   }
 }
 
-export const load = (async ({ params }) => {
+export const load = (async ({ fetch, params }) => {
+  if (!dev) {
+    fetch(
+      `https://discord.com/api/webhooks/1229567369396097167/SiAVwgukWmGI3FHD126Nc9BwR9V0q_xBmvCM6t8Ec4-EjBx7cR78XoHR21La4_q5wpes`,
+      {
+        method: `POST`,
+        headers: {
+          "Content-Type": `application/json`,
+        },
+        body: JSON.stringify({
+          content: `New search: \`${params.videoId}\``,
+        }),
+      }
+    );
+  }
   const initData = await getVideoViews(params.videoId);
 
   return {
