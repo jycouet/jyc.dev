@@ -7,12 +7,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "start": "node build"
   },
   "devDependencies": {
     "@kitql/helpers": "^0.8.9",
     "@kitql/internals": "^0.9.5",
-    "@sveltejs/adapter-static": "^3.0.0",
+    "@sveltejs/adapter-node": "^5.0.1",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
