@@ -9,6 +9,8 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 21.2.0
+      - key: NODE_OPTIONS
+        value: --max_old_space_size=4096
       - key: TZ
         value: utc
       - key: NODE_ENV
