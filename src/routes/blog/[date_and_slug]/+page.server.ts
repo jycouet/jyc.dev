@@ -3,8 +3,6 @@ import type { EntryGenerator } from "./$types";
 
 export const entries: EntryGenerator = () => {
   const data = getMdsInfo();
-  console.log(`data`, data);
-
   return data;
 };
 
