@@ -6,6 +6,8 @@ services:
     branch: main
     buildCommand: npm i -g pnpm; pnpm install --production=false; pnpm build
     startCommand: pnpm start
+    numInstances: 1
+    healthCheckPath: /api/healthz
     envVars:
       - key: NODE_VERSION
         value: 21.2.0

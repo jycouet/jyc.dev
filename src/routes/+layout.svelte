@@ -3,11 +3,17 @@
   import fav from "$lib/assets/favicon.png";
   import { onNavigate } from "$app/navigation";
   import posthog from "posthog-js";
+  import { page } from "$app/stores";
+  import { dev } from "$app/environment";
 
   $effect(() => {
-    posthog.init("phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL", {
-      api_host: "https://eu.posthog.com",
-    });
+    if (!dev) {
+      posthog.init("phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL", {
+        // api_host: "https://eu.posthog.com",
+        api_host: `${$page.url.origin}/posthog`,
+        ui_host: "https://eu.posthog.com",
+      });
+    }
   });
 
   onNavigate((navigation) => {
