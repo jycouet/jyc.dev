@@ -83,6 +83,7 @@
 
   function switchTheme() {
     theme = theme === "light" ? "dark" : "light";
+    console.log(`theme`, theme);
   }
 </script>
 
@@ -135,8 +136,4 @@
   #thumb * {
     font-family: Arial, Helvetica, sans-serif !important;
   }
-
-  /* #thumb {
-    height: 300px;
-  } */
 </style>

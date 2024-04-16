@@ -24,7 +24,6 @@ async function fetchImageAsBase64(url: string) {
 
 export const load = (async ({ fetch, params }) => {
   const initData = await getVideoViews(params.videoId);
-  // console.log(`initData.snippet.thumbnails`, initData.snippet.thumbnails);
 
   return {
     ...initData,
@@ -78,6 +77,3 @@ async function getVideoViews(videoId: string) {
     redirect(303, "/thumb-meta");
   }
 }
-
-// Let's see if download always work now...
-export const csr = false;
