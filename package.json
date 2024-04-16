@@ -26,6 +26,7 @@
     "postcss": "^8.4.32",
     "postcss-load-config": "^5.0.2",
     "posthog-js": "^1.122.0",
+    "remult": "^0.26.0",
     "remult-kit": "^0.0.3",
     "svelte": "5.0.0-next.104",
     "svelte-check": "^3.6.0",

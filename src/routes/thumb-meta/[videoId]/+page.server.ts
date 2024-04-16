@@ -24,10 +24,14 @@ async function fetchImageAsBase64(url: string) {
 
 export const load = (async ({ fetch, params }) => {
   const initData = await getVideoViews(params.videoId);
+  // console.log(`initData.snippet.thumbnails`, initData.snippet.thumbnails);
 
   return {
     ...initData,
-    blob: await fetchImageAsBase64(initData.snippet.thumbnails.maxres.url),
+    blob: await fetchImageAsBase64(
+      initData.snippet.thumbnails.maxres?.url ??
+        initData.snippet.thumbnails.standard?.url
+    ),
   };
 }) satisfies PageServerLoad;
 

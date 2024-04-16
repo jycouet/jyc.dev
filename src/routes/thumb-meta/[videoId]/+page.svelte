@@ -1,7 +1,7 @@
 <script lang="ts">
   import html2canvas from "html2canvas-pro";
   import { parseISO, formatDistanceToNow } from "date-fns";
-  import { fr } from "date-fns/locale";
+  import { fr, is } from "date-fns/locale";
 
   export let data;
 
@@ -40,8 +40,11 @@
   }
 
   const displayCount = (nb: number) => {
+    if (nb > 1000000) {
+      return `${(nb / 1000000).toFixed(2)} M vues`;
+    }
     if (nb > 1000) {
-      return `${(nb / 1000).toFixed(0)} k vues`;
+      return `${(nb / 1000).toFixed(1)} k vues`;
     }
     return `${nb.toFixed(0)} vues`;
   };
@@ -57,10 +60,14 @@
   };
 
   function parseISOToTime(isoDuration: string) {
-    const match = isoDuration.match(/PT(\d+M)?(\d+S)?/);
-    const minutes = match[1] ? parseInt(match[1]) : 0;
-    const seconds = match[2] ? parseInt(match[2]) : 0;
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    try {
+      const match = isoDuration.match(/PT(\d+M)?(\d+S)?/);
+      const minutes = match[1] ? parseInt(match[1]) : 0;
+      const seconds = match[2] ? parseInt(match[2]) : 0;
+      return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } catch (error) {
+      return isoDuration;
+    }
   }
 
   function switchTheme() {
@@ -81,6 +88,7 @@
     class="rounded-2xl"
     src={`data:image/jpeg;base64,${data.blob}`}
     alt="video: {data.snippet.title}"
+    style="width: {width}px; height:{height}px;"
     {width}
     {height}
   />
