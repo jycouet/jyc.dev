@@ -78,3 +78,6 @@ async function getVideoViews(videoId: string) {
     redirect(303, "/thumb-meta");
   }
 }
+
+// Let's see if download always work now...
+export const csr = false;

@@ -1,6 +1,6 @@
 <script>
   import "../app.pcss";
-  import fav from "$lib/assets/favicon.png";
+  import fav from "$lib/assets/favicon.svg";
   import { onNavigate } from "$app/navigation";
   import posthog from "posthog-js";
   import { page } from "$app/stores";
