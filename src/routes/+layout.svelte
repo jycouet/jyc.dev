@@ -2,6 +2,13 @@
   import "../app.pcss";
   import fav from "$lib/assets/favicon.png";
   import { onNavigate } from "$app/navigation";
+  import posthog from "posthog-js";
+
+  $effect(() => {
+    posthog.init("phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL", {
+      api_host: "https://eu.posthog.com",
+    });
+  });
 
   onNavigate((navigation) => {
     // @ts-ignore
