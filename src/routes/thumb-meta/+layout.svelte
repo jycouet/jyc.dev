@@ -9,7 +9,7 @@
 
   <center>
     <a class="link link-primary" href="/blog/2024-04-15-thumb-meta"
-      >how to use?</a
+      >How to use it ?</a
     >
   </center>
 </div>

@@ -23,6 +23,7 @@
     "date-fns": "^3.6.0",
     "googleapis": "^134.0.0",
     "html2canvas-pro": "^1.4.3",
+    "intl-parse-accept-language": "^1.0.0",
     "postcss": "^8.4.32",
     "postcss-load-config": "^5.0.2",
     "posthog-js": "^1.122.0",

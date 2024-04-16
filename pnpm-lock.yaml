@@ -41,6 +41,9 @@ devDependencies:
   html2canvas-pro:
     specifier: ^1.4.3
     version: 1.4.3
+  intl-parse-accept-language:
+    specifier: ^1.0.0
+    version: 1.0.0
   postcss:
     specifier: ^8.4.32
     version: 8.4.35
@@ -3777,6 +3780,11 @@ packages:
   /interpret@2.2.0:
     resolution: {integrity: sha512-Ju0Bz/cEia55xDwUWEa8+olFpCiQoypjnQySseKtmjNrnps3P+xfpUmGr90T7yjlVJmOtybRvPXhKMbHr+fWnw==}
     engines: {node: '>= 0.10'}
+    dev: true
+
+  /intl-parse-accept-language@1.0.0:
+    resolution: {integrity: sha512-YFMSV91JNBOSjw1cOfw2tup6hDP7mkz+2AUV7W1L1AM6ntgI75qC1ZeFpjPGMrWp+upmBRTX2fJWQ8c7jsUWpA==}
+    engines: {node: '>=14'}
     dev: true
 
   /is-alphabetical@1.0.4:

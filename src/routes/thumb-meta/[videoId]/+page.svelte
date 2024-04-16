@@ -1,9 +1,12 @@
 <script lang="ts">
   import html2canvas from "html2canvas-pro";
   import { parseISO, formatDistanceToNow } from "date-fns";
-  import { fr, is } from "date-fns/locale";
+  import { fr, enUS } from "date-fns/locale";
+  import { page } from "$app/stores";
 
   export let data;
+
+  $: locale = $page.data.locale;
 
   const width = 480;
   const height = 270;
@@ -40,13 +43,15 @@
   }
 
   const displayCount = (nb: number) => {
-    if (nb > 1000000) {
-      return `${(nb / 1000000).toFixed(2)} M vues`;
+    let viewWord = nb > 1 ? "views" : "view";
+    if (locale.toLowerCase().includes("fr")) {
+      viewWord = nb > 1 ? "vues" : "vue";
     }
-    if (nb > 1000) {
-      return `${(nb / 1000).toFixed(1)} k vues`;
-    }
-    return `${nb.toFixed(0)} vues`;
+
+    return (
+      new Intl.NumberFormat(locale, { notation: "compact" }).format(nb) +
+      ` ${viewWord}`
+    );
   };
 
   const displayWhen = (dateISO: string) => {
@@ -54,7 +59,7 @@
 
     const relativeDate = formatDistanceToNow(date, {
       addSuffix: true,
-      locale: fr,
+      locale: locale.toLowerCase().includes("fr") ? fr : enUS,
     });
     return relativeDate;
   };
@@ -62,9 +67,11 @@
   function parseISOToTime(isoDuration: string) {
     try {
       const match = isoDuration.match(/PT(\d+M)?(\d+S)?/);
-      const minutes = match[1] ? parseInt(match[1]) : 0;
-      const seconds = match[2] ? parseInt(match[2]) : 0;
-      return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      if (match) {
+        const minutes = match[1] ? parseInt(match[1]) : 0;
+        const seconds = match[2] ? parseInt(match[2]) : 0;
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }
     } catch (error) {
       return isoDuration;
     }
@@ -93,7 +100,7 @@
     {height}
   />
   <span
-    class="absolute top-56 right-6 bg-black text-white px-2 py-1 rounded-lg"
+    class="absolute bottom-[6.5rem] right-6 bg-black text-white px-2 py-1 rounded-lg"
   >
     {parseISOToTime(data.contentDetails.duration)}
   </span>
