@@ -1,9 +1,12 @@
+import { dev } from "$app/environment";
 import { Log } from "@kitql/helpers";
 import { error, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
 export type proxyDefinition = { from: string; to: string };
 export type handleProxiesOptions = { proxies: proxyDefinition[] };
+
+const log = new Log("handleProxies");
 
 export const handleProxies: (options: handleProxiesOptions) => Handle = (
   options
@@ -14,18 +17,12 @@ export const handleProxies: (options: handleProxiesOptions) => Handle = (
     );
 
     // We should not find more than 1
-    if (proxies_found.length > 1) {
-      error(
-        403,
-        JSON.stringify({
-          error: "Multiple proxies found",
-          proxies_found,
-          url: event.url.pathname,
-        })
-      );
-    }
-    // We find one, perfect, let's use it
-    else if (proxies_found.length === 1) {
+    if (proxies_found.length > 0) {
+      if (proxies_found.length > 1 && dev) {
+        log.error("Multiple proxies found", event.url.pathname);
+      }
+
+      // we take the first one
       const proxy = proxies_found[0];
 
       const origin = event.request.headers.get("Origin");
@@ -41,7 +38,6 @@ export const handleProxies: (options: handleProxiesOptions) => Handle = (
       // build the new URL
       const urlPath = `${proxy.to}${strippedPath}${event.url.search}`;
       const proxiedUrl = new URL(urlPath);
-      console.log(`proxiedUrl`, proxiedUrl.toString());
 
       const requestHeaders = new Headers(event.request.headers);
       requestHeaders.set("host", event.url.hostname);
@@ -57,7 +53,6 @@ export const handleProxies: (options: handleProxiesOptions) => Handle = (
 
         return d;
       } catch (error) {
-        const log = new Log("handleProxies");
         console.error(error);
         log.error("handleProxies ERROR");
         throw error;
