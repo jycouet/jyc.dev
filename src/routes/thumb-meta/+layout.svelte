@@ -11,5 +11,10 @@
     <a class="link link-primary" href="/blog/2024-04-15-thumb-meta"
       >How to use it ?</a
     >
+    <br />
+    <span class="italic text-sm"
+      >If the download is ugly, refresh and download again... (I'm hunting the
+      🪲)</span
+    >
   </center>
 </div>
