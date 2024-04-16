@@ -8,13 +8,13 @@
 
   $: locale = $page.data.locale;
 
-  const width = 480;
-  const height = 270;
+  // const width = 480;
+  // const height = 270;
 
   let theme: "light" | "dark" = "light";
 
   async function download() {
-    const el = document.querySelector("#tumb");
+    const el = document.querySelector("#thumb");
     if (!el) return;
 
     // Capture the div as it is
@@ -22,17 +22,21 @@
       backgroundColor: null,
     });
 
-    // const width = 506;
-    // const height = 526;
-
     // Create a new canvas with desired dimensions
     const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = width;
-    finalCanvas.height = height + 100;
+
+    finalCanvas.width = el.getBoundingClientRect().width;
+    finalCanvas.height = el.getBoundingClientRect().height;
 
     // Draw the captured image onto the new canvas, scaling it in the process
     const ctx = finalCanvas.getContext("2d");
-    ctx!.drawImage(capturedCanvas, 0, 0, width, height + 100);
+    ctx!.drawImage(
+      capturedCanvas,
+      0,
+      0,
+      el.getBoundingClientRect().width,
+      el.getBoundingClientRect().height
+    );
 
     // Convert to data URL and create download link
     const image = finalCanvas.toDataURL();
@@ -85,31 +89,36 @@
 <!-- <pre>{JSON.stringify(data, null, 2)}</pre> -->
 
 <div
-  id="tumb"
-  class="rounded-2xl flex flex-col gap-4 {theme === 'light'
+  id="thumb"
+  class="rounded-2xl flex flex-col gap-1 {theme === 'light'
     ? 'bg-white'
     : 'bg-black'} p-4 relative"
-  style="width: {width}px; height:{height + 100}px;"
 >
-  <img
-    class="rounded-2xl"
-    src={`data:image/jpeg;base64,${data.blob}`}
-    alt="video: {data.snippet.title}"
-    style="width: {width}px; height:{height}px;"
-    {width}
-    {height}
-  />
-  <span
-    class="absolute bottom-[6.5rem] right-6 bg-black text-white px-2 py-1 rounded-lg"
-  >
-    {parseISOToTime(data.contentDetails.duration)}
-  </span>
+  <div class="relative">
+    <img
+      class="rounded-2xl aspect-video"
+      src={`data:image/jpeg;base64,${data.blob}`}
+      alt="video: {data.snippet.title}"
+      width="100%"
+    />
+    <!-- style="width: {width}px; height:{height}px;" -->
+    <!-- class="absolute bottom-28 right-6 bg-black text-white px-2 py-1 rounded-lg" -->
+    <span
+      class="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-lg"
+    >
+      {parseISOToTime(data.contentDetails.duration)}
+    </span>
+  </div>
 
-  <h2 class="{theme === 'light' ? 'text-black' : 'text-white'} mt-1">
+  <h2
+    class="{theme === 'light'
+      ? 'text-black'
+      : 'text-white'} text-xl font-medium mt-2"
+  >
     {data.snippet.title}
   </h2>
 
-  <div class="{theme === 'light' ? 'text-gray-400' : 'text-gray-600'} -mt-2">
+  <div class={theme === "light" ? "text-gray-400" : "text-gray-600"}>
     <span>{displayCount(data.statistics.viewCount)}</span>
     -
     <span>{displayWhen(data.snippet.publishedAt)}</span>
@@ -120,3 +129,14 @@
   <button class="btn btn-primary" onclick={switchTheme}>{theme}</button>
   <button class="btn btn-primary flex-grow" onclick={download}>Download</button>
 </div>
+
+<style>
+  #thumb,
+  #thumb * {
+    font-family: Arial, Helvetica, sans-serif !important;
+  }
+
+  /* #thumb {
+    height: 300px;
+  } */
+</style>
