@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  html-to-image:
+    specifier: ^1.11.11
+    version: 1.11.11
+
 devDependencies:
   '@kitql/eslint-config':
     specifier: ^0.3.2
@@ -38,9 +43,6 @@ devDependencies:
   googleapis:
     specifier: ^134.0.0
     version: 134.0.0
-  html-to-image:
-    specifier: ^1.11.11
-    version: 1.11.11
   intl-parse-accept-language:
     specifier: ^1.0.0
     version: 1.0.0
@@ -3698,7 +3700,7 @@ packages:
 
   /html-to-image@1.11.11:
     resolution: {integrity: sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==}
-    dev: true
+    dev: false
 
   /https-proxy-agent@7.0.4:
     resolution: {integrity: sha512-wlwpilI7YdjSkWaQ/7omYBMTliDcmCN8OLihO6I9B86g06lMyAoqgoDpV0XqoaPOKj+0DIdAvnsWfyAAhmimcg==}
