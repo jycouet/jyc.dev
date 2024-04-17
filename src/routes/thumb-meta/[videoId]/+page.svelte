@@ -4,6 +4,7 @@
   import { fr, enUS } from "date-fns/locale";
   import { page } from "$app/stores";
 
+  export const csr = false;
   export let data;
 
   $: locale = $page.data.locale;
