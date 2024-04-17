@@ -1,5 +1,5 @@
 <script lang="ts">
-  import html2canvas from "html2canvas-pro";
+  import { toPng } from 'html-to-image';
   import { parseISO, formatDistanceToNow } from "date-fns";
   import { fr, enUS } from "date-fns/locale";
   import { page } from "$app/stores";
@@ -17,33 +17,16 @@
     const el = document.querySelector("#thumb");
     if (!el) return;
 
-    // Capture the div as it is
-    const capturedCanvas = await html2canvas(el as HTMLElement, {
-      backgroundColor: null,
-    });
-
-    // Create a new canvas with desired dimensions
-    const finalCanvas = document.createElement("canvas");
-
-    finalCanvas.width = el.getBoundingClientRect().width;
-    finalCanvas.height = el.getBoundingClientRect().height;
-
-    // Draw the captured image onto the new canvas, scaling it in the process
-    const ctx = finalCanvas.getContext("2d");
-    ctx!.drawImage(
-      capturedCanvas,
-      0,
-      0,
-      el.getBoundingClientRect().width,
-      el.getBoundingClientRect().height
-    );
-
-    // Convert to data URL and create download link
-    const image = finalCanvas.toDataURL();
-    const a = document.createElement("a");
-    a.setAttribute("download", `${data.snippet.title}.png`);
-    a.setAttribute("href", image);
-    a.click();
+    toPng(el, { cacheBust: true, })
+    .then((dataUrl) => {
+      const link = document.createElement('a')
+      link.download = `${data.snippet.title}.png`
+      link.href = dataUrl
+      link.click()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   const displayCount = (nb: number) => {
@@ -97,10 +80,9 @@
 >
   <div class="relative">
     <img
-      class="rounded-2xl aspect-video"
+      class="rounded-2xl aspect-video image"
       src={`data:image/jpeg;base64,${data.blob}`}
       alt="video: {data.snippet.title}"
-      width="100%"
     />
     <!-- style="width: {width}px; height:{height}px;" -->
     <!-- class="absolute bottom-28 right-6 bg-black text-white px-2 py-1 rounded-lg" -->
@@ -135,5 +117,11 @@
   #thumb,
   #thumb * {
     font-family: Arial, Helvetica, sans-serif !important;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
