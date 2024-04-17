@@ -4,7 +4,7 @@ services:
     env: node
     repo: https://github.com/jycouet/jyc.dev
     branch: main
-    buildCommand: npm i -g pnpm; pnpm install --production=false; pnpm build
+    buildCommand: npm i -g pnpm@9.0.1; pnpm install --production=false; pnpm build
     startCommand: pnpm start
     numInstances: 1
     healthCheckPath: /api/healthz

@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      html-to-image:
-        specifier: ^1.11.11
-        version: 1.11.11
     devDependencies:
       '@kitql/eslint-config':
         specifier: ^0.3.2
@@ -45,6 +41,9 @@ importers:
       googleapis:
         specifier: ^134.0.0
         version: 134.0.0
+      html-to-image:
+        specifier: ^1.11.11
+        version: 1.11.11
       intl-parse-accept-language:
         specifier: ^1.0.0
         version: 1.0.0
