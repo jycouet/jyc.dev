@@ -3,42 +3,35 @@ title: The Switch to Remult
 ---
 
 I've been using [Remult](https://remult.dev) for a while now and I'm really happy with it.
-Let me walk you through the switch and why I did it.
+Let me walk you through why I made the switch and how it went.
 
 ## Introduction
 
-First of all, what is Remult? It's a library that allows you to build your application with a single language: TypeScript.
-The main principle is SSoT aka Single Source of Truth. Which means that you can define once and use everywhere (client, server, db, validation, ...).
-As a lazy developer, I'm in love with the idea of not having to write the same code twice (and maintain it two times!).
+First off, what exactly is Remult? It's a library that lets you build applications entirely in TypeScript. The main concept here is SSoT—Single Source of Truth. This means you can define everything just once and use it everywhere (client, server, db, validation, etc.). As someone who appreciates efficiency _(ok, I'm lazy)_, I love not having to write and maintain the same code twice.
 
 ## The Discovery
 
-In february 2023, I was at [ViennaJS](https://viennajs.org) where the creator [Noam Honig](https://twitter.com/noamhonig) gave a talk about his library.
-I was really impressed by the fact that in 30 minutes, in a very cozy way, he was able tweak a client ONLY application to a fullstack application with:
+Back in February 2023, I attended [ViennaJS](https://viennajs.org) where [Noam Honig](https://twitter.com/noamhonig), the creator of Remult, was speaking. His presentation was eye-opening. In just 30 minutes, he transformed a client-only application into a full-stack application complete with:
 
-- database
-- access control
-- validation
-- ...
-  I was like: "Why I spend more time on my side while he can do it so fast? and so reliable? I need to try it!".
+- Database integration
+- Access control
+- Validation
+
+I thought to myself, "Why am I spending more time on this when he can do it so quickly and reliably? I need to try this!"
 
 ## The Decision
 
-Everyone has his prefered stack, so it's hard to see a presentation like that and see that everything is solved when you use Remult!
-So you need to start to asses your stack and be open to get away from a few things! But not all because you can include remult step by steps in your app.
-It's not a all or nothing decision.
+We all have our preferred tech stacks, and it's tough to see a demo like that and believe that one tool can solve all your problems. However, you need to assess your current stack and be open to letting go of some parts—but not everything, because you can integrate Remult step-by-step into your app. It's not an all-or-nothing decision.
 
-=> You need to be open for good change. Change your habbits! (for the better ;))
+=> Be open to good changes. Change your habits for the better! ;)
 
 ## The Migration Process
 
-## Initial Glimp
+### Initial Glimpse
 
-The cool thing is that you can just add it to your project and that's it! You can start enjoying it...
-So, where to start? Where to have the source of truth? How to create my first entity? As I have a prostgres db, you can use `remult-cli` to generate all your entities as a one shot generator to not start from scratch. And it's what I did, after 1 line of code I got my 48 entities in my project, ready to be used!
-Already with this step, I'm able to query my db, it's like my ORM now. Without the need to learn a new DSL or a new syntax, it's just typescript!
+The cool part is that you can simply add Remult to your project and start enjoying its benefits. So, where do you start? Where to set up your source of truth? How to create your first entity? Since I have a PostgreSQL database, I used `remult-cli` to generate all my entities in one go, so I didn't have to start from scratch. Just like that, with one line of code, I had 48 entities in my project, ready to be used. From this point, I could already query my database—it became my ORM without needing to learn a new DSL or syntax.
 
-So in my backend, I can already do:
+In my backend, I can now do things like:
 
 ```ts
 import { repo } from "remult";
@@ -61,14 +54,14 @@ const sales = await repo(User).find({
 All this, just from this one shot generator reading from my db schema!
 
 ::: tip
-I think that it's important to mention that it's a one shot generator, as after my SSoT are my entities, annd everything will be derived from it (including migrations !)
+I think that it's important to mention that it's a one shot generator, as after my SSoT are my entities, and everything will be derived from it (including migrations!)
 :::
 
-My project was using Prisma, and no I didn't remove prisma in 1 afternoon! In real life project, things takes time... You have complexe queries, you want to make sure everything still work, etc etc... So I had Prisma & Remult in parallel for a few weeks, and it's fine, it's the backend. Like this I'm confident to move step by step.
+My project was using Prisma, and no I didn't remove Prisma in one afternoon! In real life projects, things take time... You have complex queries, you want to make sure everything still works, etc., etc. So I had Prisma & Remult running in parallel for a few weeks, and it's fine, it's the backend. Like this I'm confident to move step by step.
 
 ## Let's take move advantage
 
-Now, let's use also remult in the frontend! On my side, I'm using Svelte, and the thing is that remult works with all frontends, so pick yours!
+Now, let's also use Remult in the frontend! On my side, I'm using Svelte, and the thing is that Remult works with all frontends, so pick yours!
 
 Let's say, I want to have a list of sales on my page, I will do:
 
@@ -82,14 +75,14 @@ const sales = await repo(User).find({
 ```
 
 Wait what? It's the same code?! Yes!
-But here, it will do an api call to the backend that will do an sql query to get the data. And all this typed!
+But here, it will do an API call to the backend that will do an SQL query to get the data. And all this typed!
 
 🤯 🤯 🤯
 
 So all new features for my app, I start to use this technique... enhance my entities to give more and more knowledge to the SSoT.
-Field caption for example! How many time you have to display the label of a field and you write over and over again "Name of the user" ? With remult, you can define it once and use it everywhere!
+Field caption for example! How many times have you had to display the label of a field and you write over and over again "Name of the user"? With Remult, you can define it once and use it everywhere!
 
-Same things for validation, you probably want the name to be required, so in the field name, you can add `required: true` and that's it! You can use it in the backend and in the frontend! (Validation will run in both places). As `required` is verry common, it's a property, but you can also define your own validation function! like:
+Same things for validation, you probably want the name to be required, so in the field name, you can add required: true and that's it! You can use it in the backend and in the frontend! (Validation will run in both places). As required is very common, it's a property, but you can also define your own validation function! Like:
 
 ```ts
 	@Fields.string({
@@ -101,7 +94,7 @@ Same things for validation, you probably want the name to be required, so in the
 	name!: string
 ```
 
-You can do this, in my app in reality, I use only already powerfull builtin validation. My favorit is probably:
+You can do this; in my app, in reality, I use only already powerful built-in validation. My favorite is probably:
 
 ```ts
 @Fields.string({ validate: [Validators.unique()] })
@@ -114,12 +107,12 @@ This one will run only in the backend, to check if the email is unique in the db
 
 ### Admin UI
 
-This feature was not present when I started, but now it's a game changer! It's a full admin UI that you can use to manage your entities. It's like a CMS for your entities. You can create, update, delete, search, filter, ... It's a real time saver! And it's also a good way to see if your entities are well defined, as you can see the data in a table, and you can see the relations, etc...
+This feature was not present when I started, but now it's a game-changer! It's a full admin UI that you can use to manage your entities. It's like a CMS for your entities. You can create, update, delete, search, filter, ... It's a real time saver! And it's also a good way to see if your entities are well defined, as you can see the data in a table, and you can see the relations, etc...
 
 ### Lyfecycle hooks
 
-It's so handy to have hooks in your entities & fields! You can do things before or after a save, a delete, a find, ...
-for example, making sure email and in lowercase and trimmed:
+It's so handy to have hooks in your entities & fields! You can do things before or after a save, a delete, a find...
+for example, making sure the email is in lowercase and trimmed:
 
 ```ts
 	@Fields.string<User>({
@@ -128,19 +121,19 @@ for example, making sure email and in lowercase and trimmed:
 	email!: string
 ```
 
-In a few lines of code, I also implemented `ChangeLogs` in my app. So I can see who did what and when! Ask me if you want to know more about it ;)
+In a few lines of code, I also implemented ChangeLogs in my app. So I can see who did what and when! Ask me if you want to know more about it ;)
 
 ### Backend methods
 
-Sometimes, you need to have a very specific data "out of nowhere", here you can use backend methods. You just call this function from the frontend, and it will do the front -> back api call for you. It's so flexbile !
+Sometimes, you need to have a very specific data "out of nowhere"; here, you can use backend methods. You just call this function from the frontend, and it will do the front -> back API call for you. It's so flexible!
 
 ## Benefits Realized
 
 The main benefit is really this SSoT, as it improves my efficiency, maintenance, and scalability for all my projects.
 
-Yesterday, I finished my migration, everything is now running on remult. And I did a small exercise, I did a PR of now to the code before remult => it's divided by 4 !!! (With all the features of before, and some new developped allong the way !)
+Yesterday, I finished my migration; everything is now running on Remult. And I did a small exercise, I did a PR of now to the code before Remult => it's divided by 4!!! (With all the features of before, and some new developed along the way!)
 
 ## Conclusion
 
 As you could read, I'm really happy about my switch.
-I'm also contributing to remult project and it's a joy! Tons of new features / ideas a coming, and I'm happy to be part of it.
+I'm also contributing to the Remult project, and it's a joy! Tons of new features/ideas are coming, and I'm happy to be part of it.
