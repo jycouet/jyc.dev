@@ -1,6 +1,8 @@
 ---
-title: The Switch to Remult
+title: Less Code (-75%) & More Power (💪) with Remult
 ---
+
+[Read on dev.to](https://dev.to/jycouet/less-code-75-more-power-with-remult-325m)
 
 I've been using [Remult](https://remult.dev) for a while now and I'm really happy with it.
 Let me walk you through why I made the switch and how it went.
