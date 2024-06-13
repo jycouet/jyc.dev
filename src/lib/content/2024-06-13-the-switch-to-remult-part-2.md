@@ -1,5 +1,6 @@
 ---
 title: The Power of Less: Streamlining Dependencies with Remult
+published: true
 series: remult-all-the-things
 ---
 
