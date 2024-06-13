@@ -4,6 +4,8 @@ published: true
 series: remult-all-the-things
 ---
 
+[Read on dev.to](https://dev.to/jycouet/the-power-of-less-streamlining-dependencies-with-remult-55e2)
+
 In my last post, I shared my epic journey switching to Remult, which shrank my codebase by 75% and turbocharged my development power. 💪 If you haven't checked it out, give it a read [here](https://dev.to/jycouet/less-code-75-more-power-with-remult-325m)!
 
 Today, let’s dive deeper into one of the most transformative aspects of my switch: Reducing Dependencies. Streamlining my tech stack not only simplified my workflow but also enhanced my project's maintainability. Let’s break it down:
