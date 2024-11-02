@@ -18,6 +18,7 @@ export const load = async (event) => {
     };
   });
 
+  const mds2 = [];
   // https://atproto-browser.vercel.app/at/jyc.dev
   const handleResolver = new HandleResolver({});
   const did = await handleResolver.resolve("jyc.dev");
@@ -54,7 +55,7 @@ export const load = async (event) => {
           // );
           // console.log(`recordData`, recordData);
           const uriObj = new AtUri(record.uri);
-          mds.unshift({
+          mds2.push({
             link_under_blog: `${pds.replace("https://", "")}/${did}${uriObj.pathname}`,
             date: record.value.createdAt.split("T")[0],
             title: record.value.title,
@@ -64,5 +65,5 @@ export const load = async (event) => {
     }
   }
 
-  return { mds };
+  return { mds: [...mds2, ...mds] };
 };
