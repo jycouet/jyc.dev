@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toPng } from 'html-to-image';
+  import { toPng } from "html-to-image";
   import { parseISO, formatDistanceToNow } from "date-fns";
   import { fr, enUS } from "date-fns/locale";
   import { page } from "$app/stores";
@@ -17,16 +17,16 @@
     const el = document.querySelector("#thumb");
     if (!el) return;
 
-    toPng(el, { cacheBust: true, })
-    .then((dataUrl) => {
-      const link = document.createElement('a')
-      link.download = `${data.snippet.title}.png`
-      link.href = dataUrl
-      link.click()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    toPng(el as HTMLElement, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = `${data.snippet.title}.png`;
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   const displayCount = (nb: number) => {

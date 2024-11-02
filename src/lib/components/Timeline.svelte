@@ -3,10 +3,10 @@
 
   interface Props {
     items?: {
-    date_and_slug: string;
-    date: string;
-    title: string;
-  }[];
+      link_under_blog: string;
+      date: string;
+      title: string;
+    }[];
   }
 
   let { items = [] }: Props = $props();
@@ -24,7 +24,7 @@
           ? 'timeline-start md:text-end'
           : 'timeline-end'} "
       >
-        <a href="/blog/{item.date_and_slug}">
+        <a href="/blog/{item.link_under_blog}">
           <time class="font-mono italic" title="Yes, I display year-month-day">
             {item.date}
           </time>

@@ -7,5 +7,5 @@ export const entries: EntryGenerator = () => {
 };
 
 export const load = async ({ params }) => {
-  return getMdInfo(params.date_and_slug);
+  return getMdInfo(params.link_under_blog);
 };

@@ -11,6 +11,8 @@
     "start": "node build"
   },
   "devDependencies": {
+    "@atproto/identity": "^0.4.2",
+    "@atproto/syntax": "^0.3.0",
     "@kitql/eslint-config": "0.3.2",
     "@kitql/helpers": "0.8.9",
     "@kitql/internals": "0.9.5",

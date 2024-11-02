@@ -4,20 +4,20 @@ export const getMdsInfo = () => {
   const files = getFilesUnder("./src/lib/content").reverse();
 
   return files.map((file) => {
-    return { date_and_slug: file.replace(/\.md$/, "") };
+    return { link_under_blog: file.replace(/\.md$/, "") };
   });
 };
 
-export const getMdInfo = (date_and_slug: string) => {
-  const source = read(`./src/lib/content/${date_and_slug}.md`) ?? "";
+export const getMdInfo = (link_under_blog: string) => {
+  const source = read(`./src/lib/content/${link_under_blog}.md`) ?? "";
 
-  const date = date_and_slug.split("-").slice(0, 3).join("-");
-  const slug = date_and_slug.split("-").slice(3).join("-");
+  const date = link_under_blog.split("-").slice(0, 3).join("-");
+  const slug = link_under_blog.split("-").slice(3).join("-");
 
   const { metadata, content } = extractMarkdownInfo(source);
   const title = metadata.title ?? slug.replaceAll("-", " ");
 
-  return { date_and_slug, date, title, source: content };
+  return { link_under_blog, date, title, source: content };
 };
 
 const extractMarkdownInfo = (markdown: string) => {
