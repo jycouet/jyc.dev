@@ -1,5 +1,5 @@
 <script lang="ts">
-  let videoId = "";
+  let videoId = $state("");
 </script>
 
 <div class="flex gap-4 items-center">

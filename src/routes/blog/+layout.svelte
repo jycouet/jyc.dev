@@ -1,4 +1,9 @@
-<script>
+<script lang="ts">
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
   // import "../../app.pcss";
 </script>
 
@@ -10,7 +15,7 @@
   <span class="italic text-sm">Some takes about web devs!</span>
 
   <div class="flex flex-col gap-4 flex-grow">
-    <slot />
+    {@render children?.()}
   </div>
 
   <footer class="footer items-center p-4 text-neutral-content">

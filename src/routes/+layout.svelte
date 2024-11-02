@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
   import "../app.pcss";
   import fav from "$lib/assets/favicon.svg";
   import { onNavigate } from "$app/navigation";
   import posthog from "posthog-js";
   import { page } from "$app/stores";
   import { dev } from "$app/environment";
+  
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   $effect(() => {
     if (!dev) {
@@ -61,4 +67,4 @@
   <meta name="twitter:image" content={fav} />
 </svelte:head>
 
-<slot />
+{@render children?.()}

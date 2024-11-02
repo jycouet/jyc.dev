@@ -4,14 +4,14 @@
   import { fr, enUS } from "date-fns/locale";
   import { page } from "$app/stores";
 
-  export let data;
+  let { data } = $props();
 
-  $: locale = $page.data.locale;
+  let locale = $derived($page.data.locale);
 
   // const width = 480;
   // const height = 270;
 
-  let theme: "light" | "dark" = "light";
+  let theme: "light" | "dark" = $state("light");
 
   async function download() {
     const el = document.querySelector("#thumb");

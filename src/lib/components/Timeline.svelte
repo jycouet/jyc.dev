@@ -1,11 +1,15 @@
 <script lang="ts">
   import TimelineIcon from "./TimelineIcon.svelte";
 
-  export let items: {
+  interface Props {
+    items?: {
     date_and_slug: string;
     date: string;
     title: string;
-  }[] = [];
+  }[];
+  }
+
+  let { items = [] }: Props = $props();
 </script>
 
 <ul

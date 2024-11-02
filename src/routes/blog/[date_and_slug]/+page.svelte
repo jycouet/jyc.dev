@@ -1,6 +1,6 @@
 <script lang="ts">
   import SvelteMarkdown from "svelte-markdown";
-  export let data;
+  let { data } = $props();
 </script>
 
 <h2 class="text-2xl text-primary">{data.title}</h2>

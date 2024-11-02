@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   import Timeline from "$lib/components/Timeline.svelte";
 
-  export let data;
+  let { data } = $props();
 </script>
 
 <Timeline items={data.mds}></Timeline>
