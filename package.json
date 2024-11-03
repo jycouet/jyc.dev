@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "vite dev",
+    "//// ---- BEST PRACTICES ---- ////": "",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "format": "kitql-lint -f",
+    "lint": "kitql-lint",
+    "//// ---- PROD ---- ////": "",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "start": "node build"
   },
   "devDependencies": {
