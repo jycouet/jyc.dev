@@ -1,9 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import { page } from "$app/stores";
-
   export let data: PageData;
-  const handle = $page.params.handle;
 </script>
 
 <a href="/at" class="btn btn-ghost">
@@ -29,25 +26,27 @@
     <div class="card-body">
       <div class="flex justify-between items-center">
         <h2 class="card-title flex flex-col gap-2 items-start">
-          <span class="text-xl font-bold flex items-center gap-2">
-            {data.app_bsky_actor_profile.records[0].value.displayName}
-            <span class="text-sm font-mono text-secondary">@{handle}</span>
+          <span class="text-xl font-bold flex items-end gap-2">
+            {data.displayName}
+            <span class="text-sm font-mono text-secondary">@{data.handle}</span>
+            <div class="text-xs font-mono text-gray-500">{data.did}</div>
           </span>
-          <div class="text-xs font-mono text-gray-500">{data.did}</div>
+          <div class="flex flex-col gap-1 border-l pl-4">
+            {#each data.description.split("\n") as line}
+              <p class="text-sm">{line}</p>
+            {/each}
+          </div>
         </h2>
         <div class="avatar">
           <div class="mask mask-hexagon w-20">
-            <img
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            />
+            <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
           </div>
         </div>
       </div>
-      <!-- Add more profile details here once you fetch the data -->
     </div>
   </div>
 
-  <div class="stats shadow bg-base-300">
+  <!-- <div class="stats shadow bg-base-300">
     <div class="stat">
       <div class="stat-figure text-primary">
         <svg
@@ -91,20 +90,11 @@
     </div>
 
     <div class="stat">
-      <div class="stat-figure text-secondary">
-        <div class="avatar online">
-          <div class="w-16 rounded-full">
-            <img
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            />
-          </div>
-        </div>
-      </div>
       <div class="stat-value">86%</div>
       <div class="stat-title">Tasks done</div>
       <div class="stat-desc text-secondary">31 tasks remaining</div>
     </div>
-  </div>
+  </div> -->
 </div>
 
-<pre class="code text-xs">{JSON.stringify(data, null, 2)}</pre>
+<!-- <pre class="code text-xs">{JSON.stringify(data, null, 2)}</pre> -->

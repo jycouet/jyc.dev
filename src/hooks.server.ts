@@ -45,7 +45,7 @@ export const handleProxies: (options: handleProxiesOptions) => Handle = (
       requestHeaders.set("host", event.url.hostname);
 
       try {
-        const d = event.fetch(proxiedUrl.toString(), {
+        const response = await event.fetch(proxiedUrl.toString(), {
           body: event.request.body,
           method: event.request.method,
           headers: requestHeaders,
@@ -53,7 +53,17 @@ export const handleProxies: (options: handleProxiesOptions) => Handle = (
           duplex: "half",
         });
 
-        return d;
+        // Create a new response with modified headers
+        const newHeaders = new Headers(response.headers);
+
+        // Remove the Content-Encoding header to prevent decoding issues
+        newHeaders.delete("Content-Encoding");
+
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: newHeaders,
+        });
       } catch (error) {
         console.error(error);
         log.error("handleProxies ERROR");

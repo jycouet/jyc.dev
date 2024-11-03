@@ -4,17 +4,27 @@
 
   let handle: string = "";
   let error: string = "";
+  let loading: boolean = false;
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = async (e: Event) => {
     e.preventDefault();
     error = "";
+    loading = true;
+
     // Remove @ if user included it
     const cleanHandle = handle.replace("@", "");
 
     if (cleanHandle) {
-      goto(`/at/${cleanHandle}`);
+      try {
+        await goto(`/at/${cleanHandle}`);
+      } catch (e) {
+        error = "An error occurred";
+      } finally {
+        loading = false;
+      }
     } else {
       error = "Please enter a valid handle";
+      loading = false;
     }
   };
 </script>
@@ -44,5 +54,18 @@
     </label>
   </div>
 
-  <button type="submit" class="btn btn-primary"> Look up handle </button>
+  <button type="submit" class="btn btn-primary" disabled={loading}>
+    {#if loading}
+      <span class="loading loading-spinner"></span>
+    {/if}
+    Look up handle
+  </button>
 </form>
+
+<div class="mt-8 text-center text-sm text-base-content/70">
+  <p>TIP: If you're viewing a profile on blue sky,</p>
+  <p>
+    <span class="text-secondary">prefix with</span>
+    "<code class="font-mono text-primary">jyc.dev/</code>" to open it here!
+  </p>
+</div>

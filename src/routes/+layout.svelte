@@ -13,13 +13,13 @@
   let { children }: Props = $props();
 
   $effect(() => {
-    if (!dev) {
+    // if (!dev) {
       posthog.init("phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL", {
         // api_host: "https://eu.posthog.com",
         api_host: `${$page.url.origin}/posthog`,
         ui_host: "https://eu.posthog.com",
       });
-    }
+    // }
   });
 
   onNavigate((navigation) => {

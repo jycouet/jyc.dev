@@ -11,11 +11,9 @@ import { redirect } from "@sveltejs/kit";
 
 export const load = (async (event) => {
   try {
-    // did
     const handleResolver = new HandleResolver({});
     const did = await handleResolver.resolve(event.params.handle);
 
-    // didDocument
     if (did) {
       const didResolver = new DidResolver({});
       const didDocument = await didResolver.resolve(did);
@@ -24,14 +22,23 @@ export const load = (async (event) => {
         const pds = getPds(didDocument);
 
         if (pds) {
-          const app_bsky_actor_profile = await listRecords(
+          const profile = await listRecords(
             event.fetch,
             pds,
             did,
             "app.bsky.actor.profile"
           );
 
-          return { did, didDocument, app_bsky_actor_profile };
+          const profileData = profile.records[0]?.value;
+          return {
+            did,
+            displayName: profileData?.displayName || event.params.handle,
+            handle: event.params.handle,
+            avatar: profileData?.avatar?.ref?.$link
+              ? `https://cdn.bsky.app/img/avatar/plain/${did}/${profileData.avatar.ref.$link}@jpeg`
+              : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+            description: profileData?.description || "",
+          };
         }
       }
     }
