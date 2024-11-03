@@ -1,36 +1,33 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
-  export let data: PageData;
+  import type { PageData } from './$types'
 
-  let currentISOString = new Date().toISOString().slice(0, 19);
+  export let data: PageData
 
-  function getNumbersComparison(
-    today: number,
-    yesterday: number,
-    topic: string
-  ): string {
+  let currentISOString = new Date().toISOString().slice(0, 19)
+
+  function getNumbersComparison(today: number, yesterday: number, topic: string): string {
     if (today === yesterday) {
-      return "<span class='text-gray-500'>Same as yesterday</span>";
+      return "<span class='text-gray-500'>Same as yesterday</span>"
     }
     if (yesterday === 0) {
-      return `<span class='text-error'>No ${topic} yesterday</span>`;
+      return `<span class='text-error'>No ${topic} yesterday</span>`
     }
     if (today === 0) {
-      return `<span class='text-error'>No ${topic} yet!</span>`;
+      return `<span class='text-error'>No ${topic} yet!</span>`
     }
 
-    const diff = today - yesterday;
+    const diff = today - yesterday
     // const percentage = Math.abs(Math.round((diff / yesterday) * 100));
 
     if (diff > 0) {
-      return `${diff} <span class='text-success'>more</span> than yesterday`;
+      return `${diff} <span class='text-success'>more</span> than yesterday`
     } else {
-      return `${-diff} <span class='text-error'>less</span> than yesterday`;
+      return `${-diff} <span class='text-error'>less</span> than yesterday`
     }
   }
 </script>
 
-<div class="flex justify-between items-center">
+<div class="flex items-center justify-between">
   <a href="/at" class="btn btn-ghost">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -54,32 +51,34 @@
 <div class="flex flex-col gap-4">
   <div class="card bg-base-300">
     <div class="card-body">
-      <div class="flex justify-between items-center">
-        <h2 class="card-title flex flex-col gap-2 items-start">
-          <span class="text-xl font-bold flex items-end gap-2">
+      <div class="flex items-center justify-between">
+        <h2 class="card-title flex flex-col items-start gap-2">
+          <span class="flex items-end gap-2 text-xl font-bold">
             {data.displayName}
             <!-- <span class="text-sm font-mono text-secondary">@{data.handle}</span>
             <div class="text-xs font-mono text-gray-500">{data.did}</div> -->
           </span>
           <div class="flex flex-col gap-1 border-l pl-4">
-            {#each data.description.split("\n") as line}
+            {#each data.description.split('\n') as line}
               <p class="text-sm">{line}</p>
             {/each}
           </div>
         </h2>
         <div class="flex flex-col items-center gap-2">
-          <div class="avatar">
-            <div class="mask mask-hexagon w-20">
-              <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
+          <a href={`https://bsky.app/profile/${data.handle}`} target="_blank">
+            <div class="avatar">
+              <div class="mask mask-hexagon w-20">
+                <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
+              </div>
             </div>
-          </div>
-          <span class="text-sm font-mono text-secondary">@{data.handle}</span>
+          </a>
+          <span class="font-mono text-sm text-secondary">@{data.handle}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="stats stats-vertical md:stats-horizontal shadow bg-base-300">
+  <div class="stats stats-vertical bg-base-300 shadow md:stats-horizontal">
     <div class="stat">
       <div class="stat-figure text-primary">
         <svg
@@ -99,11 +98,7 @@
       <div class="stat-title">Likes today</div>
       <div class="stat-value text-primary">{data?.likes?.today}</div>
       <div class="stat-desc">
-        {@html getNumbersComparison(
-          data?.likes?.today ?? 0,
-          data?.likes?.yesterday ?? 0,
-          "like"
-        )}
+        {@html getNumbersComparison(data?.likes?.today ?? 0, data?.likes?.yesterday ?? 0, 'like')}
       </div>
     </div>
 
@@ -126,11 +121,7 @@
       <div class="stat-title">Posts Today</div>
       <div class="stat-value text-secondary">{data?.posts?.today}</div>
       <div class="stat-desc">
-        {@html getNumbersComparison(
-          data?.posts?.today ?? 0,
-          data?.posts?.yesterday ?? 0,
-          "post"
-        )}
+        {@html getNumbersComparison(data?.posts?.today ?? 0, data?.posts?.yesterday ?? 0, 'post')}
       </div>
     </div>
 
@@ -156,11 +147,18 @@
         {@html getNumbersComparison(
           data?.reposts?.today ?? 0,
           data?.reposts?.yesterday ?? 0,
-          "repost"
+          'repost',
         )}
       </div>
     </div>
   </div>
+</div>
+
+<div class="mt-12 text-center text-sm text-gray-500">
+  You have a request? Just ping me here: 🦋 <a
+    href="https://bsky.app/profile/jyc.dev"
+    class="link link-primary">@jyc.dev</a
+  > - I'll be happy to try ;)
 </div>
 
 <!-- <pre class="code text-xs">{JSON.stringify(data, null, 2)}</pre> -->
