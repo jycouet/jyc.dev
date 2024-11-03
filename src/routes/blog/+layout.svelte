@@ -39,6 +39,10 @@
       <p>jyc.dev</p>
     </aside>
 
+
+    <a href="/thumb-meta" class="link link-primary">thumb-meta</a>
+    <a href="/at" class="link link-primary">@AT Proto - Stats</a>
+
     <nav
       class="grid-flow-col gap-4 md:place-self-center md:justify-self-end items-center"
     >

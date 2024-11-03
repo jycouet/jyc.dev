@@ -4,11 +4,6 @@
 
   let currentISOString = new Date().toISOString().slice(0, 19);
 
-  // Update the time every second
-  setInterval(() => {
-    currentISOString = new Date().toISOString().slice(0, 19);
-  }, 1000);
-
   function getNumbersComparison(
     today: number,
     yesterday: number,
