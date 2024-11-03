@@ -1,39 +1,41 @@
 <script lang="ts">
-  import "../app.pcss";
-  import fav from "$lib/assets/favicon.svg";
-  import { onNavigate } from "$app/navigation";
-  import posthog from "posthog-js";
-  import { page } from "$app/stores";
-  import { dev } from "$app/environment";
-  
+  import '../app.pcss'
+
+  import posthog from 'posthog-js'
+
+  import { onNavigate } from '$app/navigation'
+  import { page } from '$app/stores'
+
+  import fav from '$lib/assets/favicon.svg'
+
   interface Props {
-    children?: import('svelte').Snippet;
+    children?: import('svelte').Snippet
   }
 
-  let { children }: Props = $props();
+  let { children }: Props = $props()
 
   $effect(() => {
     // if (!dev) {
-      posthog.init("phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL", {
-        // api_host: "https://eu.posthog.com",
-        api_host: `${$page.url.origin}/posthog`,
-        ui_host: "https://eu.posthog.com",
-      });
+    posthog.init('phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL', {
+      // api_host: "https://eu.posthog.com",
+      api_host: `${$page.url.origin}/posthog`,
+      ui_host: 'https://eu.posthog.com',
+    })
     // }
-  });
+  })
 
   onNavigate((navigation) => {
     // @ts-ignore
-    if (!document.startViewTransition) return;
+    if (!document.startViewTransition) return
 
     return new Promise((resolve) => {
       // @ts-ignore
       document.startViewTransition(async () => {
-        resolve();
-        await navigation.complete;
-      });
-    });
-  });
+        resolve()
+        await navigation.complete
+      })
+    })
+  })
 </script>
 
 <svelte:head>
@@ -42,15 +44,9 @@
   <title>jyc.dev</title>
 
   <!-- Defaults Meta Tags -->
-  <meta
-    name="description"
-    content="jyc.dev - a thing where I share my thoughts..."
-  />
+  <meta name="description" content="jyc.dev - a thing where I share my thoughts..." />
   <meta property="og:title" content="jyc.dev" />
-  <meta
-    property="og:description"
-    content="A thing where I share my thoughts..."
-  />
+  <meta property="og:description" content="A thing where I share my thoughts..." />
   <meta property="og:type" content="blog" />
   <meta property="og:url" content="https://jyc.dev" />
   <meta property="og:image" content={fav} />
@@ -60,10 +56,7 @@
   <meta property="twitter:domain" content="jyc.dev" />
   <meta property="twitter:url" content="https://jyc.dev" />
   <meta name="twitter:title" content="jyc.dev" />
-  <meta
-    name="twitter:description"
-    content="A thing where I share my thoughts..."
-  />
+  <meta name="twitter:description" content="A thing where I share my thoughts..." />
   <meta name="twitter:image" content={fav} />
 </svelte:head>
 

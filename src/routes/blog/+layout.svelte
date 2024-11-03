@@ -1,30 +1,26 @@
 <script lang="ts">
   interface Props {
-    children?: import('svelte').Snippet;
+    children?: import('svelte').Snippet
   }
 
-  let { children }: Props = $props();
+  let { children }: Props = $props()
   // import "../../app.pcss";
 </script>
 
-<div class="w-[800px] mx-auto p-4 flex flex-col gap-4 h-screen">
-  <h1 class="text-primary text-3xl">
+<div class="mx-auto flex h-screen w-[800px] flex-col gap-4 p-4">
+  <h1 class="text-3xl text-primary">
     <a href="/" aria-label="Back home">jyc.dev</a>
   </h1>
 
-  <span class="italic text-sm">Some takes about web devs!</span>
+  <span class="text-sm italic">Some takes about web devs!</span>
 
-  <div class="flex flex-col gap-4 flex-grow">
+  <div class="flex flex-grow flex-col gap-4">
     {@render children?.()}
   </div>
 
   <footer class="footer items-center p-4 text-neutral-content">
-    <aside class="items-center grid-flow-col">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="32"
-        height="32"
-        viewBox="0 0 24 24"
+    <aside class="grid-flow-col items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
         ><g
           fill="none"
           stroke="#888888"
@@ -39,13 +35,10 @@
       <p>jyc.dev</p>
     </aside>
 
-
     <a href="/thumb-meta" class="link link-primary">thumb-meta</a>
     <a href="/at" class="link link-primary">@AT Proto - Stats</a>
 
-    <nav
-      class="grid-flow-col gap-4 md:place-self-center md:justify-self-end items-center"
-    >
+    <nav class="grid-flow-col items-center gap-4 md:place-self-center md:justify-self-end">
       <a href="https://dynamicprocess.io/" target="_blank" aria-label="Youtube"
         ><svg
           version="1.0"
@@ -55,9 +48,7 @@
           viewBox="0 0 372.000000 372.000000"
           preserveAspectRatio="xMidYMid meet"
         >
-          <metadata>
-            Created by potrace 1.10, written by Peter Selinger 2001-2011
-          </metadata>
+          <metadata> Created by potrace 1.10, written by Peter Selinger 2001-2011 </metadata>
           <g
             transform="translate(0.000000,372.000000) scale(0.100000,-0.100000)"
             fill="#495057"
@@ -147,15 +138,8 @@
         </svg>
       </a>
 
-      <a
-        href="https://www.youtube.com/c/JeanYvesCOU%C3%8BT"
-        target="_blank"
-        aria-label="Youtube"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
+      <a href="https://www.youtube.com/c/JeanYvesCOU%C3%8BT" target="_blank" aria-label="Youtube"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
           ><path
             fill="#888888"
             d="M23 9.71a8.5 8.5 0 0 0-.91-4.13a2.92 2.92 0 0 0-1.72-1A78.36 78.36 0 0 0 12 4.27a78.45 78.45 0 0 0-8.34.3a2.87 2.87 0 0 0-1.46.74c-.9.83-1 2.25-1.1 3.45a48.29 48.29 0 0 0 0 6.48a9.55 9.55 0 0 0 .3 2a3.14 3.14 0 0 0 .71 1.36a2.86 2.86 0 0 0 1.49.78a45.18 45.18 0 0 0 6.5.33c3.5.05 6.57 0 10.2-.28a2.88 2.88 0 0 0 1.53-.78a2.49 2.49 0 0 0 .61-1a10.58 10.58 0 0 0 .52-3.4c.04-.56.04-3.94.04-4.54M9.74 14.85V8.66l5.92 3.11c-1.66.92-3.85 1.96-5.92 3.08"
@@ -163,15 +147,8 @@
         >
       </a>
 
-      <a
-        href="https://www.linkedin.com/in/jycouet/"
-        target="_blank"
-        aria-label="linkedin"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
+      <a href="https://www.linkedin.com/in/jycouet/" target="_blank" aria-label="linkedin"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
           ><path
             fill="#888888"
             d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37z"
@@ -180,11 +157,7 @@
       </a>
 
       <a href="https://github.com/jycouet" target="_blank" aria-label="github"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
           ><path
             fill="#888888"
             d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"
@@ -196,11 +169,7 @@
         href="https://twitter.com/intent/follow?screen_name=jycouet"
         target="_blank"
         aria-label="Twitter / X"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
           ><path
             fill="#888888"
             d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"
@@ -208,15 +177,8 @@
         >
       </a>
 
-      <a
-        href="https://bsky.app/profile/jyc.dev"
-        target="_blank"
-        aria-label="bsky"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
+      <a href="https://bsky.app/profile/jyc.dev" target="_blank" aria-label="bsky"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
           ><path
             fill="currentColor"
             d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565C.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479c.815 2.736 3.713 3.66 6.383 3.364q.204-.03.415-.056q-.207.033-.415.056c-3.912.58-7.387 2.005-2.83 7.078c5.013 5.19 6.87-1.113 7.823-4.308c.953 3.195 2.05 9.271 7.733 4.308c4.267-4.308 1.172-6.498-2.74-7.078a9 9 0 0 1-.415-.056q.21.026.415.056c2.67.297 5.568-.628 6.383-3.364c.246-.828.624-5.79.624-6.478c0-.69-.139-1.861-.902-2.206c-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8"

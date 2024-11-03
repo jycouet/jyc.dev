@@ -1,23 +1,25 @@
 {
   "name": "jyc.dev",
   "version": "0.0.1",
+  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vite dev",
     "//// ---- BEST PRACTICES ---- ////": "",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "format": "kitql-lint -f",
-    "lint": "kitql-lint",
     "//// ---- PROD ---- ////": "",
     "build": "vite build",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "dev": "vite dev",
+    "format": "kitql-lint -f",
+    "lint": "kitql-lint",
     "preview": "vite preview",
     "start": "node build"
   },
   "devDependencies": {
     "@atproto/identity": "^0.4.2",
     "@atproto/syntax": "^0.3.0",
-    "@kitql/eslint-config": "0.3.2",
-    "@kitql/helpers": "0.8.9",
+    "@kitql/eslint-config": "0.4.0",
+    "@kitql/handles": "0.2.1-next.0",
+    "@kitql/helpers": "0.8.10",
     "@kitql/internals": "0.9.5",
     "@sveltejs/adapter-node": "5.0.1",
     "@sveltejs/kit": "2.7.4",
@@ -41,6 +43,5 @@
     "tslib": "2.6.2",
     "typescript": "5.6.3",
     "vite": "5.4.10"
-  },
-  "type": "module"
+  }
 }

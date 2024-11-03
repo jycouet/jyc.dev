@@ -1,56 +1,58 @@
-import { YOUTUBE_API_KEY } from "$env/static/private";
-import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
-import { google } from "googleapis";
-import { dev } from "$app/environment";
-import { Log, cyan, green } from "@kitql/helpers";
+import { redirect } from '@sveltejs/kit'
+import { google } from 'googleapis'
 
-const log = new Log("jyc.dev");
+import { cyan, green, Log } from '@kitql/helpers'
+
+import { YOUTUBE_API_KEY } from '$env/static/private'
+import { dev } from '$app/environment'
+
+import type { PageServerLoad } from './$types'
+
+const log = new Log('jyc.dev')
 
 async function fetchImageAsBase64(url: string) {
   try {
     const response = await fetch(url, {
-      mode: "cors",
-      redirect: "follow",
-    });
-    const arrayBuffer = await response.arrayBuffer();
+      mode: 'cors',
+      redirect: 'follow',
+    })
+    const arrayBuffer = await response.arrayBuffer()
     // @ts-ignore
-    const base64String = Buffer.from(arrayBuffer).toString("base64");
-    return base64String;
+    const base64String = Buffer.from(arrayBuffer).toString('base64')
+    return base64String
   } catch (error) {
-    console.error("Failed to fetch and convert image", error);
+    console.error('Failed to fetch and convert image', error)
   }
 }
 
 export const load = (async ({ fetch, params }) => {
-  const initData = await getVideoViews(params.videoId);
+  const initData = await getVideoViews(params.videoId)
 
   return {
     ...initData,
     blob: await fetchImageAsBase64(
-      initData.snippet.thumbnails.maxres?.url ??
-        initData.snippet.thumbnails.standard?.url
+      initData.snippet.thumbnails.maxres?.url ?? initData.snippet.thumbnails.standard?.url,
     ),
-  };
-}) satisfies PageServerLoad;
+  }
+}) satisfies PageServerLoad
 
-const youtube = google.youtube({ version: "v3", auth: YOUTUBE_API_KEY });
+const youtube = google.youtube({ version: 'v3', auth: YOUTUBE_API_KEY })
 
 async function getVideoViews(videoId: string) {
   try {
     const response = await youtube.videos.list({
       // @ts-ignore
       id: videoId,
-      part: "snippet,statistics,contentDetails",
-    });
+      part: 'snippet,statistics,contentDetails',
+    })
 
     // @ts-ignore
     if (response.data.items && response.data.items.length > 0) {
       // @ts-ignore
-      const views = response.data.items[0].statistics?.viewCount;
+      const views = response.data.items[0].statistics?.viewCount
 
-      const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      log.success(`${cyan(ytUrl)} has ${green(views)} views`);
+      const ytUrl = `https://www.youtube.com/watch?v=${videoId}`
+      log.success(`${cyan(ytUrl)} has ${green(views)} views`)
 
       if (!dev) {
         fetch(
@@ -58,22 +60,22 @@ async function getVideoViews(videoId: string) {
           {
             method: `POST`,
             headers: {
-              "Content-Type": `application/json`,
+              'Content-Type': `application/json`,
             },
             body: JSON.stringify({
               content: `New search: \`${ytUrl}\` has ${views} views`,
             }),
-          }
-        );
+          },
+        )
       }
 
       // @ts-ignore
-      return response.data.items[0];
+      return response.data.items[0]
     } else {
-      redirect(303, "/thumb-meta");
+      redirect(303, '/thumb-meta')
     }
   } catch (error) {
-    log.error(error);
-    redirect(303, "/thumb-meta");
+    log.error(error)
+    redirect(303, '/thumb-meta')
   }
 }

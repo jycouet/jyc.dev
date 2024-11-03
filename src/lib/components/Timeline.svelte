@@ -1,29 +1,23 @@
 <script lang="ts">
-  import TimelineIcon from "./TimelineIcon.svelte";
+  import TimelineIcon from './TimelineIcon.svelte'
 
   interface Props {
     items?: {
-      link_under_blog: string;
-      date: string;
-      title: string;
-    }[];
+      link_under_blog: string
+      date: string
+      title: string
+    }[]
   }
 
-  let { items = [] }: Props = $props();
+  let { items = [] }: Props = $props()
 </script>
 
-<ul
-  class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical"
->
+<ul class="timeline timeline-vertical timeline-snap-icon max-md:timeline-compact">
   {#each items as item, i}
     <li>
       <hr />
       <TimelineIcon></TimelineIcon>
-      <div
-        class="mb-10 {i % 2 === 0
-          ? 'timeline-start md:text-end'
-          : 'timeline-end'} "
-      >
+      <div class="mb-10 {i % 2 === 0 ? 'timeline-start md:text-end' : 'timeline-end'} ">
         <a href="/blog/{item.link_under_blog}">
           <time class="font-mono italic" title="Yes, I display year-month-day">
             {item.date}

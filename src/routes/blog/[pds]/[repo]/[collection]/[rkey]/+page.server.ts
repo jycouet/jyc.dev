@@ -1,6 +1,4 @@
-import { getMdInfo, getMdsInfo } from "$lib/mdInfos";
-import type { EntryGenerator } from "./$types";
-import { getRecord } from "$lib/at/helper";
+import { getRecord } from '$lib/at/helper'
 
 // export const entries: EntryGenerator = () => {
 //   const data = getMdsInfo();
@@ -13,7 +11,7 @@ export const load = async ({ fetch, params }) => {
     `https://${params.pds}`,
     params.repo,
     params.collection,
-    params.rkey
-  );
-  return { title: record.value.title, source: record.value.content };
-};
+    params.rkey,
+  )
+  return { title: record.value.title, source: record.value.content }
+}
