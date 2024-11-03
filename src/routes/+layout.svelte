@@ -16,6 +16,7 @@
 
   $effect(() => {
     // if (!dev) {
+    // It's a public key anyway!
     posthog.init('phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL', {
       // api_host: "https://eu.posthog.com",
       api_host: `${$page.url.origin}/posthog`,
