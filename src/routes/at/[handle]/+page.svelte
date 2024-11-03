@@ -1,9 +1,22 @@
 <script lang="ts">
+  import { Area, Axis, Chart, LinearGradient, Svg } from 'layerchart'
+
   import type { PageData } from './$types'
 
   export let data: PageData
 
   let currentISOString = new Date().toISOString().slice(0, 19)
+
+  type FollowerPoint = {
+    date: Date
+    value: number
+  }
+
+  let follow: FollowerPoint[] = [
+    { date: new Date('2024-03-20 00:00'), value: 1 },
+    { date: new Date('2024-03-20 12:00'), value: 2 },
+    { date: new Date('2024-03-21 00:00'), value: 3 },
+  ]
 
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {
     if (today === yesterday) {
@@ -150,6 +163,39 @@
           'repost',
         )}
       </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-300 p-4">
+    <h3 class="mb-4 text-lg font-bold">Follow (Rooling 7 days)</h3>
+    <div class="h-[200px] w-full">
+      <!-- xScale={scaleTime()} -->
+      <Chart
+        data={follow}
+        x="date"
+        y="value"
+        yDomain={[0, null]}
+        yNice
+        padding={{ left: 16, bottom: 24 }}
+      >
+        <Svg>
+          <Axis
+            placement="left"
+            grid
+            format={(d) => parseInt(d).toLocaleString()}
+            tickLabelProps={{
+              textAnchor: 'end',
+              class: 'fill-primary',
+            }}
+          />
+          <!-- <Axis placement="bottom" rule /> -->
+          <!-- format={(d) => format(d, PeriodType.Day, { variant: 'short' })} -->
+          <!-- <Area line={{ class: 'stroke-2 stroke-primary' }} class="fill-primary/30" /> -->
+          <LinearGradient class="from-primary/50 to-primary/0" vertical let:url>
+            <Area line={{ class: 'stroke-2 stroke-primary' }} fill={url} />
+          </LinearGradient>
+        </Svg>
+      </Chart>
     </div>
   </div>
 </div>

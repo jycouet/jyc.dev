@@ -10,6 +10,11 @@ interface ActivityCounts {
   today: number
 }
 
+type FollowerPoint = {
+  date: Date
+  value: number
+}
+
 async function getActivityCounts(
   fetch: typeof globalThis.fetch,
   pds: string,
