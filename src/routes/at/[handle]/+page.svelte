@@ -13,7 +13,7 @@
       return `<span class='text-error'>No ${topic} yesterday</span>`
     }
     if (today === 0) {
-      return `<span class='text-error'>No ${topic} yet!</span>`
+      return `<span class='text-gray-500'>No ${topic}... yet 🙈</span>`
     }
 
     const diff = today - yesterday
