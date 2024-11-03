@@ -1,4 +1,4 @@
-import { listRecords, listRecordsAll } from "$lib/at/helper";
+import { describeRepo, listRecords, listRecordsAll } from "$lib/at/helper";
 import type { PageServerLoad } from "./$types";
 import {
   DidResolver,
@@ -52,6 +52,9 @@ export const load = (async (event) => {
 
       if (didDocument) {
         const pds = getPds(didDocument);
+        // console.log(`pds`, pds);
+        // const repo = await describeRepo(event.fetch, pds!, did);
+        // console.log(`repo`, repo);
 
         if (pds) {
           const [profile, likes, posts, reposts] = await Promise.all([
