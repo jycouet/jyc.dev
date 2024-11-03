@@ -29,6 +29,22 @@ export const load = (async (event) => {
             "app.bsky.actor.profile"
           );
 
+          // const likes = await listRecords(
+          //   event.fetch,
+          //   pds,
+          //   did,
+          //   "app.bsky.feed.like"
+          // );
+
+          // const totalLikes = likes.records.length;
+
+          // const today = new Date();
+          // today.setHours(0, 0, 0, 0);
+          // const todayLikes = likes.records.filter((record) => {
+          //   const likeDate = new Date(record.value.createdAt);
+          //   return likeDate >= today;
+          // }).length;
+
           const profileData = profile.records[0]?.value;
           return {
             did,
