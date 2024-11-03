@@ -2,6 +2,13 @@
   import type { PageData } from "./$types";
   export let data: PageData;
 
+  let currentISOString = new Date().toISOString().slice(0, 19);
+
+  // Update the time every second
+  setInterval(() => {
+    currentISOString = new Date().toISOString().slice(0, 19);
+  }, 1000);
+
   function getNumbersComparison(
     today: number,
     yesterday: number,
@@ -28,23 +35,26 @@
   }
 </script>
 
-<a href="/at" class="btn btn-ghost">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      d="M10 19l-7-7m0 0l7-7m-7 7h18"
-    />
-  </svg>
-  Check another handle
-</a>
+<div class="flex justify-between items-center">
+  <a href="/at" class="btn btn-ghost">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+      />
+    </svg>
+    Check another handle
+  </a>
+  <div class="font-mono text-xl text-secondary">{currentISOString}</div>
+</div>
 
 <div class="flex flex-col gap-4">
   <div class="card bg-base-300">
@@ -53,8 +63,8 @@
         <h2 class="card-title flex flex-col gap-2 items-start">
           <span class="text-xl font-bold flex items-end gap-2">
             {data.displayName}
-            <span class="text-sm font-mono text-secondary">@{data.handle}</span>
-            <div class="text-xs font-mono text-gray-500">{data.did}</div>
+            <!-- <span class="text-sm font-mono text-secondary">@{data.handle}</span>
+            <div class="text-xs font-mono text-gray-500">{data.did}</div> -->
           </span>
           <div class="flex flex-col gap-1 border-l pl-4">
             {#each data.description.split("\n") as line}
@@ -62,16 +72,19 @@
             {/each}
           </div>
         </h2>
-        <div class="avatar">
-          <div class="mask mask-hexagon w-20">
-            <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
+        <div class="flex flex-col items-center gap-2">
+          <div class="avatar">
+            <div class="mask mask-hexagon w-20">
+              <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
+            </div>
           </div>
+          <span class="text-sm font-mono text-secondary">@{data.handle}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="stats shadow bg-base-300">
+  <div class="stats stats-vertical md:stats-horizontal shadow bg-base-300">
     <div class="stat">
       <div class="stat-figure text-primary">
         <svg
