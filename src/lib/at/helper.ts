@@ -25,14 +25,17 @@ export const listRecords = async (
   pds: string,
   repo: string,
   collection: string,
-  cursor?: string
+  options?: {
+    cursor?: string;
+    limit?: number;
+  }
 ) => {
   const listRecordsUrl = new URL(`${pds}/xrpc/com.atproto.repo.listRecords`);
   listRecordsUrl.searchParams.set("repo", repo);
   listRecordsUrl.searchParams.set("collection", collection);
-  listRecordsUrl.searchParams.set("limit", "5");
-  if (cursor) {
-    listRecordsUrl.searchParams.set("cursor", cursor);
+  listRecordsUrl.searchParams.set("limit", options?.limit?.toString() ?? "50");
+  if (options?.cursor) {
+    listRecordsUrl.searchParams.set("cursor", options.cursor);
   }
   const res = await fetchToUse(listRecordsUrl.toString());
   if (!res.ok) {
@@ -58,4 +61,50 @@ export const getRecord = async (
     throw new Error(`Failed to get record: ${res.statusText}`);
   }
   return await res.json();
+};
+
+export const listRecordsAll = async (
+  fetchToUse: any,
+  pds: string,
+  repo: string,
+  collection: string,
+  options?: {
+    while?: (record: any) => boolean;
+  }
+) => {
+  const allRecords: Array<{
+    uri: string;
+    cid: string;
+    value: any;
+  }> = [];
+
+  let cursor: string | undefined = undefined;
+
+  while (true) {
+    const response = await listRecords(fetchToUse, pds, repo, collection, {
+      cursor,
+      limit: 100,
+    });
+
+    if (options?.while) {
+      try {
+        for (const record of response.records) {
+          if (options.while(record)) {
+            allRecords.push(record);
+          } else {
+            break;
+          }
+        }
+      } catch (error) {}
+    } else {
+      allRecords.push(...response.records);
+    }
+
+    if (!response.cursor) {
+      break;
+    }
+    cursor = response.cursor;
+  }
+
+  return { records: allRecords };
 };
