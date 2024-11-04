@@ -293,16 +293,16 @@
         </div>
       </div>
     </div>
-    <!-- TODO: add padding to not touch the axis -->
-    <!-- TODO: add legend -->
     <!-- TODO: on legend click, show/hide series (with a nice fade? bounce?) -->
-
     <div class="h-[250px] w-full">
       <ScatterChart
         x="hour"
         y="weekday"
         r="count"
-        padding={{ left: 24, bottom: 24 }}
+        xPadding={[20, 20]}
+        yPadding={[20, 20]}
+        padding={{ left: 24, bottom: 44 }}
+        legend
         props={{
           xAxis: {
             format: (d) => `${d}:00`,
