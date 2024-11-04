@@ -172,6 +172,148 @@ export const load = (async (event) => {
           // PUNCH CARD - END
           // **********
 
+          // **********
+          // PERSONNALYTY - START
+          // **********
+          // Calculate the ratio of starting a post vs replying to a convo
+          // Your convo score
+          // convo score in general
+          const postStarted = posts.records.filter((p) => !p.value.reply).map((c) => c.cid)
+          const nbPostStared = postStarted.length
+          const postRepliesToAStartedOne = posts.records.filter(
+            (p) => p.value.reply?.root.cid && postStarted.includes(p.value.reply?.root.cid),
+          ).length
+          const postRepliesToOthers =
+            posts.records.length - postStarted.length - postRepliesToAStartedOne
+
+          // Calculate totals and ratios
+          let totalReplies = postRepliesToAStartedOne + postRepliesToOthers
+          let totalInteractions = nbPostStared + totalReplies
+
+          let replyToOwnRatio = postRepliesToAStartedOne / totalReplies
+          let replyToOthersRatio = postRepliesToOthers / totalReplies
+          let postsStartedRatio = nbPostStared / totalInteractions
+
+          // Define the Category interface
+          interface Category {
+            title: string
+            traits: string
+          }
+
+          // List of categories
+          let categories: Category[] = [
+            {
+              title: 'The Serial Replier',
+              traits:
+                "Replies are your bread and butter! With a whopping number of replies, you just can't resist jumping into the conversation.",
+            },
+            {
+              title: 'The Self-Amplifier (aka The Echo Chamber Architect)',
+              traits:
+                "You love your own thoughts just a bit more than most. You're giving 'it's my world, and you're just living in it' vibes.",
+            },
+            {
+              title: "The Starter of Things (but doesn't look back)",
+              traits: "You're all about throwing ideas out there and moving on.",
+            },
+            {
+              title: 'The Obligatory Participator',
+              traits:
+                "Just enough engagement to stay on people's radar, but we're not convinced you really *want* to be here.",
+            },
+            {
+              title: 'The Social Glue Stick',
+              traits:
+                "You hold the community together with constant replies to other people's posts.",
+            },
+            {
+              title: 'The Anti-Lurker',
+              traits: "Heavily involved in other people's business.",
+            },
+            {
+              title: 'The Socratic Socialite',
+              traits:
+                "Constant questions and contributions, but it's mostly other people's posts that ignite you.",
+            },
+            {
+              title: 'The Conversation Conductor',
+              traits: 'Keeping all the threads active with a balance of posts and replies.',
+            },
+            {
+              title: 'The Thought Bubble Enthusiast',
+              traits:
+                "Almost as many replies to yourself as to others. It's giving 'intense inner dialogue with side commentary.'",
+            },
+            {
+              title: 'The Thread-Thirsty Troll (in the friendliest way)',
+              traits:
+                "You're all over, replying like a friend of everyone but subtly steering the chat in your direction.",
+            },
+          ]
+
+          // Function to determine the category
+          function determineCategory(): Category {
+            if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
+              // High proportion of replies to own posts
+              return categories[1] // The Self-Amplifier
+            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
+              // High replies to others, few posts started
+              return categories[0] // The Serial Replier
+            } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
+              // More posts started than replies
+              return categories[2] // The Starter of Things
+            } else if (replyToOthersRatio > 0.9 && postsStartedRatio < 0.1) {
+              // Almost exclusively replies to others
+              return categories[5] // The Anti-Lurker
+            } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
+              // Engaged in others' posts and starts some posts
+              return categories[4] // The Social Glue Stick
+            } else if (replyToOwnRatio > 0.4 && replyToOthersRatio > 0.4) {
+              // Balanced replies to own and others' posts
+              return categories[8] // The Thought Bubble Enthusiast
+            } else if (
+              postsStartedRatio > 0.3 &&
+              replyToOwnRatio > 0.3 &&
+              replyToOthersRatio > 0.3
+            ) {
+              // Balanced in all activities
+              return categories[7] // The Conversation Conductor
+            } else if (totalInteractions < 10) {
+              // Low engagement overall
+              return categories[3] // The Obligatory Participator
+            } else {
+              // Default category
+              return categories[9] // The Thread-Thirsty Troll
+            }
+          }
+
+          const results = determineCategory()
+          console.log(`results`, results)
+
+          //
+          const kindOfEmbed = posts.records.reduce(
+            (acc, post) => {
+              const embedType = (post.value.embed?.$type || 'text only')
+                .replaceAll('app.bsky.embed.', '')
+                .replaceAll('record', 'link to other post')
+                .replaceAll('external', 'link to outside')
+                .replaceAll('images', 'image')
+              const existingType = acc.find((t) => t.kind === embedType)
+              if (existingType) {
+                existingType.count++
+              } else {
+                acc.push({ kind: embedType, count: 1 })
+              }
+              return acc
+            },
+            [] as Array<{ kind: string; count: number }>,
+          )
+          console.log(`kindOfEmbed`, kindOfEmbed)
+
+          // **********
+          // PERSONNALYTY - END
+          // **********
+
           const profileData = profile.records[0]?.value
           return {
             did,
