@@ -260,7 +260,7 @@ export const load = (async (event) => {
                 "You're fluttering from conversation to conversation, pollinating discussions with your replies.",
               emoji: '🦋',
             },
-            Peacock: {
+            'Famous Peacock': {
               trait:
                 'You love showcasing your own thoughts, strutting through threads with self-assured elegance.',
               emoji: '🦚',
@@ -311,6 +311,7 @@ export const load = (async (event) => {
           function determineCategory(): { title: string; traits: string; emoji: string } {
             // First determine the animal base
 
+            console.log(`display`, profileData?.displayName)
             console.log(`replyToOwnRatio`, replyToOwnRatio)
             console.log(`replyToOthersRatio`, replyToOthersRatio)
             console.log(`postsStartedRatio`, postsStartedRatio)
@@ -318,19 +319,19 @@ export const load = (async (event) => {
 
             let animalBase: string
             if (totalInteractions < 10) {
-              animalBase = 'Sleepy Sloth'
-            } else if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
-              animalBase = 'Famous Peacock'
-            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
-              animalBase = 'Social Butterfly'
-            } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
+              animalBase = 'Sleepy Sloth' // @xeho91.dev
+            } else if (replyToOwnRatio > 0.4 && replyToOwnRatio > replyToOthersRatio) {
+              animalBase = 'Famous Peacock' // @rich-harris.dev
+            } else if (replyToOthersRatio > 0.5 && postsStartedRatio < 0.3) {
+              animalBase = 'Social Butterfly' // @jyc.dev
+            } else if (postsStartedRatio > 0.4 && nbPostStared > totalReplies * 0.8) {
               animalBase = 'Wise Owl'
-            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.1) {
+            } else if (replyToOthersRatio > 0.5 && postsStartedRatio < 0.5) {
               animalBase = 'Curious Cat'
-            } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
-              animalBase = 'Busy Bee'
+            } else if (replyToOthersRatio > 0.4 && postsStartedRatio > 0.3) {
+              animalBase = 'Busy Bee' // @afaikfyi.bsky.social
             } else {
-              animalBase = 'Social Spider'
+              animalBase = 'Social Spider' // @lucasoe.bsky.social
             }
 
             // console.log(`specialty`, artRatio, linkInsideRatio, linkOutsideRatio)
