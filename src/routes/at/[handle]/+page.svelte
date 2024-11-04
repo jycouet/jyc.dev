@@ -218,7 +218,7 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs"></span>
+        Insights <span class="text-xs"> (Rolling 28 days)</span>
       </h3>
       <a
         class="link link-secondary"
@@ -246,6 +246,7 @@
           padding={{ bottom: -100 }}
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
         ></PieChart>
+        <!-- sort={null} -->
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
           <p class="text-center text-sm text-base-content/70">
@@ -270,7 +271,7 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Your punchs <span class="text-xs"></span>
+        Your punchs <span class="text-xs"> (Rolling 28 days)</span>
       </h3>
       <div class="flex items-center gap-4">
         <div>
@@ -311,10 +312,17 @@
             },
           },
           yAxis: {
-            format: (d) => {
+            format: (d: number) => {
+              if (d < 0) {
+                return ''
+              }
+              if (d > 6) {
+                return ''
+              }
               return daysOfWeek[d]
             },
             ticks: 7,
+            tickLength: 0,
             tickLabelProps: {
               class: 'fill-base-content/50',
             },
@@ -338,8 +346,11 @@
 </div>
 
 <div class="mt-12 text-center text-sm text-gray-500">
-  You have a request? Just ping me here: 🦋 <a
-    href="https://bsky.app/profile/jyc.dev"
+  You have a request? Ask me here: 🦋 <a
+    target="_blank"
+    href="https://bsky.app/intent/compose?text={encodeURI(
+      `Hey @jyc.dev could we have [YOUR REQUEST] 😉 ?`,
+    )}"
     class="link link-primary">@jyc.dev</a
   > - I'll be happy to try ;)
 </div>

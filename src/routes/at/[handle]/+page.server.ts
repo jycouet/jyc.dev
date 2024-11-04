@@ -82,12 +82,21 @@ export const load = (async (event) => {
         // const repo = await describeRepo(event.fetch, pds!, did);
         // console.log(`repo`, repo);
 
+        const four_weeks_ago = new Date()
+        four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+
         if (pds) {
           const [profile, likes, posts, reposts, follows] = await Promise.all([
             listRecords(event.fetch, pds, did, 'app.bsky.actor.profile'),
-            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.like'),
-            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.post'),
-            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.repost'),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.like', {
+              while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            }),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.post', {
+              while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            }),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.repost', {
+              while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            }),
             listRecordsAll(event.fetch, pds, did, 'app.bsky.graph.follow'),
           ])
 
@@ -187,9 +196,9 @@ export const load = (async (event) => {
             posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
 
           const kindOfPost = [
-            { key: 'Post started', value: nbPostStared },
-            { key: 'My convos', value: nbPostRepliesToAStartedOne },
-            { key: 'Others convos', value: nbPostRepliesToOthers },
+            { key: '🐣 Hatchlings - Your started something', value: nbPostStared },
+            { key: '🦜 Parrot Replies - In your threads', value: nbPostRepliesToAStartedOne },
+            { key: '🐒 Swing-by Replies', value: nbPostRepliesToOthers },
           ]
 
           const kindOfEmbed = posts.records.reduce(
