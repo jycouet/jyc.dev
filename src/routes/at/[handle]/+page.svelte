@@ -192,7 +192,7 @@
   <div class="card bg-base-300 p-4">
     <div class="flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Punch <span class="text-xs"> (likes)</span>
+        Punch <span class="text-xs"></span>
       </h3>
     </div>
     <div class="h-[200px] w-full">

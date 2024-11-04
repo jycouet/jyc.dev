@@ -10,15 +10,9 @@ import type { PageServerLoad } from './$types'
 interface ActivityCounts {
   yesterday: number
   today: number
-  nbRequest: number
 }
 
-async function getActivityCounts(
-  fetch: typeof globalThis.fetch,
-  pds: string,
-  did: string,
-  collection: string,
-): Promise<ActivityCounts> {
+function getActivityCounts(records: { records: any[] }): ActivityCounts {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
   yesterday.setHours(0, 0, 0, 0)
@@ -26,15 +20,16 @@ async function getActivityCounts(
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const records = await listRecordsAll(fetch, pds, did, collection, {
-    while: (record) => new Date(record.value.createdAt) > yesterday,
-  })
-
-  return {
-    yesterday: records.records.filter((record) => new Date(record.value.createdAt) < today).length,
+  const toRet = {
+    yesterday: records.records.filter(
+      (record) =>
+        new Date(record.value.createdAt) >= yesterday && new Date(record.value.createdAt) < today,
+    ).length,
     today: records.records.filter((record) => new Date(record.value.createdAt) >= today).length,
-    nbRequest: records.nbRequest,
   }
+  console.log(`toRet`, toRet)
+
+  return toRet
 }
 
 const log = new Log('at/[handle]/+page.server.ts')
@@ -57,9 +52,9 @@ export const load = (async (event) => {
         if (pds) {
           const [profile, likes, posts, reposts, follows] = await Promise.all([
             listRecords(event.fetch, pds, did, 'app.bsky.actor.profile'),
-            getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.like'),
-            getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.post'),
-            getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.repost'),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.like'),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.post'),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.repost'),
             listRecordsAll(event.fetch, pds, did, 'app.bsky.graph.follow'),
           ])
 
@@ -68,6 +63,9 @@ export const load = (async (event) => {
 
           log.info(`totalRequests`, totalRequests)
 
+          // **********
+          // FOLLOW CHART - START
+          // **********
           const followsTotal = follows.records.length
           const followsPeriods: { timestamp: Date; count: number }[] = []
 
@@ -115,6 +113,10 @@ export const load = (async (event) => {
             })
           }
 
+          // **********
+          // FOLLOW CHART - END
+          // **********
+
           const profileData = profile.records[0]?.value
           return {
             did,
@@ -124,9 +126,9 @@ export const load = (async (event) => {
               ? `https://cdn.bsky.app/img/avatar/plain/${did}/${profileData.avatar.ref.$link}@jpeg`
               : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
             description: profileData?.description || '',
-            likes,
-            posts,
-            reposts,
+            likes: getActivityCounts(likes),
+            posts: getActivityCounts(posts),
+            reposts: getActivityCounts(reposts),
             followsPeriods,
             followsTotal,
             punchCard: [
