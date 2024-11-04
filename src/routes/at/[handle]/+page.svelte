@@ -7,17 +7,6 @@
 
   let currentISOString = new Date().toISOString().slice(0, 19)
 
-  type FollowerPoint = {
-    date: Date
-    value: number
-  }
-
-  let follow: FollowerPoint[] = [
-    { date: new Date('2024-03-20 00:00'), value: 1 },
-    { date: new Date('2024-03-20 12:00'), value: 2 },
-    { date: new Date('2024-03-21 00:00'), value: 3 },
-  ]
-
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {
     if (today === yesterday) {
       return "<span class='text-gray-500'>Same as yesterday</span>"
@@ -167,13 +156,20 @@
   </div>
 
   <div class="card bg-base-300 p-4">
-    <h3 class="mb-4 text-lg font-bold">Follow (Rooling 7 days)</h3>
+    <div class="flex items-start justify-between">
+      <h3 class="mb-4 text-lg font-bold">
+        Follow <span class="text-xs"> (Rolling 7 days)</span>
+      </h3>
+      <div class="stat-value text-primary">
+        {data.followsTotal}
+      </div>
+    </div>
     <div class="h-[200px] w-full">
       <!-- xScale={scaleTime()} -->
       <Chart
-        data={follow}
-        x="date"
-        y="value"
+        data={data.followsPeriods ?? []}
+        x="timestamp"
+        y="count"
         yDomain={[0, null]}
         yNice
         padding={{ left: 16, bottom: 24 }}

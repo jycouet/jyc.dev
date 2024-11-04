@@ -1,6 +1,8 @@
 import { DidResolver, getPds, HandleResolver } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
+import { Log } from '@kitql/helpers'
+
 import { listRecords, listRecordsAll } from '$lib/at/helper'
 
 import type { PageServerLoad } from './$types'
@@ -8,11 +10,7 @@ import type { PageServerLoad } from './$types'
 interface ActivityCounts {
   yesterday: number
   today: number
-}
-
-type FollowerPoint = {
-  date: Date
-  value: number
+  nbRequest: number
 }
 
 async function getActivityCounts(
@@ -35,8 +33,11 @@ async function getActivityCounts(
   return {
     yesterday: records.records.filter((record) => new Date(record.value.createdAt) < today).length,
     today: records.records.filter((record) => new Date(record.value.createdAt) >= today).length,
+    nbRequest: records.nbRequest,
   }
 }
+
+const log = new Log('at/[handle]/+page.server.ts')
 
 export const load = (async (event) => {
   try {
@@ -54,12 +55,57 @@ export const load = (async (event) => {
         // console.log(`repo`, repo);
 
         if (pds) {
-          const [profile, likes, posts, reposts] = await Promise.all([
+          const [profile, likes, posts, reposts, follows] = await Promise.all([
             listRecords(event.fetch, pds, did, 'app.bsky.actor.profile'),
             getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.like'),
             getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.post'),
             getActivityCounts(event.fetch, pds, did, 'app.bsky.feed.repost'),
+            listRecordsAll(event.fetch, pds, did, 'app.bsky.graph.follow'),
           ])
+
+          const totalRequests =
+            likes.nbRequest + posts.nbRequest + reposts.nbRequest + follows.nbRequest + 1
+
+          log.info(`totalRequests`, totalRequests)
+
+          const followsTotal = follows.records.length
+          const followsPeriods: { timestamp: Date; count: number }[] = []
+
+          // Get current time and round down to nearest 12h period
+          let currentPeriodStart = new Date()
+          followsPeriods.unshift({
+            timestamp: new Date(currentPeriodStart),
+            count: followsTotal,
+          })
+          currentPeriodStart.setMinutes(0, 0, 0)
+          if (currentPeriodStart.getHours() >= 12) {
+            currentPeriodStart.setHours(12)
+          } else {
+            currentPeriodStart.setHours(0)
+          }
+
+          // Get periods for last 7 days with cumulative counts
+          const sevenDaysAgo = new Date(currentPeriodStart)
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+          follows.records.reverse()
+
+          // Loop through follows from newest to oldest to build cumulative counts
+          for (let i = follows.records.length - 1; i >= 0; i--) {
+            const followDate = new Date(follows.records[i].value.createdAt)
+            // console.log(`currentPeriodStart`, followDate, currentPeriodStart)
+
+            // Skip if before 7 days ago
+            if (followDate < sevenDaysAgo) continue
+
+            if (followDate < currentPeriodStart) {
+              followsPeriods.unshift({
+                timestamp: new Date(currentPeriodStart),
+                count: i + 1,
+              })
+              currentPeriodStart.setTime(currentPeriodStart.getTime() - 12 * 60 * 60 * 1000)
+            }
+          }
 
           const profileData = profile.records[0]?.value
           return {
@@ -73,6 +119,8 @@ export const load = (async (event) => {
             likes,
             posts,
             reposts,
+            followsPeriods,
+            followsTotal,
           }
         }
       }

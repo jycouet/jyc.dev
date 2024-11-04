@@ -1,3 +1,5 @@
+import { Log } from '@kitql/helpers'
+
 export const describeRepo = async (fetchToUse: any, pds: string, repo: string) => {
   const describeRepoUrl = new URL(`${pds}/xrpc/com.atproto.repo.describeRepo`)
   describeRepoUrl.searchParams.set('repo', repo)
@@ -16,6 +18,8 @@ export const describeRepo = async (fetchToUse: any, pds: string, repo: string) =
   }
 }
 
+const log = new Log('at/helper')
+
 export const listRecords = async (
   fetchToUse: any,
   pds: string,
@@ -33,7 +37,9 @@ export const listRecords = async (
   if (options?.cursor) {
     listRecordsUrl.searchParams.set('cursor', options.cursor)
   }
-  const res = await fetchToUse(listRecordsUrl.toString())
+  const url = listRecordsUrl.toString()
+  log.info(`fetch`, url)
+  const res = await fetchToUse(url)
   if (!res.ok) {
     throw new Error(`Failed to list records: ${res.statusText}`)
   }
@@ -76,11 +82,13 @@ export const listRecordsAll = async (
 
   let cursor: string | undefined = undefined
 
+  let nbRequest = 0
   while (true) {
     const response = await listRecords(fetchToUse, pds, repo, collection, {
       cursor,
       limit: 100,
     })
+    nbRequest++
 
     if (options?.while) {
       try {
@@ -102,5 +110,5 @@ export const listRecordsAll = async (
     cursor = response.cursor
   }
 
-  return { records: allRecords }
+  return { records: allRecords, nbRequest }
 }
