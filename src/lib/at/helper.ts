@@ -38,7 +38,7 @@ export const listRecords = async (
     listRecordsUrl.searchParams.set('cursor', options.cursor)
   }
   const url = listRecordsUrl.toString()
-  log.info(`fetch`, url)
+  // log.info(`fetch`, url)
   const res = await fetchToUse(url)
   if (!res.ok) {
     throw new Error(`Failed to list records: ${res.statusText}`)
