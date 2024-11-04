@@ -228,16 +228,16 @@ export const load = (async (event) => {
           let postsStartedRatio = nbPostStared / totalInteractions
 
           const totalEmbed = posts.records.length
-          const pointerRatio =
+          const linkInsideRatio =
             kindOfEmbed.reduce((acc, embed) => {
-              if (embed.kind.includes('record')) {
+              if (embed.kind.includes('link to other post')) {
                 return acc + embed.count
               }
               return acc
             }, 0) / totalEmbed
-          const linkRatio =
+          const linkOutsideRatio =
             kindOfEmbed.reduce((acc, embed) => {
-              if (embed.kind.includes('link')) {
+              if (embed.kind.includes('ink to outside')) {
                 return acc + embed.count
               }
               return acc
@@ -310,30 +310,38 @@ export const load = (async (event) => {
 
           function determineCategory(): { title: string; traits: string; emoji: string } {
             // First determine the animal base
+
+            console.log(`replyToOwnRatio`, replyToOwnRatio)
+            console.log(`replyToOthersRatio`, replyToOthersRatio)
+            console.log(`postsStartedRatio`, postsStartedRatio)
+            console.log(`totalInteractions`, totalInteractions)
+
             let animalBase: string
-            if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
-              animalBase = 'Peacock'
+            if (totalInteractions < 10) {
+              animalBase = 'Sleepy Sloth'
+            } else if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
+              animalBase = 'Famous Peacock'
             } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
               animalBase = 'Social Butterfly'
             } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
               animalBase = 'Wise Owl'
-            } else if (replyToOthersRatio > 0.9 && postsStartedRatio < 0.1) {
+            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.1) {
               animalBase = 'Curious Cat'
             } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
               animalBase = 'Busy Bee'
-            } else if (totalInteractions < 10) {
-              animalBase = 'Sleepy Sloth'
             } else {
               animalBase = 'Social Spider'
             }
 
+            // console.log(`specialty`, artRatio, linkInsideRatio, linkOutsideRatio)
+
             // Then determine specialty
             let specialty: string
-            if (artRatio > 0.3) {
+            if (artRatio > 0.11) {
               specialty = 'Artist'
-            } else if (pointerRatio > 0.3) {
+            } else if (linkInsideRatio > 0.05) {
               specialty = 'Connector'
-            } else if (linkRatio > 0.3) {
+            } else if (linkOutsideRatio > 0.07) {
               specialty = 'Explorer'
             } else {
               specialty = 'Conversationalist'

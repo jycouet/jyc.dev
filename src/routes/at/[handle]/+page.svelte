@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, AreaChart, LinearGradient, PieChart, ScatterChart } from 'layerchart'
+  import { Area, AreaChart, Legend, LinearGradient, PieChart, ScatterChart } from 'layerchart'
 
   import { page } from '$app/stores'
 
@@ -47,6 +47,43 @@
   // $effect(() => {
   //   followsPeriods = data.followsPeriods ?? []
   // })
+
+  let selection = $state(['like', 'post', 'repost'])
+
+  const toggleSelection = (name: string) => {
+    if (selection.includes(name)) {
+      selection = selection.filter((c) => c !== name)
+    } else {
+      selection.push(name)
+    }
+  }
+
+  let punchCard = $derived(
+    (data.punchCard ?? [])
+      .filter((c) => selection.includes(c.kind))
+      .map((c, i) => {
+        const colors = []
+        if (selection.includes('like')) {
+          colors.push('#4ca2fe')
+        }
+        if (selection.includes('post')) {
+          colors.push('#fd6f9c')
+        }
+        if (selection.includes('repost')) {
+          colors.push('#b387fa')
+        }
+
+        return {
+          key: c.kind,
+          data: c.data.map((d) => ({
+            hour: d.hour,
+            weekday: daysOfWeek.indexOf(d.weekday),
+            count: d.count,
+          })),
+          color: colors[i],
+        }
+      }),
+  )
 </script>
 
 <svelte:head>
@@ -108,6 +145,61 @@
           </a>
           <span class="font-mono text-sm text-secondary">@{data.handle}</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-300 p-4">
+    <div class="mb-6 flex items-start justify-between">
+      <h3 class="mb-4 text-lg font-bold">
+        Insights <span class="text-xs"> (Rolling 28 days)</span>
+      </h3>
+      <a
+        class="link link-secondary"
+        href="https://bsky.app/intent/compose?text={encodeURI(
+          `I'm ${data.category?.emoji} ${data.category?.title} on 🦋<br>📎 https://jyc.dev/at/${data.handle}<br><br>What about 🫵 ? 🐾 ! ?<br><br>👀@jyc.dev `,
+        )}"
+        target="_blank"
+      >
+        Share it on 🦋
+      </a>
+    </div>
+
+    <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
+      <div class="flex h-[250px] w-full flex-col items-center gap-4">
+        <!-- TODO: how to remove the sorting ? -->
+        <PieChart
+          data={data.kindOfPost ?? []}
+          key="key"
+          value="value"
+          range={[-90, 90]}
+          innerRadius={-20}
+          cornerRadius={7}
+          padAngle={0.02}
+          props={{ group: { y: 0 }, pie: { sort: null } }}
+          padding={{ bottom: -100 }}
+          cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
+        ></PieChart>
+        <div class="absolute mt-16 text-3xl">{data.category?.emoji}</div>
+        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
+        <div class="mb-4 flex w-full flex-col items-center gap-2">
+          <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
+          <p class="text-center text-sm text-base-content/70">
+            {data.category?.traits}
+          </p>
+        </div>
+      </div>
+      <div class="h-[250px] w-full">
+        <PieChart
+          data={data.kindOfEmbed ?? []}
+          cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
+          key="kind"
+          value="count"
+          innerRadius={-20}
+          cornerRadius={7}
+          padAngle={0.02}
+        ></PieChart>
+        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
       </div>
     </div>
   </div>
@@ -225,82 +317,39 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs"> (Rolling 28 days)</span>
-      </h3>
-      <a
-        class="link link-secondary"
-        href="https://bsky.app/intent/compose?text={encodeURI(
-          `I'm __${data.category?.title}__ on 🦋<br><br>Check it out: https://jyc.dev/at/${data.handle}<br><br>🫵 Get in, and claim your digital beast too 🐾 ! ?<br><br>👀@jyc.dev `,
-        )}"
-        target="_blank"
-      >
-        Share it on 🦋
-      </a>
-    </div>
-
-    <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
-      <div class="flex h-[250px] w-full flex-col items-center gap-4">
-        <!-- TODO: how to remove the sorting ? -->
-        <PieChart
-          data={data.kindOfPost ?? []}
-          key="key"
-          value="value"
-          range={[-90, 90]}
-          innerRadius={-20}
-          cornerRadius={7}
-          padAngle={0.02}
-          props={{ group: { y: 0 }, pie: { sort: null } }}
-          padding={{ bottom: -100 }}
-          cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
-        ></PieChart>
-        <div class="absolute mt-16 text-3xl">{data.category?.emoji}</div>
-        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
-        <div class="mb-4 flex w-full flex-col items-center gap-2">
-          <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
-          <p class="text-center text-sm text-base-content/70">
-            {data.category?.traits}
-          </p>
-        </div>
-      </div>
-      <div class="h-[250px] w-full">
-        <PieChart
-          data={data.kindOfEmbed ?? []}
-          cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
-          key="kind"
-          value="count"
-          innerRadius={-20}
-          cornerRadius={7}
-          padAngle={0.02}
-        ></PieChart>
-        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card bg-base-300 p-4">
-    <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 text-lg font-bold">
         Your punchs <span class="text-xs"> (Rolling 28 days)</span>
       </h3>
       <div class="flex items-center gap-4">
-        <div>
-          <span class="stat-value text-[#4ca2fe]"
-            >{new Intl.NumberFormat().format(data.totalLikes ?? 0)}</span
+        <button onclick={() => toggleSelection('like')}>
+          <span
+            class="stat-value {selection.includes('like')
+              ? 'text-[#4ca2fe]'
+              : 'text-base-content/10'}"
+          >
+            {new Intl.NumberFormat().format(data.totalLikes ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> likes</span>
-        </div>
-        <div>
-          <span class="stat-value text-[#fd6f9c]"
-            >{new Intl.NumberFormat().format(data.totalPosts ?? 0)}</span
+        </button>
+        <button onclick={() => toggleSelection('post')}>
+          <span
+            class="stat-value {selection.includes('post')
+              ? 'text-[#fd6f9c]'
+              : 'text-base-content/10'}"
+          >
+            {new Intl.NumberFormat().format(data.totalPosts ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> posts</span>
-        </div>
-        <div>
-          <span class="stat-value text-[#b387fa]"
-            >{new Intl.NumberFormat().format(data.totalReposts ?? 0)}</span
+        </button>
+        <button onclick={() => toggleSelection('repost')}>
+          <span
+            class="stat-value {selection.includes('repost')
+              ? 'text-[#b387fa]'
+              : 'text-base-content/10'}"
+          >
+            {new Intl.NumberFormat().format(data.totalReposts ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> reposts</span>
-        </div>
+        </button>
       </div>
     </div>
     <!-- TODO: on legend click, show/hide series (with a nice fade? bounce?) -->
@@ -312,8 +361,8 @@
         xPadding={[20, 20]}
         yPadding={[20, 20]}
         padding={{ left: 24, bottom: 44 }}
-        legend
         props={{
+          // points: { class: 'animate-pulse' },
           xAxis: {
             format: (d) => `${d}:00`,
             tickLabelProps: {
@@ -337,19 +386,9 @@
             },
           },
         }}
-        series={(data?.punchCard ?? []).map((c, i) => {
-          return {
-            key: c.kind,
-            data: c.data.map((d) => ({
-              hour: d.hour,
-              weekday: daysOfWeek.indexOf(d.weekday),
-              count: d.count,
-            })),
-            color: ['#4ca2fe', '#fd6f9c', '#b387fa'][i],
-          }
-        })}
+        series={punchCard}
       ></ScatterChart>
-      <!-- legend={true} -->
+      {selection}
     </div>
   </div>
 </div>
