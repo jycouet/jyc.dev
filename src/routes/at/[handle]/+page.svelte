@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, AreaChart, LinearGradient, ScatterChart } from 'layerchart'
+  import { Area, AreaChart, Legend, LinearGradient, PieChart, ScatterChart } from 'layerchart'
 
   import type { PageData } from './$types'
 
@@ -29,6 +29,14 @@
   }
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  export function getBackgroundColor(
+    name: string,
+    options?: { saturation?: number; lightness?: number },
+  ): string {
+    const hue = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360
+    return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
+  }
 </script>
 
 <div class="flex items-center justify-between">
@@ -194,6 +202,52 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
+        Insights <span class="text-xs"></span>
+      </h3>
+    </div>
+
+    <div class="flex h-[250px] w-full">
+      <div class="flex w-full flex-col items-center gap-4">
+        <PieChart
+          data={data.kindOfPost ?? []}
+          key="key"
+          value="value"
+          range={[-90, 90]}
+          innerRadius={-20}
+          cornerRadius={7}
+          padAngle={0.02}
+          props={{ group: { y: 0 } }}
+          cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
+        >
+          <svelte:fragment slot="legend">
+            <Legend title="" variant="swatches" placement="bottom">
+              <div class="mb-4 flex w-full flex-col items-center gap-2">
+                <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
+                <p class="text-center text-sm text-base-content/70">
+                  {data.category?.traits}
+                </p>
+              </div>
+            </Legend>
+          </svelte:fragment>
+        </PieChart>
+      </div>
+      <div class="w-full">
+        <PieChart
+          data={data.kindOfEmbed ?? []}
+          cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
+          key="kind"
+          value="count"
+          innerRadius={-20}
+          cornerRadius={7}
+          padAngle={0.02}
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-300 p-4">
+    <div class="mb-6 flex items-start justify-between">
+      <h3 class="mb-4 text-lg font-bold">
         Your punchs <span class="text-xs"></span>
       </h3>
       <div class="flex items-center gap-4">
@@ -221,7 +275,7 @@
     <!-- TODO: add legend -->
     <!-- TODO: on legend click, show/hide series (with a nice fade? bounce?) -->
 
-    <div class="punch h-[250px] w-full">
+    <div class="h-[250px] w-full">
       <ScatterChart
         x="hour"
         y="weekday"

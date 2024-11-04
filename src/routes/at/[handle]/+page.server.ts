@@ -180,117 +180,18 @@ export const load = (async (event) => {
           // convo score in general
           const postStarted = posts.records.filter((p) => !p.value.reply).map((c) => c.cid)
           const nbPostStared = postStarted.length
-          const postRepliesToAStartedOne = posts.records.filter(
+          const nbPostRepliesToAStartedOne = posts.records.filter(
             (p) => p.value.reply?.root.cid && postStarted.includes(p.value.reply?.root.cid),
           ).length
-          const postRepliesToOthers =
-            posts.records.length - postStarted.length - postRepliesToAStartedOne
+          const nbPostRepliesToOthers =
+            posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
 
-          // Calculate totals and ratios
-          let totalReplies = postRepliesToAStartedOne + postRepliesToOthers
-          let totalInteractions = nbPostStared + totalReplies
-
-          let replyToOwnRatio = postRepliesToAStartedOne / totalReplies
-          let replyToOthersRatio = postRepliesToOthers / totalReplies
-          let postsStartedRatio = nbPostStared / totalInteractions
-
-          // Define the Category interface
-          interface Category {
-            title: string
-            traits: string
-          }
-
-          // List of categories
-          let categories: Category[] = [
-            {
-              title: 'The Serial Replier',
-              traits:
-                "Replies are your bread and butter! With a whopping number of replies, you just can't resist jumping into the conversation.",
-            },
-            {
-              title: 'The Self-Amplifier (aka The Echo Chamber Architect)',
-              traits:
-                "You love your own thoughts just a bit more than most. You're giving 'it's my world, and you're just living in it' vibes.",
-            },
-            {
-              title: "The Starter of Things (but doesn't look back)",
-              traits: "You're all about throwing ideas out there and moving on.",
-            },
-            {
-              title: 'The Obligatory Participator',
-              traits:
-                "Just enough engagement to stay on people's radar, but we're not convinced you really *want* to be here.",
-            },
-            {
-              title: 'The Social Glue Stick',
-              traits:
-                "You hold the community together with constant replies to other people's posts.",
-            },
-            {
-              title: 'The Anti-Lurker',
-              traits: "Heavily involved in other people's business.",
-            },
-            {
-              title: 'The Socratic Socialite',
-              traits:
-                "Constant questions and contributions, but it's mostly other people's posts that ignite you.",
-            },
-            {
-              title: 'The Conversation Conductor',
-              traits: 'Keeping all the threads active with a balance of posts and replies.',
-            },
-            {
-              title: 'The Thought Bubble Enthusiast',
-              traits:
-                "Almost as many replies to yourself as to others. It's giving 'intense inner dialogue with side commentary.'",
-            },
-            {
-              title: 'The Thread-Thirsty Troll (in the friendliest way)',
-              traits:
-                "You're all over, replying like a friend of everyone but subtly steering the chat in your direction.",
-            },
+          const kindOfPost = [
+            { key: 'Post started', value: nbPostStared },
+            { key: 'My convos', value: nbPostRepliesToAStartedOne },
+            { key: 'Others convos', value: nbPostRepliesToOthers },
           ]
 
-          // Function to determine the category
-          function determineCategory(): Category {
-            if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
-              // High proportion of replies to own posts
-              return categories[1] // The Self-Amplifier
-            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
-              // High replies to others, few posts started
-              return categories[0] // The Serial Replier
-            } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
-              // More posts started than replies
-              return categories[2] // The Starter of Things
-            } else if (replyToOthersRatio > 0.9 && postsStartedRatio < 0.1) {
-              // Almost exclusively replies to others
-              return categories[5] // The Anti-Lurker
-            } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
-              // Engaged in others' posts and starts some posts
-              return categories[4] // The Social Glue Stick
-            } else if (replyToOwnRatio > 0.4 && replyToOthersRatio > 0.4) {
-              // Balanced replies to own and others' posts
-              return categories[8] // The Thought Bubble Enthusiast
-            } else if (
-              postsStartedRatio > 0.3 &&
-              replyToOwnRatio > 0.3 &&
-              replyToOthersRatio > 0.3
-            ) {
-              // Balanced in all activities
-              return categories[7] // The Conversation Conductor
-            } else if (totalInteractions < 10) {
-              // Low engagement overall
-              return categories[3] // The Obligatory Participator
-            } else {
-              // Default category
-              return categories[9] // The Thread-Thirsty Troll
-            }
-          }
-
-          const results = determineCategory()
-          console.log(`results`, results)
-
-          //
           const kindOfEmbed = posts.records.reduce(
             (acc, post) => {
               const embedType = (post.value.embed?.$type || 'text only')
@@ -308,7 +209,117 @@ export const load = (async (event) => {
             },
             [] as Array<{ kind: string; count: number }>,
           )
-          console.log(`kindOfEmbed`, kindOfEmbed)
+
+          // Calculate totals and ratios
+          let totalReplies = nbPostRepliesToAStartedOne + nbPostRepliesToOthers
+          let totalInteractions = nbPostStared + totalReplies
+
+          let replyToOwnRatio = nbPostRepliesToAStartedOne / totalReplies
+          let replyToOthersRatio = nbPostRepliesToOthers / totalReplies
+          let postsStartedRatio = nbPostStared / totalInteractions
+
+          const totalEmbed = posts.records.length
+          const linkRatio =
+            kindOfEmbed.reduce((acc, embed) => {
+              if (embed.kind.includes('record')) {
+                return acc + embed.count
+              }
+              return acc
+            }, 0) / totalEmbed
+          const pointerRatio =
+            kindOfEmbed.reduce((acc, embed) => {
+              if (embed.kind.includes('link')) {
+                return acc + embed.count
+              }
+              return acc
+            }, 0) / totalEmbed
+          const artRatio =
+            kindOfEmbed.reduce((acc, embed) => {
+              if (embed.kind.includes('image')) {
+                return acc + embed.count
+              }
+              if (embed.kind.includes('video')) {
+                return acc + embed.count
+              }
+              return acc
+            }, 0) / totalEmbed
+
+          // Update the Category interface and categories definition
+          interface Category {
+            traits: string
+          }
+
+          // Replace the categories array with a Record
+          const categories: Record<string, Category> = {
+            'The Serial Replier': {
+              traits:
+                "Replies are your bread and butter! With a whopping number of replies, you just can't resist jumping into the conversation.",
+            },
+            'The Self-Amplifier': {
+              traits:
+                "You love your own thoughts just a bit more than most. You're giving 'it's my world, and you're just living in it' vibes.",
+            },
+            'The Starter of Things': {
+              traits: "You're all about throwing ideas out there and moving on.",
+            },
+            'The Obligatory Participator': {
+              traits:
+                "Just enough engagement to stay on people's radar, but we're not convinced you really *want* to be here.",
+            },
+            'The Social Glue Stick': {
+              traits:
+                "You hold the community together with constant replies to other people's posts.",
+            },
+            'The Anti-Lurker': {
+              traits: "Heavily involved in other people's business.",
+            },
+            'The Socratic Socialite': {
+              traits:
+                "Constant questions and contributions, but it's mostly other people's posts that ignite you.",
+            },
+            'The Conversation Conductor': {
+              traits: 'Keeping all the threads active with a balance of posts and replies.',
+            },
+            'The Thought Bubble Enthusiast': {
+              traits:
+                "Almost as many replies to yourself as to others. It's giving 'intense inner dialogue with side commentary.'",
+            },
+            'The Thread-Thirsty Troll': {
+              traits:
+                "You're all over, replying like a friend of everyone but subtly steering the chat in your direction.",
+            },
+          }
+
+          // Simplified determineCategory function
+          function determineCategory(): { title: string; traits: string } {
+            let title: string
+
+            if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
+              title = 'The Self-Amplifier'
+            } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
+              title = 'The Serial Replier'
+            } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
+              title = 'The Starter of Things'
+            } else if (replyToOthersRatio > 0.9 && postsStartedRatio < 0.1) {
+              title = 'The Anti-Lurker'
+            } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
+              title = 'The Social Glue Stick'
+            } else if (replyToOwnRatio > 0.4 && replyToOthersRatio > 0.4) {
+              title = 'The Thought Bubble Enthusiast'
+            } else if (
+              postsStartedRatio > 0.3 &&
+              replyToOwnRatio > 0.3 &&
+              replyToOthersRatio > 0.3
+            ) {
+              title = 'The Conversation Conductor'
+            } else if (totalInteractions < 10) {
+              title = 'The Obligatory Participator'
+            } else {
+              title = 'The Thread-Thirsty Troll'
+            }
+
+            return { title, traits: categories[title].traits }
+          }
 
           // **********
           // PERSONNALYTY - END
@@ -332,6 +343,12 @@ export const load = (async (event) => {
             totalLikes: likes.records.length,
             totalPosts: posts.records.length,
             totalReposts: reposts.records.length,
+            kindOfPost,
+            kindOfEmbed,
+            category: {
+              title: 'zdzd',
+              traits: 'dzdzdz',
+            },
           }
         }
       }
