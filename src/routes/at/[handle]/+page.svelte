@@ -192,10 +192,30 @@
   </div>
 
   <div class="card bg-base-300 p-4">
-    <div class="flex items-start justify-between">
+    <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
         Your punchs <span class="text-xs"></span>
       </h3>
+      <div class="flex items-center gap-4">
+        <div>
+          <span class="stat-value text-[#4ca2fe]"
+            >{new Intl.NumberFormat().format(data.totalLikes ?? 0)}</span
+          >
+          <span class="text-sm text-gray-500"> likes</span>
+        </div>
+        <div>
+          <span class="stat-value text-[#fd6f9c]"
+            >{new Intl.NumberFormat().format(data.totalPosts ?? 0)}</span
+          >
+          <span class="text-sm text-gray-500"> posts</span>
+        </div>
+        <div>
+          <span class="stat-value text-[#b387fa]"
+            >{new Intl.NumberFormat().format(data.totalReposts ?? 0)}</span
+          >
+          <span class="text-sm text-gray-500"> reposts</span>
+        </div>
+      </div>
     </div>
     <!-- TODO: add padding to not touch the axis -->
     <!-- TODO: add legend -->

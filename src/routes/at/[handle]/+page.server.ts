@@ -187,6 +187,9 @@ export const load = (async (event) => {
             followsPeriods,
             followsTotal,
             punchCard,
+            totalLikes: likes.records.length,
+            totalPosts: posts.records.length,
+            totalReposts: reposts.records.length,
           }
         }
       }
