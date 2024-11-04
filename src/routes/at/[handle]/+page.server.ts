@@ -198,9 +198,9 @@ export const load = (async (event) => {
             posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
 
           const kindOfPost = [
-            { key: '🐣 Hatchlings - Your started something', value: nbPostStared },
-            { key: '🦜 Parrot Replies - In your threads', value: nbPostRepliesToAStartedOne },
-            { key: '🐒 Swing-by Replies', value: nbPostRepliesToOthers },
+            { key: '🐣 Your new skeets', value: nbPostStared },
+            { key: '🦜 Replies in skeets you started', value: nbPostRepliesToAStartedOne },
+            { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
           ]
 
           const kindOfEmbed = posts.records.reduce(
