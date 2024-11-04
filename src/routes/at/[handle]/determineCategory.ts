@@ -80,42 +80,27 @@ export function determineCategory(args: {
   let nbPostRepliesToAStartedOneRatio = nbPostRepliesToAStartedOne / totalInteractions
   let nbPostRepliesToOthersRatio = nbPostRepliesToOthers / totalInteractions
 
-  const linkInsideRatio =
-    kindOfEmbed.reduce((acc, embed) => {
-      if (embed.kind.includes('link to other post')) {
-        return acc + embed.count
-      }
-      return acc
-    }, 0) / totalTotal
-  const linkOutsideRatio =
-    kindOfEmbed.reduce((acc, embed) => {
-      if (embed.kind.includes('link to outside')) {
-        return acc + embed.count
-      }
-      return acc
-    }, 0) / totalTotal
-  const artRatio =
-    kindOfEmbed.reduce((acc, embed) => {
-      if (embed.kind.includes('image')) {
-        return acc + embed.count
-      }
-      if (embed.kind.includes('video')) {
-        return acc + embed.count
-      }
-      return acc
-    }, 0) / totalTotal
+  let linkInside = 0
+  let linkOutside = 0
+  let art = 0
 
-  // console.log(``)
-  // console.log(`nbPostStared`, nbPostStared)
-  // console.log(`nbPostRepliesToAStartedOne`, nbPostRepliesToAStartedOne)
-  // console.log(`nbPostRepliesToOthers`, nbPostRepliesToOthers)
+  for (const embed of kindOfEmbed) {
+    if (embed.kind.includes('link to other post')) {
+      linkInside += embed.count
+    } else if (embed.kind.includes('link to outside')) {
+      linkOutside += embed.count
+    } else if (embed.kind.includes('image') || embed.kind.includes('video')) {
+      art += embed.count
+    }
+  }
 
-  // console.log(`totalInteractions`, totalInteractions)
-  // console.log(`totalReplies`, totalReplies)
+  const artRatio = art / totalTotal
+  const linkInsideRatio = linkInside / totalTotal
+  const linkOutsideRatio = linkOutside / totalTotal
 
-  // console.log(`postsStartedRatio`, nbPostStaredRatio)
-  // console.log(`replyToOwnRatio`, nbPostRepliesToAStartedOneRatio)
-  // console.log(`replyToOthersRatio`, nbPostRepliesToOthersRatio)
+  // console.log(`artRatio`, artRatio)
+  // console.log(`linkInsideRatio`, linkInsideRatio)
+  // console.log(`linkOutsideRatio`, linkOutsideRatio)
 
   let animalBase: keyof typeof categories
   if (totalInteractions < 10) {
@@ -125,7 +110,7 @@ export function determineCategory(args: {
     nbPostRepliesToAStartedOneRatio > nbPostRepliesToOthersRatio
   ) {
     animalBase = 'Famous Peacock'
-  } else if (nbPostRepliesToOthersRatio > 0.5 && nbPostStaredRatio < 0.3) {
+  } else if (nbPostRepliesToOthersRatio > 0.5 && nbPostStaredRatio < 0.2) {
     animalBase = 'Social Butterfly'
   } else if (nbPostStaredRatio > 0.4 && nbPostStared > totalReplies * 0.8) {
     animalBase = 'Wise Owl'
@@ -134,16 +119,18 @@ export function determineCategory(args: {
   } else if (nbPostRepliesToOthersRatio > 0.4 && nbPostStaredRatio > 0.3) {
     animalBase = 'Busy Bee'
   } else {
-    animalBase = 'Social Spider' // @lucasoe.bsky.social
+    animalBase = 'Social Spider'
   }
 
   // Then determine specialty
   let specialty: keyof typeof specialties
-  if (artRatio > 0.11) {
+  if (linkInsideRatio > 0.1) {
+    specialty = 'Connector'
+  } else if (artRatio > 0.07) {
     specialty = 'Artist'
   } else if (linkInsideRatio > 0.05) {
     specialty = 'Connector'
-  } else if (linkOutsideRatio > 0.07) {
+  } else if (linkOutsideRatio > 0.06) {
     specialty = 'Explorer'
   } else {
     specialty = 'Conversationalist'

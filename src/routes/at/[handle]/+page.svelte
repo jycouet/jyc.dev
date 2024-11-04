@@ -152,7 +152,7 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs"> (Rolling 28 days)</span>
+        Insights <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
       </h3>
       <a
         class="link link-secondary"
@@ -282,7 +282,7 @@
   <div class="card bg-base-300 p-4">
     <div class="flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Follow <span class="text-xs"> (Rolling 7 days)</span>
+        Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
       </h3>
       <div class="stat-value text-primary">
         {data.followsTotal}
@@ -316,10 +316,11 @@
 
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 text-lg font-bold">
-        Your punchs <span class="text-xs"> (Rolling 28 days)</span>
+      <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
+        <span>Your punchs</span>
+        <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
       </h3>
-      <div class="flex items-center gap-4">
+      <div class="flex flex-col items-center gap-4 md:flex-row">
         <button onclick={() => toggleSelection('like')}>
           <span
             class="stat-value {selection.includes('like')
@@ -388,7 +389,6 @@
         }}
         series={punchCard}
       ></ScatterChart>
-      {selection}
     </div>
   </div>
 </div>

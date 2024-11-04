@@ -68,4 +68,15 @@ describe('determineCategory', () => {
       }).emoji,
     ).toMatchInlineSnapshot(`"🕷️"`)
   })
+
+  it('should categorize as Curious Cat when mostly replying to others', () => {
+    expect(
+      determineCategory({
+        nbPostStared: 5,
+        nbPostRepliesToAStartedOne: 3,
+        nbPostRepliesToOthers: 12,
+        kindOfEmbed: [],
+      }).emoji,
+    ).toMatchInlineSnapshot(`"🐱"`)
+  })
 })
