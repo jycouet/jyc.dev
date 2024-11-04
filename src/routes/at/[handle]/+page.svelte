@@ -28,7 +28,7 @@
     }
   }
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].reverse()
 
   export function getBackgroundColor(
     name: string,
@@ -58,6 +58,8 @@
     }
   }
 
+  const diff = new Date().getTimezoneOffset() / 60
+
   let punchCard = $derived(
     (data.punchCard ?? [])
       .filter((c) => selection.includes(c.kind))
@@ -75,11 +77,14 @@
 
         return {
           key: c.kind,
-          data: c.data.map((d) => ({
-            hour: d.hour,
-            weekday: daysOfWeek.indexOf(d.weekday),
-            count: d.count,
-          })),
+          data: c.data.map((d) => {
+            return {
+              // hour: d.hour,
+              hour: (d.hour - diff) % 24,
+              weekday: daysOfWeek.indexOf(d.weekday),
+              count: d.count,
+            }
+          }),
           color: colors[i],
         }
       }),
@@ -130,7 +135,7 @@
             <div class="text-xs font-mono text-gray-500">{data.did}</div> -->
           </span>
           <div class="flex flex-col gap-1 border-l pl-4">
-            {#each data.description.split('\n') as line}
+            {#each (data.description ?? '').split('\n') ?? [] as line}
               <p class="text-sm">{line}</p>
             {/each}
           </div>
@@ -363,6 +368,8 @@
         yPadding={[20, 20]}
         padding={{ left: 24, bottom: 44 }}
         props={{
+          grid: { x: true, y: true, bandAlign: 'between' },
+          rule: { x: false, y: false },
           // points: { class: 'animate-pulse' },
           xAxis: {
             format: (d) => `${d}:00`,
