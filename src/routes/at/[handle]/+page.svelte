@@ -162,7 +162,7 @@
       <a
         class="link link-secondary"
         href="https://bsky.app/intent/compose?text={encodeURI(
-          `I'm ${data.category?.emoji} ${data.category?.title} on 🦋<br>📎 https://jyc.dev/at/${data.handle}<br><br>What about 🫵 ? 🐾 ! ?<br><br>👀@jyc.dev `,
+          `${data.displayName} is ${data.category?.emoji} ${data.category?.title} on 🦋\n<br>📎 https://jyc.dev/at/${data.handle}<br><br>\n\nWhat about 🫵 ? 🐾 ! ?<br><br>\n\n👀@jyc.dev<br>\n`,
         )}"
         target="_blank"
       >
