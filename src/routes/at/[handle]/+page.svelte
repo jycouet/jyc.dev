@@ -231,8 +231,8 @@
       </a>
     </div>
 
-    <div class="flex h-[250px] w-full">
-      <div class="flex w-full flex-col items-center gap-4">
+    <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
+      <div class="flex h-[250px] w-full flex-col items-center gap-4">
         <!-- TODO: how to remove the sorting ? -->
         <PieChart
           data={data.kindOfPost ?? []}
@@ -255,7 +255,7 @@
           </p>
         </div>
       </div>
-      <div class="w-full">
+      <div class="h-[250px] w-full">
         <PieChart
           data={data.kindOfEmbed ?? []}
           cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
