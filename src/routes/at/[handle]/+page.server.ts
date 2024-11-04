@@ -107,6 +107,14 @@ export const load = (async (event) => {
             }
           }
 
+          // If this... That mean that nothing happened in the last 7 days
+          if (followsPeriods.length === 1) {
+            followsPeriods.unshift({
+              timestamp: new Date(currentPeriodStart),
+              count: followsTotal,
+            })
+          }
+
           const profileData = profile.records[0]?.value
           return {
             did,
@@ -121,6 +129,29 @@ export const load = (async (event) => {
             reposts,
             followsPeriods,
             followsTotal,
+            punchCard: [
+              {
+                kind: 'like',
+                data: [
+                  { weekday: 'Mon', hour: 12, count: 2 },
+                  { weekday: 'Tue', hour: 2, count: 3 },
+                ],
+              },
+              {
+                kind: 'post',
+                data: [
+                  { weekday: 'Mon', hour: 12, count: 2 },
+                  { weekday: 'Wed', hour: 11, count: 30 },
+                ],
+              },
+              {
+                kind: 'repost',
+                data: [
+                  { weekday: 'Mon', hour: 12, count: 2 },
+                  { weekday: 'Sun', hour: 12, count: 3 },
+                ],
+              },
+            ],
           }
         }
       }

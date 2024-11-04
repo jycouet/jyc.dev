@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, AreaChart, LinearGradient } from 'layerchart'
+  import { Area, AreaChart, LinearGradient, ScatterChart } from 'layerchart'
 
   import type { PageData } from './$types'
 
@@ -186,6 +186,28 @@
           </LinearGradient>
         </svelte:fragment>
       </AreaChart>
+    </div>
+  </div>
+
+  <div class="card bg-base-300 p-4">
+    <div class="flex items-start justify-between">
+      <h3 class="mb-4 text-lg font-bold">
+        Punch <span class="text-xs"> (likes)</span>
+      </h3>
+    </div>
+    <div class="h-[200px] w-full">
+      <ScatterChart
+        x="hour"
+        y="weekday"
+        r="count"
+        series={(data?.punchCard ?? []).map((c, i) => {
+          return {
+            key: c.kind,
+            data: c.data,
+            color: ['#ff865b', '#fd6f9c', '#b387fa'][i],
+          }
+        })}
+      />
     </div>
   </div>
 </div>
