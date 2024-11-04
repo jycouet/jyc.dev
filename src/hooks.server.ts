@@ -1,4 +1,4 @@
-import { error, type Handle } from '@sveltejs/kit'
+import { type Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { parseAcceptLanguage } from 'intl-parse-accept-language'
 

@@ -72,7 +72,7 @@ export const load = (async (event) => {
           const followsPeriods: { timestamp: Date; count: number }[] = []
 
           // Get current time and round down to nearest 12h period
-          let currentPeriodStart = new Date()
+          const currentPeriodStart = new Date()
           followsPeriods.unshift({
             timestamp: new Date(currentPeriodStart),
             count: followsTotal,

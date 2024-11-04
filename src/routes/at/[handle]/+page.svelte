@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, Axis, Chart, LinearGradient, Svg } from 'layerchart'
+  import { Area, AreaChart, LinearGradient } from 'layerchart'
 
   import type { PageData } from './$types'
 
@@ -164,34 +164,28 @@
         {data.followsTotal}
       </div>
     </div>
+
     <div class="h-[200px] w-full">
-      <!-- xScale={scaleTime()} -->
-      <Chart
+      <AreaChart
         data={data.followsPeriods ?? []}
         x="timestamp"
         y="count"
-        yDomain={[0, null]}
-        yNice
-        padding={{ left: 24, bottom: 24 }}
-      >
-        <Svg>
-          <Axis
-            placement="left"
-            grid
-            format={(d) => parseInt(d).toLocaleString()}
-            tickLabelProps={{
-              textAnchor: 'end',
+        axis="y"
+        padding={{ left: 24 }}
+        props={{
+          yAxis: {
+            tickLabelProps: {
               class: 'fill-primary',
-            }}
-          />
-          <!-- <Axis placement="bottom" rule /> -->
-          <!-- format={(d) => format(d, PeriodType.Day, { variant: 'short' })} -->
-          <!-- <Area line={{ class: 'stroke-2 stroke-primary' }} class="fill-primary/30" /> -->
+            },
+          },
+        }}
+      >
+        <svelte:fragment slot="marks">
           <LinearGradient class="from-primary/50 to-primary/0" vertical let:url>
             <Area line={{ class: 'stroke-2 stroke-primary' }} fill={url} />
           </LinearGradient>
-        </Svg>
-      </Chart>
+        </svelte:fragment>
+      </AreaChart>
     </div>
   </div>
 </div>
