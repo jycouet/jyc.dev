@@ -12,6 +12,7 @@ const config = {
       {
         jyc: {
           ...require('daisyui/src/theming/themes')['sunset'],
+          accent: '#4ca2fe',
         },
       },
     ],

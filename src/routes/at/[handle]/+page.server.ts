@@ -12,6 +12,12 @@ interface ActivityCounts {
   today: number
 }
 
+interface PunchCardEntry {
+  weekday: string
+  hour: number
+  count: number
+}
+
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -27,9 +33,36 @@ function getActivityCounts(records: { records: any[] }): ActivityCounts {
     ).length,
     today: records.records.filter((record) => new Date(record.value.createdAt) >= today).length,
   }
-  console.log(`toRet`, toRet)
+  // console.log(`toRet`, toRet)
 
   return toRet
+}
+
+function generatePunchCardData(records: any[]): PunchCardEntry[] {
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const countMap = new Map<string, number>()
+
+  records.forEach((record) => {
+    const date = new Date(record.value.createdAt)
+    const weekday = weekdays[date.getDay()]
+    const hour = date.getHours()
+    const key = `${weekday}-${hour}`
+    countMap.set(key, (countMap.get(key) || 0) + 1)
+  })
+
+  const result: PunchCardEntry[] = []
+
+  // Only include entries where there is activity
+  countMap.forEach((count, key) => {
+    const [weekday, hour] = key.split('-')
+    result.push({
+      weekday,
+      hour: parseInt(hour),
+      count,
+    })
+  })
+
+  return result
 }
 
 const log = new Log('at/[handle]/+page.server.ts')
@@ -117,6 +150,28 @@ export const load = (async (event) => {
           // FOLLOW CHART - END
           // **********
 
+          // **********
+          // PUNCH CARD - START
+          // **********
+          const punchCard = [
+            {
+              kind: 'like',
+              data: generatePunchCardData(likes.records),
+            },
+            {
+              kind: 'post',
+              data: generatePunchCardData(posts.records),
+            },
+            {
+              kind: 'repost',
+              data: generatePunchCardData(reposts.records),
+            },
+          ]
+
+          // **********
+          // PUNCH CARD - END
+          // **********
+
           const profileData = profile.records[0]?.value
           return {
             did,
@@ -131,29 +186,7 @@ export const load = (async (event) => {
             reposts: getActivityCounts(reposts),
             followsPeriods,
             followsTotal,
-            punchCard: [
-              {
-                kind: 'like',
-                data: [
-                  { weekday: 'Mon', hour: 12, count: 2 },
-                  { weekday: 'Tue', hour: 2, count: 3 },
-                ],
-              },
-              {
-                kind: 'post',
-                data: [
-                  { weekday: 'Mon', hour: 12, count: 2 },
-                  { weekday: 'Wed', hour: 11, count: 30 },
-                ],
-              },
-              {
-                kind: 'repost',
-                data: [
-                  { weekday: 'Mon', hour: 12, count: 2 },
-                  { weekday: 'Sun', hour: 12, count: 3 },
-                ],
-              },
-            ],
+            punchCard,
           }
         }
       }

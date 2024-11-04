@@ -27,6 +27,8 @@
       return `${-diff} <span class='text-error'>less</span> than yesterday`
     }
   }
+
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 </script>
 
 <div class="flex items-center justify-between">
@@ -82,7 +84,7 @@
 
   <div class="stats stats-vertical bg-base-300 shadow md:stats-horizontal">
     <div class="stat">
-      <div class="stat-figure text-primary">
+      <div class="stat-figure text-accent">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -98,7 +100,7 @@
         </svg>
       </div>
       <div class="stat-title">Likes today</div>
-      <div class="stat-value text-primary">{data?.likes?.today}</div>
+      <div class="stat-value text-accent">{data?.likes?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(data?.likes?.today ?? 0, data?.likes?.yesterday ?? 0, 'like')}
       </div>
@@ -128,7 +130,7 @@
     </div>
 
     <div class="stat">
-      <div class="stat-figure text-accent">
+      <div class="stat-figure text-purple-500">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -144,7 +146,7 @@
         </svg>
       </div>
       <div class="stat-title">Reposts Today</div>
-      <div class="stat-value text-accent">{data?.reposts?.today}</div>
+      <div class="stat-value text-purple-500">{data?.reposts?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(
           data?.reposts?.today ?? 0,
@@ -175,7 +177,7 @@
         props={{
           yAxis: {
             tickLabelProps: {
-              class: 'fill-primary',
+              class: 'fill-base-content/50',
             },
           },
         }}
@@ -192,22 +194,49 @@
   <div class="card bg-base-300 p-4">
     <div class="flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Punch <span class="text-xs"></span>
+        Your punchs <span class="text-xs"></span>
       </h3>
     </div>
-    <div class="h-[200px] w-full">
+    <!-- TODO: add padding to not touch the axis -->
+    <!-- TODO: add legend -->
+    <!-- TODO: on legend click, show/hide series (with a nice fade? bounce?) -->
+
+    <div class="punch h-[250px] w-full">
       <ScatterChart
         x="hour"
         y="weekday"
         r="count"
+        padding={{ left: 24, bottom: 24 }}
+        props={{
+          xAxis: {
+            format: (d) => `${d}:00`,
+            tickLabelProps: {
+              class: 'fill-base-content/50',
+            },
+          },
+          yAxis: {
+            format: (d) => {
+              return daysOfWeek[d]
+            },
+            ticks: 7,
+            tickLabelProps: {
+              class: 'fill-base-content/50',
+            },
+          },
+        }}
         series={(data?.punchCard ?? []).map((c, i) => {
           return {
             key: c.kind,
-            data: c.data,
-            color: ['#ff865b', '#fd6f9c', '#b387fa'][i],
+            data: c.data.map((d) => ({
+              hour: d.hour,
+              weekday: daysOfWeek.indexOf(d.weekday),
+              count: d.count,
+            })),
+            color: ['#4ca2fe', '#fd6f9c', '#b387fa'][i],
           }
         })}
-      />
+      ></ScatterChart>
+      <!-- legend={true} -->
     </div>
   </div>
 </div>
