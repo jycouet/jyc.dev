@@ -6,6 +6,7 @@ import { Log } from '@kitql/helpers'
 import { listRecords, listRecordsAll } from '$lib/at/helper'
 
 import type { PageServerLoad } from './$types'
+import { determineCategory } from './determineCategory'
 
 interface ActivityCounts {
   yesterday: number
@@ -86,6 +87,7 @@ export const load = (async (event) => {
         four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
 
         if (pds) {
+          log.info(`starting to fetch`, event.params.handle)
           const [profile, likes, posts, reposts, follows] = await Promise.all([
             listRecords(event.fetch, pds, did, 'app.bsky.actor.profile'),
             listRecordsAll(event.fetch, pds, did, 'app.bsky.feed.like', {
@@ -219,146 +221,6 @@ export const load = (async (event) => {
             [] as Array<{ kind: string; count: number }>,
           )
 
-          // Calculate totals and ratios
-          let totalReplies = nbPostRepliesToAStartedOne + nbPostRepliesToOthers
-          let totalInteractions = nbPostStared + totalReplies
-
-          let replyToOwnRatio = nbPostRepliesToAStartedOne / totalReplies
-          let replyToOthersRatio = nbPostRepliesToOthers / totalReplies
-          let postsStartedRatio = nbPostStared / totalInteractions
-
-          const totalEmbed = posts.records.length
-          const linkInsideRatio =
-            kindOfEmbed.reduce((acc, embed) => {
-              if (embed.kind.includes('link to other post')) {
-                return acc + embed.count
-              }
-              return acc
-            }, 0) / totalEmbed
-          const linkOutsideRatio =
-            kindOfEmbed.reduce((acc, embed) => {
-              if (embed.kind.includes('ink to outside')) {
-                return acc + embed.count
-              }
-              return acc
-            }, 0) / totalEmbed
-          const artRatio =
-            kindOfEmbed.reduce((acc, embed) => {
-              if (embed.kind.includes('image')) {
-                return acc + embed.count
-              }
-              if (embed.kind.includes('video')) {
-                return acc + embed.count
-              }
-              return acc
-            }, 0) / totalEmbed
-
-          // Update the categories definition
-          const categories: Record<string, { trait: string; emoji: string }> = {
-            'Social Butterfly': {
-              trait:
-                "You're fluttering from conversation to conversation, pollinating discussions with your replies.",
-              emoji: '🦋',
-            },
-            'Famous Peacock': {
-              trait:
-                'You love showcasing your own thoughts, strutting through threads with self-assured elegance.',
-              emoji: '🦚',
-            },
-            'Wise Owl': {
-              trait:
-                "You're the one starting thoughtful discussions, sharing wisdom from your perch.",
-              emoji: '🦉',
-            },
-            'Sleepy Sloth': {
-              trait:
-                'Minimal movement through the social jungle, just hanging around occasionally.',
-              emoji: '🦥',
-            },
-            'Busy Bee': {
-              trait: 'Always working to connect the hive, buzzing between different conversations.',
-              emoji: '🐝',
-            },
-            'Curious Cat': {
-              trait: 'Poking your whiskers into every interesting conversation you find.',
-              emoji: '🐱',
-            },
-            'Social Spider': {
-              trait: 'Weaving complex webs of conversations, connecting multiple threads together.',
-              emoji: '🕷️',
-            },
-          }
-
-          const specialties: Record<string, { trait: string }> = {
-            Artist: {
-              trait:
-                'Your visual creativity shines through in every post, painting the digital canvas with images and videos.',
-            },
-            Connector: {
-              trait:
-                'You excel at bridging conversations across the platform, creating a web of interconnected discussions.',
-            },
-            Explorer: {
-              trait:
-                'Always venturing beyond, bringing external knowledge and resources to enrich conversations.',
-            },
-            Conversationalist: {
-              trait:
-                'Your strength lies in pure dialogue, weaving words into meaningful exchanges.',
-            },
-          }
-
-          function determineCategory(): { title: string; traits: string; emoji: string } {
-            // First determine the animal base
-
-            console.log(`display`, profileData?.displayName)
-            console.log(`replyToOwnRatio`, replyToOwnRatio)
-            console.log(`replyToOthersRatio`, replyToOthersRatio)
-            console.log(`postsStartedRatio`, postsStartedRatio)
-            console.log(`totalInteractions`, totalInteractions)
-
-            let animalBase: string
-            if (totalInteractions < 10) {
-              animalBase = 'Sleepy Sloth' // @xeho91.dev
-            } else if (replyToOwnRatio > 0.4 && replyToOwnRatio > replyToOthersRatio) {
-              animalBase = 'Famous Peacock' // @rich-harris.dev
-            } else if (replyToOthersRatio > 0.5 && postsStartedRatio < 0.3) {
-              animalBase = 'Social Butterfly' // @jyc.dev
-            } else if (postsStartedRatio > 0.4 && nbPostStared > totalReplies * 0.8) {
-              animalBase = 'Wise Owl'
-            } else if (replyToOthersRatio > 0.5 && postsStartedRatio < 0.5) {
-              animalBase = 'Curious Cat'
-            } else if (replyToOthersRatio > 0.4 && postsStartedRatio > 0.3) {
-              animalBase = 'Busy Bee' // @afaikfyi.bsky.social
-            } else {
-              animalBase = 'Social Spider' // @lucasoe.bsky.social
-            }
-
-            // console.log(`specialty`, artRatio, linkInsideRatio, linkOutsideRatio)
-
-            // Then determine specialty
-            let specialty: string
-            if (artRatio > 0.11) {
-              specialty = 'Artist'
-            } else if (linkInsideRatio > 0.05) {
-              specialty = 'Connector'
-            } else if (linkOutsideRatio > 0.07) {
-              specialty = 'Explorer'
-            } else {
-              specialty = 'Conversationalist'
-            }
-
-            // Combine title and traits
-            const title = `The ${animalBase} ${specialty}`
-            const traits = `${categories[animalBase].trait} ${specialties[specialty].trait}`
-
-            return {
-              title,
-              traits,
-              emoji: categories[animalBase].emoji,
-            }
-          }
-
           // **********
           // PERSONNALYTY - END
           // **********
@@ -383,7 +245,12 @@ export const load = (async (event) => {
             totalReposts: reposts.records.length,
             kindOfPost,
             kindOfEmbed,
-            category: determineCategory(),
+            category: determineCategory({
+              nbPostStared,
+              nbPostRepliesToAStartedOne,
+              nbPostRepliesToOthers,
+              kindOfEmbed,
+            }),
           }
         }
       }
