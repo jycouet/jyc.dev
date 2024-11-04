@@ -98,7 +98,7 @@
   <meta name="description" content={description} />
   <!-- <meta name="referrer" content="no-referrer" /> -->
   <meta property="og:type" content="WebApp" />
-  <meta property="og:title" content="Aut-Pac-Man" />
+  <meta property="og:title" content="AT Proto - Stats" />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={$page.url.origin} />
 </svelte:head>
