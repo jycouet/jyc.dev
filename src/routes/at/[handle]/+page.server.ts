@@ -219,14 +219,14 @@ export const load = (async (event) => {
           let postsStartedRatio = nbPostStared / totalInteractions
 
           const totalEmbed = posts.records.length
-          const linkRatio =
+          const pointerRatio =
             kindOfEmbed.reduce((acc, embed) => {
               if (embed.kind.includes('record')) {
                 return acc + embed.count
               }
               return acc
             }, 0) / totalEmbed
-          const pointerRatio =
+          const linkRatio =
             kindOfEmbed.reduce((acc, embed) => {
               if (embed.kind.includes('link')) {
                 return acc + embed.count
@@ -244,81 +244,93 @@ export const load = (async (event) => {
               return acc
             }, 0) / totalEmbed
 
-          // Update the Category interface and categories definition
-          interface Category {
-            traits: string
-          }
-
-          // Replace the categories array with a Record
-          const categories: Record<string, Category> = {
-            'The Serial Replier': {
-              traits:
-                "Replies are your bread and butter! With a whopping number of replies, you just can't resist jumping into the conversation.",
+          // Update the categories definition
+          const categories: Record<string, { trait: string }> = {
+            'Social Butterfly': {
+              trait:
+                "You're fluttering from conversation to conversation, pollinating discussions with your replies.",
             },
-            'The Self-Amplifier': {
-              traits:
-                "You love your own thoughts just a bit more than most. You're giving 'it's my world, and you're just living in it' vibes.",
+            Peacock: {
+              trait:
+                'You love showcasing your own thoughts, strutting through threads with self-assured elegance.',
             },
-            'The Starter of Things': {
-              traits: "You're all about throwing ideas out there and moving on.",
+            'Wise Owl': {
+              trait:
+                "You're the one starting thoughtful discussions, sharing wisdom from your perch.",
             },
-            'The Obligatory Participator': {
-              traits:
-                "Just enough engagement to stay on people's radar, but we're not convinced you really *want* to be here.",
+            'Sleepy Sloth': {
+              trait:
+                'Minimal movement through the social jungle, just hanging around occasionally.',
             },
-            'The Social Glue Stick': {
-              traits:
-                "You hold the community together with constant replies to other people's posts.",
+            'Busy Bee': {
+              trait: 'Always working to connect the hive, buzzing between different conversations.',
             },
-            'The Anti-Lurker': {
-              traits: "Heavily involved in other people's business.",
+            'Curious Cat': {
+              trait: 'Poking your whiskers into every interesting conversation you find.',
             },
-            'The Socratic Socialite': {
-              traits:
-                "Constant questions and contributions, but it's mostly other people's posts that ignite you.",
-            },
-            'The Conversation Conductor': {
-              traits: 'Keeping all the threads active with a balance of posts and replies.',
-            },
-            'The Thought Bubble Enthusiast': {
-              traits:
-                "Almost as many replies to yourself as to others. It's giving 'intense inner dialogue with side commentary.'",
-            },
-            'The Thread-Thirsty Troll': {
-              traits:
-                "You're all over, replying like a friend of everyone but subtly steering the chat in your direction.",
+            'Social Spider': {
+              trait: 'Weaving complex webs of conversations, connecting multiple threads together.',
             },
           }
 
-          // Simplified determineCategory function
+          const specialties: Record<string, { trait: string }> = {
+            Artist: {
+              trait:
+                'Your visual creativity shines through in every post, painting the digital canvas with images and videos.',
+            },
+            Connector: {
+              trait:
+                'You excel at bridging conversations across the platform, creating a web of interconnected discussions.',
+            },
+            Explorer: {
+              trait:
+                'Always venturing beyond, bringing external knowledge and resources to enrich conversations.',
+            },
+            Conversationalist: {
+              trait:
+                'Your strength lies in pure dialogue, weaving words into meaningful exchanges.',
+            },
+          }
+
           function determineCategory(): { title: string; traits: string } {
-            let title: string
-
+            // First determine the animal base
+            let animalBase: string
             if (replyToOwnRatio > 0.5 && replyToOwnRatio > replyToOthersRatio) {
-              title = 'The Self-Amplifier'
+              animalBase = 'Peacock'
             } else if (replyToOthersRatio > 0.7 && postsStartedRatio < 0.2) {
-              title = 'The Serial Replier'
+              animalBase = 'Social Butterfly'
             } else if (postsStartedRatio > 0.5 && nbPostStared > totalReplies) {
-              title = 'The Starter of Things'
+              animalBase = 'Wise Owl'
             } else if (replyToOthersRatio > 0.9 && postsStartedRatio < 0.1) {
-              title = 'The Anti-Lurker'
+              animalBase = 'Curious Cat'
             } else if (replyToOthersRatio > 0.6 && postsStartedRatio > 0.2) {
-              title = 'The Social Glue Stick'
-            } else if (replyToOwnRatio > 0.4 && replyToOthersRatio > 0.4) {
-              title = 'The Thought Bubble Enthusiast'
-            } else if (
-              postsStartedRatio > 0.3 &&
-              replyToOwnRatio > 0.3 &&
-              replyToOthersRatio > 0.3
-            ) {
-              title = 'The Conversation Conductor'
+              animalBase = 'Busy Bee'
             } else if (totalInteractions < 10) {
-              title = 'The Obligatory Participator'
+              animalBase = 'Sleepy Sloth'
             } else {
-              title = 'The Thread-Thirsty Troll'
+              animalBase = 'Social Spider'
             }
 
-            return { title, traits: categories[title].traits }
+            // Then determine specialty
+            let specialty: string
+            if (artRatio > 0.3) {
+              specialty = 'Artist'
+            } else if (pointerRatio > 0.3) {
+              specialty = 'Connector'
+            } else if (linkRatio > 0.3) {
+              specialty = 'Explorer'
+            } else {
+              specialty = 'Conversationalist'
+            }
+
+            // Combine title and traits
+            const title = `The ${animalBase} ${specialty}`
+            const traits = `${categories[animalBase].trait} ${specialties[specialty].trait}`
+
+            return {
+              title,
+              traits,
+            }
           }
 
           // **********

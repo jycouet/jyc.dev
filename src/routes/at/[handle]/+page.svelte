@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Area, AreaChart, Legend, LinearGradient, PieChart, ScatterChart } from 'layerchart'
+  import { Area, AreaChart, LinearGradient, PieChart, ScatterChart } from 'layerchart'
 
-  import type { PageData } from './$types'
+  import { page } from '$app/stores'
 
-  export let data: PageData
+  let { data } = $props()
 
   let currentISOString = new Date().toISOString().slice(0, 19)
 
@@ -37,7 +37,23 @@
     const hue = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
+
+  let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
+
+  const description = `${data.displayName} is ${data.category?.title}, and you ?`
 </script>
+
+<svelte:head>
+  <title>{data.displayName} | AT Proto - Stats</title>
+
+  <link rel="canonical" href={canonicalUrl} />
+  <meta name="description" content={description} />
+  <!-- <meta name="referrer" content="no-referrer" /> -->
+  <meta property="og:type" content="WebApp" />
+  <meta property="og:title" content="Aut-Pac-Man" />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={$page.url.origin} />
+</svelte:head>
 
 <div class="flex items-center justify-between">
   <a href="/at" class="btn btn-ghost">
@@ -204,6 +220,15 @@
       <h3 class="mb-4 text-lg font-bold">
         Insights <span class="text-xs"></span>
       </h3>
+      <a
+        class="link link-secondary"
+        href="https://bsky.app/intent/compose?text={encodeURI(
+          `I'm __${data.category?.title}__ on 🦋<br><br>Check it out: https://jyc.dev/at/${data.handle}<br><br>🫵 Get in, and claim your digital beast too 🐾 ! ?`,
+        )}"
+        target="_blank"
+      >
+        🦋 Share it
+      </a>
     </div>
 
     <div class="flex h-[250px] w-full">
