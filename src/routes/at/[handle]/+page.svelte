@@ -230,7 +230,7 @@
       <a
         class="link link-secondary"
         href="https://bsky.app/intent/compose?text={encodeURI(
-          `I'm __${data.category?.title}__ on 🦋<br><br>Check it out: https://jyc.dev/at/${data.handle}<br><br>🫵 Get in, and claim your digital beast too 🐾 ! ?<br><br>👀@jyc.dev `,
+          `I'm __${data.category?.title}__ on 🦋\n\nCheck it out: https://jyc.dev/at/${data.handle}\n\n🫵 Get in, and claim your digital beast too 🐾 ! ?\n\n👀 @jyc.dev `,
         )}"
         target="_blank"
       >
