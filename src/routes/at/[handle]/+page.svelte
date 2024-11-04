@@ -230,11 +230,11 @@
       <a
         class="link link-secondary"
         href="https://bsky.app/intent/compose?text={encodeURI(
-          `I'm __${data.category?.title}__ on 🦋<br><br>Check it out: https://jyc.dev/at/${data.handle}<br><br>🫵 Get in, and claim your digital beast too 🐾 ! ?`,
+          `I'm __${data.category?.title}__ on 🦋<br><br>Check it out: https://jyc.dev/at/${data.handle}<br><br>🫵 Get in, and claim your digital beast too 🐾 ! ?<br><br>👀@jyc.dev `,
         )}"
         target="_blank"
       >
-        🦋 Share it
+        Share it on 🦋
       </a>
     </div>
 
