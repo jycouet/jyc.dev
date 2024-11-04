@@ -172,7 +172,7 @@
         y="count"
         yDomain={[0, null]}
         yNice
-        padding={{ left: 16, bottom: 24 }}
+        padding={{ left: 24, bottom: 24 }}
       >
         <Svg>
           <Axis
