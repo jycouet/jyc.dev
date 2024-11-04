@@ -90,12 +90,14 @@ export const listRecordsAll = async (
     })
     nbRequest++
 
+    let theEnd = false
     if (options?.while) {
       try {
         for (const record of response.records) {
           if (options.while(record)) {
             allRecords.push(record)
           } else {
+            theEnd = true
             break
           }
         }
@@ -104,7 +106,7 @@ export const listRecordsAll = async (
       allRecords.push(...response.records)
     }
 
-    if (!response.cursor) {
+    if (!response.cursor || theEnd) {
       break
     }
     cursor = response.cursor
