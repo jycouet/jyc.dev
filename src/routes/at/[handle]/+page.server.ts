@@ -345,10 +345,7 @@ export const load = (async (event) => {
             totalReposts: reposts.records.length,
             kindOfPost,
             kindOfEmbed,
-            category: {
-              title: 'zdzd',
-              traits: 'dzdzdz',
-            },
+            category: determineCategory(),
           }
         }
       }

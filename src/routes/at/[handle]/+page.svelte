@@ -208,6 +208,7 @@
 
     <div class="flex h-[250px] w-full">
       <div class="flex w-full flex-col items-center gap-4">
+        <!-- TODO: how to remove the sorting ? -->
         <PieChart
           data={data.kindOfPost ?? []}
           key="key"
@@ -217,19 +218,15 @@
           cornerRadius={7}
           padAngle={0.02}
           props={{ group: { y: 0 } }}
+          padding={{ bottom: -100 }}
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
-        >
-          <svelte:fragment slot="legend">
-            <Legend title="" variant="swatches" placement="bottom">
-              <div class="mb-4 flex w-full flex-col items-center gap-2">
-                <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
-                <p class="text-center text-sm text-base-content/70">
-                  {data.category?.traits}
-                </p>
-              </div>
-            </Legend>
-          </svelte:fragment>
-        </PieChart>
+        ></PieChart>
+        <div class="mb-4 flex w-full flex-col items-center gap-2">
+          <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
+          <p class="text-center text-sm text-base-content/70">
+            {data.category?.traits}
+          </p>
+        </div>
       </div>
       <div class="w-full">
         <PieChart
