@@ -246,6 +246,7 @@
           padding={{ bottom: -100 }}
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
         ></PieChart>
+        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
         <!-- sort={null} -->
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
@@ -263,7 +264,8 @@
           innerRadius={-20}
           cornerRadius={7}
           padAngle={0.02}
-        />
+        ></PieChart>
+        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
       </div>
     </div>
   </div>
