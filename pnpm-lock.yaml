@@ -57,8 +57,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       layerchart:
-        specifier: ^0.57.0
-        version: 0.57.0(svelte@5.1.9)(typescript@5.6.3)
+        specifier: 0.58.0
+        version: 0.58.0(svelte@5.1.9)(typescript@5.6.3)
       postcss:
         specifier: 8.4.38
         version: 8.4.38
@@ -1852,8 +1852,8 @@ packages:
       svelte: 3 - 5 || >=5.0.0-next.120
       typescript: ^5.0.2
 
-  layerchart@0.57.0:
-    resolution: {integrity: sha512-Rzt6z6r/fr0fsZy7l7GzRjHDIGpAYRp/mnZaPhVI8xIQCKqOeZlQhNdC8ugP1qnvhtd2s4O8G1HL3XnIZ5qrxw==}
+  layerchart@0.58.0:
+    resolution: {integrity: sha512-CZbNXeQ4yqpIRO2LHGLekTEAP/89a2nkbc1W0x8JpDa+yBZGEaEuWQBxGF1yUhuj9N/oVl2iFhLXmvCpP24hRQ==}
     peerDependencies:
       svelte: ^3.56.0 || ^4.0.0 || ^5.0.0
 
@@ -4495,7 +4495,7 @@ snapshots:
       svelte: 5.1.9
       typescript: 5.6.3
 
-  layerchart@0.57.0(svelte@5.1.9)(typescript@5.6.3):
+  layerchart@0.58.0(svelte@5.1.9)(typescript@5.6.3):
     dependencies:
       '@layerstack/svelte-actions': 0.0.7
       '@layerstack/svelte-stores': 0.0.6

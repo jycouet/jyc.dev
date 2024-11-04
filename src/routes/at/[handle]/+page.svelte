@@ -41,6 +41,12 @@
   let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
 
   const description = `${data.displayName} is ${data.category?.title}, and you ?`
+
+  let followsPeriods = data.followsPeriods ?? []
+  // let followsPeriods = $state<any[]>([])
+  // $effect(() => {
+  //   followsPeriods = data.followsPeriods ?? []
+  // })
 </script>
 
 <svelte:head>
@@ -193,11 +199,12 @@
 
     <div class="h-[200px] w-full">
       <AreaChart
-        data={data.followsPeriods ?? []}
+        data={followsPeriods}
         x="timestamp"
         y="count"
         axis="y"
         padding={{ left: 24 }}
+        grid={false}
         props={{
           yAxis: {
             tickLabelProps: {
@@ -242,12 +249,11 @@
           innerRadius={-20}
           cornerRadius={7}
           padAngle={0.02}
-          props={{ group: { y: 0 } }}
+          props={{ group: { y: 0 }, pie: { sort: null } }}
           padding={{ bottom: -100 }}
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
         ></PieChart>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
-        <!-- sort={null} -->
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           <h4 class="text-xl font-bold text-primary">{data.category?.title}</h4>
           <p class="text-center text-sm text-base-content/70">
