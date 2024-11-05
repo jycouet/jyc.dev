@@ -119,35 +119,43 @@
   )
 
   let punchCard = $derived(
-    (dataApi?.punchCard ?? [])
+    (dataApi?.punchCard ?? generateFakePunchCard())
       .filter((c) => selection.includes(c.kind))
       .map((c, i) => {
         const colors = []
         if (selection.includes('like')) {
-          colors.push('#4ca2fe')
+          colors.push(dataApi ? '#4ca2fe' : 'oklch(var(--n))')
         }
         if (selection.includes('skeet')) {
-          colors.push('#fd6f9c')
+          colors.push(dataApi ? '#fd6f9c' : 'oklch(var(--n))')
         }
         if (selection.includes('reskeet')) {
-          colors.push('#b387fa')
+          colors.push(dataApi ? '#b387fa' : 'oklch(var(--n))')
         }
 
         return {
           key: c.kind,
-          // TODO: fix weekday to be the week day... Not the number (or index!)
-          // data: c.data,
-          data: c.data.map((d) => {
-            return {
-              hour: d.hour,
-              weekday: daysOfWeek.indexOf(d.weekday),
-              count: d.count,
-            }
-          }),
+          data: c.data.map((d) => ({
+            hour: d.hour,
+            weekday: daysOfWeek.indexOf(d.weekday),
+            count: d.count,
+          })),
           color: colors[i],
         }
       }),
   )
+
+  function generateFakePunchCard() {
+    const kinds = ['like', 'skeet', 'reskeet']
+    return kinds.map((kind) => ({
+      kind,
+      data: Array.from({ length: 50 }, () => ({
+        hour: Math.floor(Math.random() * 24),
+        weekday: daysOfWeek[Math.floor(Math.random() * 7)],
+        count: Math.floor(Math.random() * 10) + 1,
+      })),
+    }))
+  }
 </script>
 
 <svelte:head>
@@ -504,6 +512,7 @@
         yPadding={[20, 20]}
         padding={{ left: 24, bottom: 44 }}
         props={{
+          points: { tweened: true },
           grid: { x: true, y: true, bandAlign: 'between' },
           rule: { x: false, y: false },
           // points: { class: 'animate-pulse' },
