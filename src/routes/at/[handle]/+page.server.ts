@@ -71,7 +71,12 @@ const log = new Log('at/[handle]/+page.server.ts')
 export const load = (async (event) => {
   try {
     const handleResolver = new HandleResolver({})
-    const did = await handleResolver.resolve(event.params.handle)
+    let did = undefined
+    if ((event.params.handle??"").startsWith('did:plc:')) {
+      did = event.params.handle
+    } else {
+      did = await handleResolver.resolve(event.params.handle)
+    }
 
     if (did) {
       const didResolver = new DidResolver({})
