@@ -195,16 +195,25 @@
         </div>
       </div>
       <div class="h-[250px] w-full">
-        <PieChart
-          data={data.kindOfEmbed ?? []}
-          cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
-          key="kind"
-          value="count"
-          innerRadius={-20}
-          cornerRadius={7}
-          padAngle={0.02}
-        ></PieChart>
-        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
+        {#if (data.kindOfEmbed ?? []).length > 0}
+          <PieChart
+            data={data.kindOfEmbed ?? []}
+            cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
+            key="kind"
+            value="count"
+            innerRadius={-20}
+            cornerRadius={7}
+            padAngle={0.02}
+          ></PieChart>
+          <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
+        {:else}
+          <div
+            class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
+          >
+            <span class="text-lg">No posts yet...</span>
+            <span class="text-sm">Add something and come back! 😉</span>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
