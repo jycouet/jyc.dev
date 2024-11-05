@@ -176,7 +176,11 @@
       <h3 class="mb-4 text-lg font-bold">
         Insights <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
       </h3>
-      <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
+      {#if dataApi}
+        <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
+      {:else}
+        <div class="skeleton h-7 w-32 bg-base-200"></div>
+      {/if}
     </div>
 
     <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
@@ -197,12 +201,24 @@
         <div class="absolute mt-16 text-3xl">{dataApi?.category?.emoji ?? '💡'}</div>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of skeet</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
-          <h4 class="z-10 text-center text-xl font-bold text-primary">
-            {dataApi?.category?.title ?? '...'}
-          </h4>
-          <p class="z-10 text-center text-sm text-base-content/70">
-            {dataApi?.category?.traits}
-          </p>
+          {#if dataApi}
+            <h4 class="z-10 text-center text-xl font-bold text-primary">
+              {dataApi?.category?.title ?? '...'}
+            </h4>
+            <p class="z-10 text-center text-sm text-base-content/70">
+              {dataApi?.category?.traits}
+            </p>
+          {:else}
+            <div class="z-10 text-center text-xl font-bold text-primary">
+              <div class="skeleton h-8 w-48 bg-base-200"></div>
+            </div>
+            <div class="z-10 text-center text-sm text-base-content/70">
+              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+              <div class="skeleton mx-auto mb-2 h-3 w-72 bg-base-200"></div>
+              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+              <div class="skeleton mx-auto h-3 w-10 bg-base-200"></div>
+            </div>
+          {/if}
         </div>
       </div>
       <div class="h-[250px] w-full">
@@ -217,7 +233,7 @@
             padAngle={0.02}
           ></PieChart>
           <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
-        {:else}
+        {:else if dataApi}
           <div
             class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
           >
@@ -247,7 +263,13 @@
         </svg>
       </div>
       <div class="stat-title">Today's likes</div>
-      <div class="stat-value text-accent">{dataApi?.likes?.today}</div>
+      <div class="stat-value text-accent">
+        {#if dataApi}
+          {dataApi?.likes?.today}
+        {:else}
+          <div class="skeleton h-10 w-24 bg-base-200"></div>
+        {/if}
+      </div>
       <div class="stat-desc">
         {@html getNumbersComparison(
           dataApi?.likes?.today ?? 0,
@@ -274,7 +296,13 @@
         </svg>
       </div>
       <div class="stat-title">Today's skeets</div>
-      <div class="stat-value text-secondary">{dataApi?.posts?.today}</div>
+      <div class="stat-value text-secondary">
+        {#if dataApi}
+          {dataApi?.posts?.today}
+        {:else}
+          <div class="skeleton h-10 w-24 bg-base-200"></div>
+        {/if}
+      </div>
       <div class="stat-desc">
         {@html getNumbersComparison(
           dataApi?.posts?.today ?? 0,
@@ -301,7 +329,13 @@
         </svg>
       </div>
       <div class="stat-title">Today's reskeets</div>
-      <div class="stat-value text-purple-500">{dataApi?.reposts?.today}</div>
+      <div class="stat-value text-purple-500">
+        {#if dataApi}
+          {dataApi?.reposts?.today}
+        {:else}
+          <div class="skeleton h-10 w-24 bg-base-200"></div>
+        {/if}
+      </div>
       <div class="stat-desc">
         {@html getNumbersComparison(
           dataApi?.reposts?.today ?? 0,
@@ -318,7 +352,11 @@
         Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
       </h3>
       <div class="stat-value text-primary">
-        {dataApi?.followsTotal}
+        {#if dataApi}
+          {dataApi?.followsTotal}
+        {:else}
+          <div class="skeleton h-10 w-20 bg-base-200"></div>
+        {/if}
       </div>
     </div>
 
@@ -366,9 +404,13 @@
               ? 'text-[#4ca2fe]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}</span
-          >
-          <span class="text-sm text-gray-500"> likes</span>
+            {#if dataApi}
+              {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}
+              <span class="text-sm text-gray-500"> likes</span>
+            {:else}
+              <div class="skeleton h-10 w-24 bg-base-200"></div>
+            {/if}
+          </span>
         </button>
         <button onclick={() => toggleSelection('skeet')}>
           <span
@@ -376,9 +418,13 @@
               ? 'text-[#fd6f9c]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}</span
-          >
-          <span class="text-sm text-gray-500"> skeets</span>
+            {#if dataApi}
+              {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
+              <span class="text-sm text-gray-500"> skeets</span>
+            {:else}
+              <div class="skeleton h-10 w-24 bg-base-200"></div>
+            {/if}
+          </span>
         </button>
         <button onclick={() => toggleSelection('reskeet')}>
           <span
@@ -386,9 +432,13 @@
               ? 'text-[#b387fa]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}</span
-          >
-          <span class="text-sm text-gray-500"> reskeets</span>
+            {#if dataApi}
+              {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
+              <span class="text-sm text-gray-500"> reskeets</span>
+            {:else}
+              <div class="skeleton h-10 w-24 bg-base-200"></div>
+            {/if}
+          </span>
         </button>
       </div>
     </div>
