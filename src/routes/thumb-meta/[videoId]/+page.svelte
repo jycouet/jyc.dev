@@ -97,6 +97,14 @@
   </div>
 </div>
 
+<div>
+  <a
+    class="link link-primary"
+    target="_blank"
+    href="https://www.youtube.com/watch?v={$page.params.videoId}">Check out the video</a
+  >
+</div>
+
 <div class="flex gap-4">
   <button class="btn btn-primary" onclick={switchTheme}>{theme}</button>
   <button class="btn btn-primary flex-grow" onclick={download}>Download</button>

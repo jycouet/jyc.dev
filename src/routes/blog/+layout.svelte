@@ -36,7 +36,7 @@
     </aside>
 
     <a href="/thumb-meta" class="link link-primary">thumb-meta</a>
-    <a href="/at" class="link link-primary">@AT Proto - Stats</a>
+    <a href="/at" class="link link-primary">Atmosphere - Stats</a>
 
     <nav class="grid-flow-col items-center gap-4 md:place-self-center md:justify-self-end">
       <a href="https://dynamicprocess.io/" target="_blank" aria-label="Youtube"

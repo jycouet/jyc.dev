@@ -37,6 +37,8 @@
       })
     })
   })
+
+  let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
 </script>
 
 <svelte:head>
@@ -45,6 +47,7 @@
   <title>jyc.dev</title>
 
   <!-- Defaults Meta Tags -->
+  <link rel="canonical" href={canonicalUrl} />
   <meta name="description" content="jyc.dev - a thing where I share my thoughts..." />
   <meta property="og:title" content="jyc.dev" />
   <meta property="og:description" content="A thing where I share my thoughts..." />

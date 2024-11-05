@@ -16,6 +16,8 @@
   {@render children?.()}
 
   <center>
+    <a class="link link-primary" href="/">Home</a> |
+    <a class="link link-primary" href="/thumb-meta/WL95jQGMPX0">Thumbnail - Example</a> |
     <a class="link link-primary" href="/blog/2024-04-15-thumb-meta">How to use it ?</a>
   </center>
 </div>

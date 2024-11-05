@@ -1,9 +1,13 @@
 <script lang="ts">
 </script>
 
+<svelte:head>
+  <title>Atmosphere - Stats</title>
+</svelte:head>
+
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
-    <h1 class="mb-8 text-center text-4xl font-bold">@AT Proto - Stats</h1>
+    <h1 class="mb-8 text-center text-4xl font-bold">Atmosphere - Stats</h1>
 
     <div class="mx-auto max-w-3xl">
       <slot />

@@ -38,8 +38,6 @@
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
 
-  let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
-
   const description = `${data.displayName} is ${data.category?.title}, and you ?`
 
   let followsPeriods = data.followsPeriods ?? []
@@ -92,13 +90,12 @@
 </script>
 
 <svelte:head>
-  <title>{data.displayName} | AT Proto - Stats</title>
+  <title>{data.displayName} | Atmosphere - Stats</title>
 
-  <link rel="canonical" href={canonicalUrl} />
   <meta name="description" content={description} />
   <!-- <meta name="referrer" content="no-referrer" /> -->
   <meta property="og:type" content="WebApp" />
-  <meta property="og:title" content="AT Proto - Stats" />
+  <meta property="og:title" content="Atmosphere - Stats" />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={$page.url.origin} />
 </svelte:head>
