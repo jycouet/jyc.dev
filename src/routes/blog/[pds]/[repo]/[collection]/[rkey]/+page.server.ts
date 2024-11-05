@@ -5,9 +5,8 @@ import { getRecord } from '$lib/at/helper'
 //   return data;
 // };
 
-export const load = async ({ fetch, params }) => {
+export const load = async ({ params }) => {
   const record = await getRecord(
-    fetch,
     `https://${params.pds}`,
     params.repo,
     params.collection,

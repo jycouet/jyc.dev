@@ -5,18 +5,22 @@
 
   import { AtController } from '$lib/modules/at/AtController'
 
+  type ResolvedType<T> = T extends Promise<infer R> ? R : T
+
   let { data } = $props()
+  let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
 
+  let currentISOString = $state('')
   $effect(() => {
-    AtController.getHandleStats(true).then((res) => {
-      console.log(`👀`, res)
+    AtController.getHandleStats(new Date().getTimezoneOffset(), data.handle!).then((res) => {
+      dataApi = res
     })
-  })
 
-  let currentISOString = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'short',
-    timeStyle: 'medium',
-  }).format(new Date())
+    currentISOString = new Intl.DateTimeFormat(undefined, {
+      dateStyle: 'short',
+      timeStyle: 'medium',
+    }).format(new Date())
+  })
 
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {
     if (today === yesterday) {
@@ -49,16 +53,9 @@
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
 
-  const description = `${data.displayName} is ${data.category?.title}, and you ?`
-
-  let followsPeriods = data.followsPeriods ?? []
-  // let followsPeriods = $state<any[]>([])
-  // $effect(() => {
-  //   followsPeriods = data.followsPeriods ?? []
-  // })
+  const description = `${data.displayName} | Some stats about Atmosphere`
 
   let selection = $state(['like', 'skeet', 'reskeet'])
-
   const toggleSelection = (name: string) => {
     if (selection.includes(name)) {
       selection = selection.filter((c) => c !== name)
@@ -67,10 +64,18 @@
     }
   }
 
-  const diff = new Date().getTimezoneOffset() / 60
+  let hrefShare = $derived(
+    `https://bsky.app/intent/compose?text=` +
+      `${encodeURI(
+        `${data.displayName} is ${dataApi?.category?.emoji} ${dataApi?.category?.title} on 🦋\n<br>` +
+          `📎 https://jyc.dev/at/${data.handle}<br><br>\n\n` +
+          `What about 🫵 ? 🐾 ! ?<br><br>\n\n` +
+          `👀@jyc.dev<br>\n`,
+      )}`,
+  )
 
   let punchCard = $derived(
-    (data.punchCard ?? [])
+    (dataApi?.punchCard ?? [])
       .filter((c) => selection.includes(c.kind))
       .map((c, i) => {
         const colors = []
@@ -88,8 +93,7 @@
           key: c.kind,
           data: c.data.map((d) => {
             return {
-              // hour: d.hour,
-              hour: (d.hour - diff) % 24,
+              hour: d.hour,
               weekday: daysOfWeek.indexOf(d.weekday),
               count: d.count,
             }
@@ -167,22 +171,14 @@
       <h3 class="mb-4 text-lg font-bold">
         Insights <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
       </h3>
-      <a
-        class="link link-secondary"
-        href="https://bsky.app/intent/compose?text={encodeURI(
-          `${data.displayName} is ${data.category?.emoji} ${data.category?.title} on 🦋\n<br>📎 https://jyc.dev/at/${data.handle}<br><br>\n\nWhat about 🫵 ? 🐾 ! ?<br><br>\n\n👀@jyc.dev<br>\n`,
-        )}"
-        target="_blank"
-      >
-        Share it on 🦋
-      </a>
+      <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
     </div>
 
     <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
       <div class="flex h-[250px] w-full flex-col items-center gap-4">
         <!-- TODO: how to remove the sorting ? -->
         <PieChart
-          data={data.kindOfPost ?? []}
+          data={dataApi?.kindOfPost ?? []}
           key="key"
           value="value"
           range={[-90, 90]}
@@ -193,20 +189,22 @@
           padding={{ bottom: -100 }}
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
         ></PieChart>
-        <div class="absolute mt-16 text-3xl">{data.category?.emoji}</div>
+        <div class="absolute mt-16 text-3xl">{dataApi?.category?.emoji ?? '💡'}</div>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of skeet</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
-          <h4 class="z-10 text-center text-xl font-bold text-primary">{data.category?.title}</h4>
+          <h4 class="z-10 text-center text-xl font-bold text-primary">
+            {dataApi?.category?.title ?? '...'}
+          </h4>
           <p class="z-10 text-center text-sm text-base-content/70">
-            {data.category?.traits}
+            {dataApi?.category?.traits}
           </p>
         </div>
       </div>
       <div class="h-[250px] w-full">
-        {#if (data.kindOfEmbed ?? []).length > 0}
+        {#if (dataApi?.kindOfEmbed ?? []).length > 0}
           <PieChart
-            data={data.kindOfEmbed ?? []}
-            cRange={data.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
+            data={dataApi?.kindOfEmbed ?? []}
+            cRange={dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
             key="kind"
             value="count"
             innerRadius={-20}
@@ -244,9 +242,13 @@
         </svg>
       </div>
       <div class="stat-title">Today's likes</div>
-      <div class="stat-value text-accent">{data?.likes?.today}</div>
+      <div class="stat-value text-accent">{dataApi?.likes?.today}</div>
       <div class="stat-desc">
-        {@html getNumbersComparison(data?.likes?.today ?? 0, data?.likes?.yesterday ?? 0, 'like')}
+        {@html getNumbersComparison(
+          dataApi?.likes?.today ?? 0,
+          dataApi?.likes?.yesterday ?? 0,
+          'like',
+        )}
       </div>
     </div>
 
@@ -267,9 +269,13 @@
         </svg>
       </div>
       <div class="stat-title">Today's skeets</div>
-      <div class="stat-value text-secondary">{data?.posts?.today}</div>
+      <div class="stat-value text-secondary">{dataApi?.posts?.today}</div>
       <div class="stat-desc">
-        {@html getNumbersComparison(data?.posts?.today ?? 0, data?.posts?.yesterday ?? 0, 'skeet')}
+        {@html getNumbersComparison(
+          dataApi?.posts?.today ?? 0,
+          dataApi?.posts?.yesterday ?? 0,
+          'skeet',
+        )}
       </div>
     </div>
 
@@ -290,11 +296,11 @@
         </svg>
       </div>
       <div class="stat-title">Today's skeets</div>
-      <div class="stat-value text-purple-500">{data?.reposts?.today}</div>
+      <div class="stat-value text-purple-500">{dataApi?.reposts?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(
-          data?.reposts?.today ?? 0,
-          data?.reposts?.yesterday ?? 0,
+          dataApi?.reposts?.today ?? 0,
+          dataApi?.reposts?.yesterday ?? 0,
           'reskeet',
         )}
       </div>
@@ -307,13 +313,13 @@
         Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
       </h3>
       <div class="stat-value text-primary">
-        {data.followsTotal}
+        {dataApi?.followsTotal}
       </div>
     </div>
 
     <div class="h-[200px] w-full">
       <AreaChart
-        data={followsPeriods}
+        data={dataApi?.followsPeriods ?? []}
         x="timestamp"
         y="count"
         axis="y"
@@ -349,7 +355,7 @@
               ? 'text-[#4ca2fe]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(data.totalLikes ?? 0)}</span
+            {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> likes</span>
         </button>
@@ -359,7 +365,7 @@
               ? 'text-[#fd6f9c]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(data.totalPosts ?? 0)}</span
+            {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> skeets</span>
         </button>
@@ -369,7 +375,7 @@
               ? 'text-[#b387fa]'
               : 'text-base-content/10'}"
           >
-            {new Intl.NumberFormat().format(data.totalReposts ?? 0)}</span
+            {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}</span
           >
           <span class="text-sm text-gray-500"> reskeets</span>
         </button>

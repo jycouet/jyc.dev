@@ -1,9 +1,9 @@
 import { Log } from '@kitql/helpers'
 
-export const describeRepo = async (fetchToUse: any, pds: string, repo: string) => {
+export const describeRepo = async (pds: string, repo: string) => {
   const describeRepoUrl = new URL(`${pds}/xrpc/com.atproto.repo.describeRepo`)
   describeRepoUrl.searchParams.set('repo', repo)
-  const res = await fetchToUse(describeRepoUrl.toString())
+  const res = await fetch(describeRepoUrl.toString())
   if (!res.ok && res.status !== 400) {
     throw new Error(`Failed to describe repo: ${res.statusText}`)
   }
@@ -21,7 +21,6 @@ export const describeRepo = async (fetchToUse: any, pds: string, repo: string) =
 const log = new Log('at/helper')
 
 export const listRecords = async (
-  fetchToUse: any,
   pds: string,
   repo: string,
   collection: string,
@@ -39,26 +38,20 @@ export const listRecords = async (
   }
   const url = listRecordsUrl.toString()
   // log.info(`fetch`, url)
-  const res = await fetchToUse(url)
+  const res = await fetch(url)
   if (!res.ok) {
     throw new Error(`Failed to list records: ${res.statusText}`)
   }
   return await res.json()
 }
 
-export const getRecord = async (
-  fetchToUse: any,
-  pds: string,
-  repo: string,
-  collection: string,
-  rkey: string,
-) => {
+export const getRecord = async (pds: string, repo: string, collection: string, rkey: string) => {
   // const uriObj = new AtUri(uri);
   const getRecordUrl = new URL(`${pds}/xrpc/com.atproto.repo.getRecord`)
   getRecordUrl.searchParams.set('repo', repo)
   getRecordUrl.searchParams.set('collection', collection)
   getRecordUrl.searchParams.set('rkey', rkey)
-  const res = await fetchToUse(getRecordUrl.toString())
+  const res = await fetch(getRecordUrl.toString())
   if (!res.ok) {
     throw new Error(`Failed to get record: ${res.statusText}`)
   }
@@ -66,7 +59,6 @@ export const getRecord = async (
 }
 
 export const listRecordsAll = async (
-  fetchToUse: any,
   pds: string,
   repo: string,
   collection: string,
@@ -84,7 +76,7 @@ export const listRecordsAll = async (
 
   let nbRequest = 0
   while (true) {
-    const response = await listRecords(fetchToUse, pds, repo, collection, {
+    const response = await listRecords(pds, repo, collection, {
       cursor,
       limit: 100,
     })

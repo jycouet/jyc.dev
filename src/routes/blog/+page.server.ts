@@ -34,7 +34,7 @@ export const load = async (event) => {
         // const repo = pds ? await describeRepo(pds, did) : null;
         // console.log(`repo`, repo);
 
-        const records = await listRecords(event.fetch, pds, did, 'com.whtwnd.blog.entry')
+        const records = await listRecords(pds, did, 'com.whtwnd.blog.entry')
         // console.log(`records`, records.records);
 
         for (const record of records.records) {
