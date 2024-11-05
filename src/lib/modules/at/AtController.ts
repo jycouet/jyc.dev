@@ -6,7 +6,7 @@ export class AtController {
   static getHandleStatsAbscact: typeof getHandleStats
 
   @BackendMethod({ allowed: true })
-  static async getHandleStats(tzOffset: number, handle: string) {
-    return AtController.getHandleStatsAbscact(tzOffset, handle)
+  static async getHandleStats(tzOffset: number, did: string) {
+    return AtController.getHandleStatsAbscact(tzOffset, did)
   }
 }

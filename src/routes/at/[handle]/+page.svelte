@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Area, AreaChart, LinearGradient, PieChart, ScatterChart } from 'layerchart'
+  import { fade } from 'svelte/transition'
 
   import { page } from '$app/stores'
 
@@ -12,7 +13,7 @@
 
   let currentISOString = $state('')
   $effect(() => {
-    AtController.getHandleStats(new Date().getTimezoneOffset(), data.handle!).then((res) => {
+    AtController.getHandleStats(new Date().getTimezoneOffset(), data.did!).then((res) => {
       dataApi = res
     })
 
@@ -91,6 +92,8 @@
 
         return {
           key: c.kind,
+          // TODO: fix weekday to be the week day... Not the number (or index!)
+          // data: c.data,
           data: c.data.map((d) => {
             return {
               hour: d.hour,
@@ -133,7 +136,9 @@
     </svg>
     Check another handle
   </a>
-  <div class="font-mono text-xl text-secondary">{currentISOString}</div>
+  {#if currentISOString}
+    <div transition:fade class="font-mono text-xl text-secondary">{currentISOString}</div>
+  {/if}
 </div>
 
 <div class="flex flex-col gap-4">
@@ -295,7 +300,7 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Today's skeets</div>
+      <div class="stat-title">Today's reskeets</div>
       <div class="stat-value text-purple-500">{dataApi?.reposts?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(
@@ -319,19 +324,25 @@
 
     <div class="h-[200px] w-full">
       <AreaChart
-        data={dataApi?.followsPeriods ?? []}
+        data={(dataApi?.followsPeriods ?? []).map((d) => ({
+          timestamp: new Date(d.timestamp),
+          count: d.count,
+        }))}
         x="timestamp"
         y="count"
         axis="y"
         padding={{ left: 24 }}
         grid={false}
+        rule={false}
         props={{
           yAxis: {
+            tickLength: 0,
             tickLabelProps: {
               class: 'fill-base-content/50',
             },
           },
         }}
+        series={[{ key: 'count', label: 'Follow', color: 'oklch(var(--p))' }]}
       >
         <svelte:fragment slot="marks">
           <LinearGradient class="from-primary/50 to-primary/0" vertical let:url>
@@ -436,4 +447,4 @@
   > - I'll be happy to try ;)
 </div>
 
-<!-- <pre class="code text-xs">{JSON.stringify(data, null, 2)}</pre> -->
+<pre class="code text-xs">{JSON.stringify(dataApi, null, 2)}</pre>

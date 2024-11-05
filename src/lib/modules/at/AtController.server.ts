@@ -67,20 +67,13 @@ function generatePunchCardData(records: any[]): PunchCardEntry[] {
 
 const log = new Log('AtController')
 
-export async function getHandleStats(tzOffset: number, handle: string) {
+export async function getHandleStats(tzOffset: number, did: string) {
+  log.info(`getHandleStats`, did)
   const dt = new Date()
   const serverDate = new Date(dt)
   const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
 
   try {
-    const handleResolver = new HandleResolver({})
-    let did = undefined
-    if ((handle ?? '').startsWith('did:plc:')) {
-      did = handle
-    } else {
-      did = await handleResolver.resolve(handle)
-    }
-
     if (did) {
       const didResolver = new DidResolver({})
       const didDocument = await didResolver.resolve(did)
@@ -95,9 +88,7 @@ export async function getHandleStats(tzOffset: number, handle: string) {
         four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
 
         if (pds) {
-          log.info(`starting to fetch`, handle)
-          const [profile, likes, posts, reposts, follows] = await Promise.all([
-            listRecords(pds, did, 'app.bsky.actor.profile'),
+          const [likes, posts, reposts, follows] = await Promise.all([
             listRecordsAll(pds, did, 'app.bsky.feed.like', {
               while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
             }),
@@ -111,7 +102,7 @@ export async function getHandleStats(tzOffset: number, handle: string) {
           ])
 
           const totalRequests =
-            likes.nbRequest + posts.nbRequest + reposts.nbRequest + follows.nbRequest + 1
+            likes.nbRequest + posts.nbRequest + reposts.nbRequest + follows.nbRequest
 
           log.info(`totalRequests`, totalRequests)
 
@@ -233,16 +224,7 @@ export async function getHandleStats(tzOffset: number, handle: string) {
           // PERSONNALYTY - END
           // **********
 
-          const profileData = profile.records[0]?.value
-
           return {
-            did,
-            displayName: profileData?.displayName || handle,
-            handle: handle,
-            avatar: profileData?.avatar?.ref?.$link
-              ? `https://cdn.bsky.app/img/avatar/plain/${did}/${profileData.avatar.ref.$link}@jpeg`
-              : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-            description: profileData?.description || '',
             likes: getActivityCounts(likes),
             posts: getActivityCounts(posts),
             reposts: getActivityCounts(reposts),
