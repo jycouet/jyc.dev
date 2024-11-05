@@ -72,8 +72,8 @@ importers:
         specifier: 1.125.0
         version: 1.125.0
       remult:
-        specifier: 0.26.0
-        version: 0.26.0
+        specifier: 0.27.21
+        version: 0.27.21
       remult-kit:
         specifier: 0.0.3
         version: 0.0.3
@@ -2388,8 +2388,8 @@ packages:
     resolution: {integrity: sha512-us03CRLuWLPG2HTC20KkCYF/riGAz1kBwNbrMOjbj4qAxhykIEZuzO9zrSuG0WRvkKoO/vTgoqdufCE1Zrm4Xw==}
     hasBin: true
 
-  remult@0.26.0:
-    resolution: {integrity: sha512-wNhi6D9ay83TvFj9rnovhTRh9eaVzZy92EzvJ5o2ruML2ymgLS10gYfFr9jcQ9AmDEeZtQirqLlSgOeUdWTKgw==}
+  remult@0.27.21:
+    resolution: {integrity: sha512-1tz5N45kUrafikkdDtVenmRuTlV79K4tfDIT2J1MJv2d9OLxWouAFYmFmb54Fcsant39nidTu9GARq9p1hATKA==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -3323,7 +3323,7 @@ snapshots:
 
   '@paralleldrive/cuid2@2.2.2':
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -5118,7 +5118,7 @@ snapshots:
       - supports-color
       - tedious
 
-  remult@0.26.0:
+  remult@0.27.21:
     dependencies:
       '@paralleldrive/cuid2': 2.2.2
       reflect-metadata: 0.1.14

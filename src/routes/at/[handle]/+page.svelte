@@ -3,7 +3,15 @@
 
   import { page } from '$app/stores'
 
+  import { AtController } from '$lib/modules/at/AtController'
+
   let { data } = $props()
+
+  $effect(() => {
+    AtController.getHandleStats(true).then((res) => {
+      console.log(`👀`, res)
+    })
+  })
 
   let currentISOString = new Intl.DateTimeFormat(undefined, {
     dateStyle: 'short',
