@@ -5,7 +5,10 @@
 
   let { data } = $props()
 
-  let currentISOString = new Date().toISOString().slice(0, 19)
+  let currentISOString = new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+  }).format(new Date())
 
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {
     if (today === yesterday) {
@@ -185,7 +188,7 @@
         <div class="absolute mt-16 text-3xl">{data.category?.emoji}</div>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
-          <h4 class="z-10 text-xl font-bold text-primary">{data.category?.title}</h4>
+          <h4 class="z-10 text-center text-xl font-bold text-primary">{data.category?.title}</h4>
           <p class="z-10 text-center text-sm text-base-content/70">
             {data.category?.traits}
           </p>
@@ -369,7 +372,10 @@
           rule: { x: false, y: false },
           // points: { class: 'animate-pulse' },
           xAxis: {
-            format: (d) => `${d}:00`,
+            format: (d) =>
+              new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
+                new Date().setHours(d),
+              ),
             tickLabelProps: {
               class: 'fill-base-content/50',
             },
