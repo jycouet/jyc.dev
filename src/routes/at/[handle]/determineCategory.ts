@@ -72,13 +72,13 @@ export function determineCategory(args: {
 }): { title: string; traits: string; emoji: string } {
   const { nbPostStared, nbPostRepliesToAStartedOne, nbPostRepliesToOthers, kindOfEmbed } = args
 
-  let totalReplies = nbPostRepliesToAStartedOne + nbPostRepliesToOthers
-  let totalInteractions = nbPostStared + totalReplies
+  const totalReplies = nbPostRepliesToAStartedOne + nbPostRepliesToOthers
+  const totalInteractions = nbPostStared + totalReplies
   const totalTotal = totalReplies + totalInteractions
 
-  let nbPostStaredRatio = nbPostStared / totalInteractions
-  let nbPostRepliesToAStartedOneRatio = nbPostRepliesToAStartedOne / totalInteractions
-  let nbPostRepliesToOthersRatio = nbPostRepliesToOthers / totalInteractions
+  const nbPostStaredRatio = nbPostStared / totalInteractions
+  const nbPostRepliesToAStartedOneRatio = nbPostRepliesToAStartedOne / totalInteractions
+  const nbPostRepliesToOthersRatio = nbPostRepliesToOthers / totalInteractions
 
   let linkInside = 0
   let linkOutside = 0

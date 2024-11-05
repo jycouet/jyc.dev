@@ -72,7 +72,7 @@ export const load = (async (event) => {
   try {
     const handleResolver = new HandleResolver({})
     let did = undefined
-    if ((event.params.handle??"").startsWith('did:plc:')) {
+    if ((event.params.handle ?? '').startsWith('did:plc:')) {
       did = event.params.handle
     } else {
       did = await handleResolver.resolve(event.params.handle)
@@ -231,6 +231,7 @@ export const load = (async (event) => {
           // **********
 
           const profileData = profile.records[0]?.value
+
           return {
             did,
             displayName: profileData?.displayName || event.params.handle,

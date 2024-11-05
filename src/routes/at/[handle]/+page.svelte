@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, AreaChart, Legend, LinearGradient, PieChart, ScatterChart } from 'layerchart'
+  import { Area, AreaChart, LinearGradient, PieChart, ScatterChart } from 'layerchart'
 
   import { page } from '$app/stores'
 
@@ -148,7 +148,7 @@
               </div>
             </div>
           </a>
-          <span class="font-mono text-sm text-secondary">@{data.handle}</span>
+          <span class="font-mono text-sm text-secondary">@{data.displayName}</span>
         </div>
       </div>
     </div>
