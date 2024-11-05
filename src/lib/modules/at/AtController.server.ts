@@ -38,14 +38,14 @@ function getActivityCounts(records: { records: any[] }): ActivityCounts {
   return toRet
 }
 
-function generatePunchCardData(records: any[]): PunchCardEntry[] {
+function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry[] {
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const countMap = new Map<string, number>()
-
   records.forEach((record) => {
-    const date = new Date(record.value.createdAt)
-    const weekday = weekdays[date.getDay()]
-    const hour = date.getHours()
+    const dt = new Date(record.value.createdAt)
+    const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
+    const weekday = weekdays[clientDate.getDay()]
+    const hour = clientDate.getHours()
     const key = `${weekday}-${hour}`
     countMap.set(key, (countMap.get(key) || 0) + 1)
   })
@@ -69,9 +69,10 @@ const log = new Log('AtController')
 
 export async function getHandleStats(tzOffset: number, did: string) {
   log.info(`getHandleStats`, did)
-  const dt = new Date()
-  const serverDate = new Date(dt)
-  const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
+  // const dt = new Date()
+  // const serverDate = new Date(dt)
+  // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
+  // console.log(`clientDate`, clientDate)
 
   try {
     if (did) {
@@ -166,15 +167,15 @@ export async function getHandleStats(tzOffset: number, did: string) {
           const punchCard = [
             {
               kind: 'like',
-              data: generatePunchCardData(likes.records),
+              data: generatePunchCardData(likes.records, tzOffset),
             },
             {
               kind: 'skeet',
-              data: generatePunchCardData(posts.records),
+              data: generatePunchCardData(posts.records, tzOffset),
             },
             {
               kind: 'reskeet',
-              data: generatePunchCardData(reposts.records),
+              data: generatePunchCardData(reposts.records, tzOffset),
             },
           ]
 
