@@ -41,7 +41,7 @@ const categories: Record<
 }
 
 const specialties: Record<
-  'Artist' | 'Connector' | 'Explorer' | 'Conversationalist',
+  'Artist' | 'Connector' | 'Explorer' | 'Conversationalist' | 'Observer',
   { trait: string }
 > = {
   Artist: {
@@ -58,6 +58,10 @@ const specialties: Record<
   },
   Conversationalist: {
     trait: 'Your strength lies in pure dialogue, weaving words into meaningful exchanges.',
+  },
+  Observer: {
+    trait:
+      'You prefer to watch and learn from the sidelines, taking in the wisdom of others in silence.',
   },
 }
 
@@ -124,7 +128,9 @@ export function determineCategory(args: {
 
   // Then determine specialty
   let specialty: keyof typeof specialties
-  if (linkInsideRatio > 0.1) {
+  if (totalInteractions < 1) {
+    specialty = 'Observer'
+  } else if (linkInsideRatio > 0.1) {
     specialty = 'Connector'
   } else if (artRatio > 0.07) {
     specialty = 'Artist'
