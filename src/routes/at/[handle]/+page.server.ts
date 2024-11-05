@@ -175,11 +175,11 @@ export const load = (async (event) => {
               data: generatePunchCardData(likes.records),
             },
             {
-              kind: 'post',
+              kind: 'skeet',
               data: generatePunchCardData(posts.records),
             },
             {
-              kind: 'repost',
+              kind: 'reskeet',
               data: generatePunchCardData(reposts.records),
             },
           ]

@@ -49,7 +49,7 @@
   //   followsPeriods = data.followsPeriods ?? []
   // })
 
-  let selection = $state(['like', 'post', 'repost'])
+  let selection = $state(['like', 'skeet', 'reskeet'])
 
   const toggleSelection = (name: string) => {
     if (selection.includes(name)) {
@@ -69,10 +69,10 @@
         if (selection.includes('like')) {
           colors.push('#4ca2fe')
         }
-        if (selection.includes('post')) {
+        if (selection.includes('skeet')) {
           colors.push('#fd6f9c')
         }
-        if (selection.includes('repost')) {
+        if (selection.includes('reskeet')) {
           colors.push('#b387fa')
         }
 
@@ -186,7 +186,7 @@
           cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
         ></PieChart>
         <div class="absolute mt-16 text-3xl">{data.category?.emoji}</div>
-        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
+        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of skeet</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           <h4 class="z-10 text-center text-xl font-bold text-primary">{data.category?.title}</h4>
           <p class="z-10 text-center text-sm text-base-content/70">
@@ -210,7 +210,7 @@
           <div
             class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
           >
-            <span class="text-lg">No posts yet...</span>
+            <span class="text-lg">No skeets yet...</span>
             <span class="text-sm">Add something and come back! 😉</span>
           </div>
         {/if}
@@ -235,7 +235,7 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Likes today</div>
+      <div class="stat-title">Today's likes</div>
       <div class="stat-value text-accent">{data?.likes?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(data?.likes?.today ?? 0, data?.likes?.yesterday ?? 0, 'like')}
@@ -258,10 +258,10 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Posts Today</div>
+      <div class="stat-title">Today's skeets</div>
       <div class="stat-value text-secondary">{data?.posts?.today}</div>
       <div class="stat-desc">
-        {@html getNumbersComparison(data?.posts?.today ?? 0, data?.posts?.yesterday ?? 0, 'post')}
+        {@html getNumbersComparison(data?.posts?.today ?? 0, data?.posts?.yesterday ?? 0, 'skeet')}
       </div>
     </div>
 
@@ -281,13 +281,13 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Reposts Today</div>
+      <div class="stat-title">Today's skeets</div>
       <div class="stat-value text-purple-500">{data?.reposts?.today}</div>
       <div class="stat-desc">
         {@html getNumbersComparison(
           data?.reposts?.today ?? 0,
           data?.reposts?.yesterday ?? 0,
-          'repost',
+          'reskeet',
         )}
       </div>
     </div>
@@ -345,25 +345,25 @@
           >
           <span class="text-sm text-gray-500"> likes</span>
         </button>
-        <button onclick={() => toggleSelection('post')}>
+        <button onclick={() => toggleSelection('skeet')}>
           <span
-            class="stat-value {selection.includes('post')
+            class="stat-value {selection.includes('skeet')
               ? 'text-[#fd6f9c]'
               : 'text-base-content/10'}"
           >
             {new Intl.NumberFormat().format(data.totalPosts ?? 0)}</span
           >
-          <span class="text-sm text-gray-500"> posts</span>
+          <span class="text-sm text-gray-500"> skeets</span>
         </button>
-        <button onclick={() => toggleSelection('repost')}>
+        <button onclick={() => toggleSelection('reskeet')}>
           <span
-            class="stat-value {selection.includes('repost')
+            class="stat-value {selection.includes('reskeet')
               ? 'text-[#b387fa]'
               : 'text-base-content/10'}"
           >
             {new Intl.NumberFormat().format(data.totalReposts ?? 0)}</span
           >
-          <span class="text-sm text-gray-500"> reposts</span>
+          <span class="text-sm text-gray-500"> reskeets</span>
         </button>
       </div>
     </div>
