@@ -75,6 +75,49 @@
       )}`,
   )
 
+  let kindOfPost = $derived(
+    dataApi?.kindOfPost ?? [
+      { key: 'like', value: 7 },
+      { key: 'replies', value: 11 },
+      { key: 'quotes', value: 21 },
+    ],
+  )
+
+  let kindOfEmbed = $derived(
+    dataApi?.kindOfEmbed ?? [
+      { kind: 'image', count: 55 },
+      { kind: 'video', count: 11 },
+      { kind: 'link', count: 7 },
+      { kind: 'gif', count: 5 },
+      { kind: 'other', count: 1 },
+    ],
+  )
+
+  let followsPeriods = $derived(
+    (
+      dataApi?.followsPeriods ?? [
+        { timestamp: new Date('2024-01-01'), count: 200 },
+        { timestamp: new Date('2024-01-02'), count: 205 },
+        { timestamp: new Date('2024-01-03'), count: 208 },
+        { timestamp: new Date('2024-01-04'), count: 210 },
+        { timestamp: new Date('2024-01-05'), count: 245 }, // First pick
+        { timestamp: new Date('2024-01-06'), count: 250 },
+        { timestamp: new Date('2024-01-07'), count: 255 },
+        { timestamp: new Date('2024-01-08'), count: 258 },
+        { timestamp: new Date('2024-01-09'), count: 320 }, // Second pick
+        { timestamp: new Date('2024-01-10'), count: 325 },
+        { timestamp: new Date('2024-01-11'), count: 330 },
+        { timestamp: new Date('2024-01-12'), count: 335 },
+        { timestamp: new Date('2024-01-13'), count: 340 },
+        { timestamp: new Date('2024-01-14'), count: 415 }, // Third pick
+        { timestamp: new Date('2024-01-15'), count: 420 },
+      ]
+    ).map((d) => ({
+      timestamp: new Date(d.timestamp),
+      count: d.count,
+    })),
+  )
+
   let punchCard = $derived(
     (dataApi?.punchCard ?? [])
       .filter((c) => selection.includes(c.kind))
@@ -185,18 +228,19 @@
 
     <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
       <div class="flex h-[250px] w-full flex-col items-center gap-4">
-        <!-- TODO: how to remove the sorting ? -->
         <PieChart
-          data={dataApi?.kindOfPost ?? []}
+          data={kindOfPost}
           key="key"
           value="value"
           range={[-90, 90]}
           innerRadius={-20}
           cornerRadius={7}
           padAngle={0.02}
-          props={{ group: { y: 0 }, pie: { sort: null } }}
+          props={{ group: { y: 0 }, pie: { sort: null, tweened: true }, arc: { tweened: true } }}
           padding={{ bottom: -100 }}
-          cRange={['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']}
+          cRange={dataApi
+            ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
+            : ['oklch(var(--n))']}
         ></PieChart>
         <div class="absolute mt-16 text-3xl">{dataApi?.category?.emoji ?? '💡'}</div>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of skeet</div>
@@ -222,15 +266,18 @@
         </div>
       </div>
       <div class="h-[250px] w-full">
-        {#if (dataApi?.kindOfEmbed ?? []).length > 0}
+        {#if kindOfEmbed.length > 0}
           <PieChart
-            data={dataApi?.kindOfEmbed ?? []}
-            cRange={dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))}
+            data={kindOfEmbed}
+            cRange={dataApi
+              ? dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))
+              : ['oklch(var(--n))']}
             key="kind"
             value="count"
             innerRadius={-20}
             cornerRadius={7}
             padAngle={0.02}
+            props={{ pie: { tweened: true } }}
           ></PieChart>
           <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
         {:else if dataApi}
@@ -362,10 +409,7 @@
 
     <div class="h-[200px] w-full">
       <AreaChart
-        data={(dataApi?.followsPeriods ?? []).map((d) => ({
-          timestamp: new Date(d.timestamp),
-          count: d.count,
-        }))}
+        data={followsPeriods}
         x="timestamp"
         y="count"
         axis="y"
@@ -383,8 +427,16 @@
         series={[{ key: 'count', label: 'Follow', color: 'oklch(var(--p))' }]}
       >
         <svelte:fragment slot="marks">
-          <LinearGradient class="from-primary/50 to-primary/0" vertical let:url>
-            <Area line={{ class: 'stroke-2 stroke-primary' }} fill={url} />
+          <LinearGradient
+            class={dataApi ? 'from-primary/50 to-primary/0' : 'from-gray-600/50 to-gray-600/0'}
+            vertical
+            let:url
+          >
+            <Area
+              tweened
+              line={{ class: `stroke-2 ${dataApi ? 'stroke-primary' : 'stroke-gray-600'}` }}
+              fill={url}
+            />
           </LinearGradient>
         </svelte:fragment>
       </AreaChart>
@@ -497,4 +549,4 @@
   > - I'll be happy to try ;)
 </div>
 
-<pre class="code text-xs">{JSON.stringify(dataApi, null, 2)}</pre>
+<!-- <pre class="code text-xs">{JSON.stringify(dataApi, null, 2)}</pre> -->
