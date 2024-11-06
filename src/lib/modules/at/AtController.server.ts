@@ -1,6 +1,6 @@
 import { DidResolver, getPds } from '@atproto/identity'
 
-import { Log } from '@kitql/helpers'
+import { green, Log, magenta } from '@kitql/helpers'
 
 import { listRecordsAll } from '$lib/at/helper'
 
@@ -67,7 +67,8 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
 const log = new Log('AtController')
 
 export async function getHandleStats(tzOffset: number, did: string) {
-  log.info(`getHandleStats`, did, tzOffset)
+  log.info(green(did), magenta(`getHandleStats   `), tzOffset)
+  let start = new Date()
   // const dt = new Date()
   // const serverDate = new Date(dt)
   // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
@@ -88,7 +89,7 @@ export async function getHandleStats(tzOffset: number, did: string) {
         four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
 
         if (pds) {
-          const [likes, posts, reposts, follows] = await Promise.all([
+          const [likes, posts, reposts] = await Promise.all([
             listRecordsAll(pds, did, 'app.bsky.feed.like', {
               while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
             }),
@@ -98,67 +99,18 @@ export async function getHandleStats(tzOffset: number, did: string) {
             listRecordsAll(pds, did, 'app.bsky.feed.repost', {
               while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
             }),
-            listRecordsAll(pds, did, 'app.bsky.graph.follow'),
           ])
 
-          const totalRequests =
-            likes.nbRequest + posts.nbRequest + reposts.nbRequest + follows.nbRequest
+          const totalRequests = likes.nbRequest + posts.nbRequest + reposts.nbRequest
 
-          log.info(`totalRequests`, totalRequests)
-
-          // **********
-          // FOLLOW CHART - START
-          // **********
-          const followsTotal = follows.records.length
-          const followsPeriods: { timestamp: Date; count: number }[] = []
-
-          // Get current time and round down to nearest 12h period
-          const currentPeriodStart = new Date()
-          followsPeriods.unshift({
-            timestamp: new Date(currentPeriodStart),
-            count: followsTotal,
-          })
-          currentPeriodStart.setMinutes(0, 0, 0)
-          if (currentPeriodStart.getHours() >= 12) {
-            currentPeriodStart.setHours(12)
-          } else {
-            currentPeriodStart.setHours(0)
-          }
-
-          // Get periods for last 7 days with cumulative counts
-          const sevenDaysAgo = new Date(currentPeriodStart)
-          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-          follows.records.reverse()
-
-          // Loop through follows from newest to oldest to build cumulative counts
-          for (let i = follows.records.length - 1; i >= 0; i--) {
-            const followDate = new Date(follows.records[i].value.createdAt)
-            // console.log(`currentPeriodStart`, followDate, currentPeriodStart)
-
-            // Skip if before 7 days ago
-            if (followDate < sevenDaysAgo) continue
-
-            if (followDate < currentPeriodStart) {
-              followsPeriods.unshift({
-                timestamp: new Date(currentPeriodStart),
-                count: i + 1,
-              })
-              currentPeriodStart.setTime(currentPeriodStart.getTime() - 12 * 60 * 60 * 1000)
-            }
-          }
-
-          // If this... That mean that nothing happened in the last 7 days
-          if (followsPeriods.length === 1) {
-            followsPeriods.unshift({
-              timestamp: new Date(currentPeriodStart),
-              count: followsTotal,
-            })
-          }
-
-          // **********
-          // FOLLOW CHART - END
-          // **********
+          let end = new Date()
+          log.info(
+            green(did),
+            magenta(`getHandleStats   `),
+            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
+            totalRequests,
+          )
+          start = end
 
           // **********
           // PUNCH CARD - START
@@ -224,12 +176,17 @@ export async function getHandleStats(tzOffset: number, did: string) {
           // PERSONNALYTY - END
           // **********
 
+          end = new Date()
+          log.info(
+            green(did),
+            magenta(`getHandleStats   `),
+            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
+          )
+
           return {
             likes: getActivityCounts(likes),
             posts: getActivityCounts(posts),
             reposts: getActivityCounts(reposts),
-            followsPeriods,
-            followsTotal,
             punchCard,
             totalLikes: likes.records.length,
             totalPosts: posts.records.length,
@@ -242,6 +199,116 @@ export async function getHandleStats(tzOffset: number, did: string) {
               nbPostRepliesToOthers,
               kindOfEmbed,
             }),
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`error`, error)
+  }
+  return null
+}
+
+export async function getFollowsPeriods(tzOffset: number, did: string) {
+  log.info(green(did), magenta(`getFollowsPeriods`), tzOffset)
+  let start = new Date()
+  // const dt = new Date()
+  // const serverDate = new Date(dt)
+  // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
+  // console.log(`clientDate`, serverDate, clientDate)
+
+  try {
+    if (did) {
+      const didResolver = new DidResolver({})
+      const didDocument = await didResolver.resolve(did)
+
+      if (didDocument) {
+        const pds = getPds(didDocument)
+        // console.log(`pds`, pds);
+        // const repo = await describeRepo( pds!, did);
+        // console.log(`repo`, repo);
+
+        const four_weeks_ago = new Date()
+        four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+
+        if (pds) {
+          const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow')
+
+          const totalRequests = follows.nbRequest
+
+          let end = new Date()
+          log.info(
+            green(did),
+            magenta(`getFollowsPeriods`),
+            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
+            totalRequests,
+          )
+          start = end
+
+          // **********
+          // FOLLOW CHART - START
+          // **********
+          const followsTotal = follows.records.length
+          const followsPeriods: { timestamp: Date; count: number }[] = []
+
+          // Get current time and round down to nearest 12h period
+          const currentPeriodStart = new Date()
+          followsPeriods.unshift({
+            timestamp: new Date(currentPeriodStart),
+            count: followsTotal,
+          })
+          currentPeriodStart.setMinutes(0, 0, 0)
+          if (currentPeriodStart.getHours() >= 12) {
+            currentPeriodStart.setHours(12)
+          } else {
+            currentPeriodStart.setHours(0)
+          }
+
+          // Get periods for last 7 days with cumulative counts
+          const sevenDaysAgo = new Date(currentPeriodStart)
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+          follows.records.reverse()
+
+          // Loop through follows from newest to oldest to build cumulative counts
+          for (let i = follows.records.length - 1; i >= 0; i--) {
+            const followDate = new Date(follows.records[i].value.createdAt)
+            // console.log(`currentPeriodStart`, followDate, currentPeriodStart)
+
+            // Skip if before 7 days ago
+            if (followDate < sevenDaysAgo) continue
+
+            if (followDate < currentPeriodStart) {
+              followsPeriods.unshift({
+                timestamp: new Date(currentPeriodStart),
+                count: i + 1,
+              })
+              currentPeriodStart.setTime(currentPeriodStart.getTime() - 12 * 60 * 60 * 1000)
+            }
+          }
+
+          // If this... That mean that nothing happened in the last 7 days
+          if (followsPeriods.length === 1) {
+            followsPeriods.unshift({
+              timestamp: new Date(currentPeriodStart),
+              count: followsTotal,
+            })
+          }
+
+          // **********
+          // FOLLOW CHART - END
+          // **********
+
+          end = new Date()
+          log.info(
+            green(did),
+            magenta(`getFollowsPeriods`),
+            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
+          )
+
+          return {
+            followsPeriods,
+            followsTotal,
           }
         }
       }

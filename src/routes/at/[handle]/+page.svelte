@@ -10,11 +10,15 @@
 
   let { data } = $props()
   let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
+  let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getFollowsPeriods>>>()
 
   let currentISOString = $state('')
   $effect(() => {
     AtController.getHandleStats(new Date().getTimezoneOffset(), data.did!).then((res) => {
       dataApi = res
+    })
+    AtController.getFollowsPeriods(new Date().getTimezoneOffset(), data.did!).then((res) => {
+      dataApiFollows = res
     })
 
     currentISOString = new Intl.DateTimeFormat(undefined, {
@@ -93,7 +97,7 @@
 
   let followsPeriods = $derived(
     (
-      dataApi?.followsPeriods ?? [
+      dataApiFollows?.followsPeriods ?? [
         { timestamp: new Date('2024-01-01'), count: 200 },
         { timestamp: new Date('2024-01-02'), count: 205 },
         { timestamp: new Date('2024-01-03'), count: 208 },
@@ -421,8 +425,8 @@
         Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
       </h3>
       <div class="stat-value text-primary">
-        {#if dataApi}
-          {dataApi?.followsTotal}
+        {#if dataApiFollows}
+          {dataApiFollows?.followsTotal}
         {:else}
           <div class="skeleton h-10 w-20 bg-base-200"></div>
         {/if}
@@ -450,13 +454,15 @@
       >
         <svelte:fragment slot="marks">
           <LinearGradient
-            class={dataApi ? 'from-primary/50 to-primary/0' : 'from-gray-600/50 to-gray-600/0'}
+            class={dataApiFollows
+              ? 'from-primary/50 to-primary/0'
+              : 'from-gray-600/50 to-gray-600/0'}
             vertical
             let:url
           >
             <Area
               tweened
-              line={{ class: `stroke-2 ${dataApi ? 'stroke-primary' : 'stroke-gray-600'}` }}
+              line={{ class: `stroke-2 ${dataApiFollows ? 'stroke-primary' : 'stroke-gray-600'}` }}
               fill={url}
             />
           </LinearGradient>
@@ -523,7 +529,7 @@
         r="count"
         xPadding={[20, 20]}
         yPadding={[20, 20]}
-        padding={{ left: 24, bottom: 44 }}
+        padding={{ left: 24, bottom: 44, right: 8 }}
         xDomain={[0, 23]}
         yDomain={getyDomain()}
         props={{
