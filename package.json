@@ -32,7 +32,7 @@
     "googleapis": "134.0.0",
     "html-to-image": "1.11.11",
     "intl-parse-accept-language": "1.0.0",
-    "layerchart": "0.58.2",
+    "layerchart": "0.58.4",
     "postcss": "8.4.38",
     "postcss-load-config": "5.0.3",
     "posthog-js": "1.181.0",
