@@ -13,7 +13,7 @@ interface ActivityCounts {
 }
 
 interface PunchCardEntry {
-  weekday: string
+  weekday: number
   hour: number
   count: number
 }
@@ -39,14 +39,14 @@ function getActivityCounts(records: { records: any[] }): ActivityCounts {
 }
 
 function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry[] {
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const countMap = new Map<string, number>()
   records.forEach((record) => {
     const dt = new Date(record.value.createdAt)
     const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
-    const weekday = weekdays[clientDate.getDay()]
+
+    const weekday = clientDate.getDay()
     const hour = clientDate.getHours()
-    const key = `${weekday}-${hour}`
+    const key = `${weekday}-${hour + 0.5}`
     countMap.set(key, (countMap.get(key) || 0) + 1)
   })
 
@@ -56,8 +56,8 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
   countMap.forEach((count, key) => {
     const [weekday, hour] = key.split('-')
     result.push({
-      weekday,
-      hour: parseInt(hour),
+      weekday: parseInt(weekday),
+      hour: parseFloat(hour),
       count,
     })
   })
@@ -68,11 +68,11 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
 const log = new Log('AtController')
 
 export async function getHandleStats(tzOffset: number, did: string) {
-  log.info(`getHandleStats`, did)
+  log.info(`getHandleStats`, did, tzOffset)
   // const dt = new Date()
   // const serverDate = new Date(dt)
   // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
-  // console.log(`clientDate`, clientDate)
+  // console.log(`clientDate`, serverDate, clientDate)
 
   try {
     if (did) {

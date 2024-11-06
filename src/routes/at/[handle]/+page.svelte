@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Area, AreaChart, LinearGradient, PieChart, ScatterChart } from 'layerchart'
+  import { Area, AreaChart, LinearGradient, PieChart, ScatterChart, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
   import { page } from '$app/stores'
@@ -43,8 +43,6 @@
       return `${-diff} <span class='text-error'>less</span> than yesterday`
     }
   }
-
-  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].reverse()
 
   export function getBackgroundColor(
     name: string,
@@ -137,7 +135,7 @@
           key: c.kind,
           data: c.data.map((d) => ({
             hour: d.hour,
-            weekday: daysOfWeek.indexOf(d.weekday),
+            weekday: d.weekday,
             count: d.count,
           })),
           color: colors[i],
@@ -149,12 +147,28 @@
     const kinds = ['like', 'skeet', 'reskeet']
     return kinds.map((kind) => ({
       kind,
-      data: Array.from({ length: 50 }, () => ({
-        hour: Math.floor(Math.random() * 24),
-        weekday: daysOfWeek[Math.floor(Math.random() * 7)],
-        count: Math.floor(Math.random() * 10) + 1,
+      data: Array.from({ length: 25 }, () => ({
+        hour: Math.floor(Math.random() * 24) + 0.5,
+        weekday: Math.floor(Math.random() * 7),
+        count: Math.floor(Math.random() * 5) + 1,
       })),
     }))
+  }
+
+  // function getWeekStartsOnFromIntl() {
+  //   const locale = new Intl.Locale(Intl.DateTimeFormat().resolvedOptions().locale)
+
+  //   // @ts-expect-error
+  //   const weekInfo = locale.weekInfo ?? locale.getWeekInfo?.()
+  //   return (weekInfo?.firstDay ?? 0) % 7 // (in Intl, sunday is 7 not 0, so we need to mod 7)
+  // }
+
+  function getyDomain() {
+    // TODO, we can't have a domain doing like: ["1, 2, 3, 4, 5, 6, 0"] (start of week is monday in EU ;))
+    // const weekStartsOn = getWeekStartsOnFromIntl()
+    // const weekEndsOn = (weekStartsOn + 6) % 7
+
+    return [6, 0]
   }
 </script>
 
@@ -197,7 +211,7 @@
     <div class="card-body">
       <div class="flex items-center justify-between">
         <h2 class="card-title flex flex-col items-start gap-2">
-          <span class="flex items-end gap-2 text-xl font-bold">
+          <span class="flex items-end gap-2 text-2xl font-bold text-primary">
             {data.displayName}
             <!-- <span class="text-sm font-mono text-secondary">@{data.handle}</span>
             <div class="text-xs font-mono text-gray-500">{data.did}</div> -->
@@ -216,7 +230,7 @@
               </div>
             </div>
           </a>
-          <span class="font-mono text-sm text-secondary">@{data.displayName}</span>
+          <span class="font-mono text-sm text-secondary">@{data.handle}</span>
         </div>
       </div>
     </div>
@@ -502,7 +516,6 @@
         </button>
       </div>
     </div>
-    <!-- TODO: on legend click, show/hide series (with a nice fade? bounce?) -->
     <div class="h-[250px] w-full">
       <ScatterChart
         x="hour"
@@ -511,11 +524,15 @@
         xPadding={[20, 20]}
         yPadding={[20, 20]}
         padding={{ left: 24, bottom: 44 }}
+        xDomain={[0, 23]}
+        yDomain={getyDomain()}
         props={{
-          points: { tweened: true },
-          grid: { x: true, y: true, bandAlign: 'between' },
+          points: {
+            tweened: true,
+          },
+
+          grid: { xTicks: 24, bandAlign: 'between' },
           rule: { x: false, y: false },
-          // points: { class: 'animate-pulse' },
           xAxis: {
             format: (d) =>
               new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
@@ -533,7 +550,9 @@
               if (d > 6) {
                 return ''
               }
-              return daysOfWeek[d]
+              return new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(
+                new Date(2024, 0, d === 0 ? 7 : d),
+              )
             },
             ticks: 7,
             tickLength: 0,
@@ -543,7 +562,34 @@
           },
         }}
         series={punchCard}
-      ></ScatterChart>
+      >
+        <svelte:fragment slot="tooltip">
+          <Tooltip.Root let:data>
+            <Tooltip.Header>{data.seriesKey}</Tooltip.Header>
+            <Tooltip.List>
+              <Tooltip.Item
+                label="Weekday"
+                value={new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(
+                  new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
+                )}
+                valueAlign="right"
+              />
+              <Tooltip.Item
+                label="Hour"
+                value={new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
+                  new Date().setHours(data.hour),
+                ) +
+                  ' - ' +
+                  new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
+                    new Date().setHours(data.hour + 1),
+                  )}
+                valueAlign="right"
+              />
+              <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
+            </Tooltip.List>
+          </Tooltip.Root>
+        </svelte:fragment>
+      </ScatterChart>
     </div>
   </div>
 </div>
