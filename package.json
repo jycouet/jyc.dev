@@ -35,7 +35,7 @@
     "layerchart": "0.58.2",
     "postcss": "8.4.38",
     "postcss-load-config": "5.0.3",
-    "posthog-js": "1.125.0",
+    "posthog-js": "1.181.0",
     "remult": "0.27.21",
     "remult-kit": "0.0.3",
     "svelte": "5.1.9",

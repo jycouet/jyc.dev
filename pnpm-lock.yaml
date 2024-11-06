@@ -69,8 +69,8 @@ importers:
         specifier: 5.0.3
         version: 5.0.3(jiti@1.21.0)(postcss@8.4.38)
       posthog-js:
-        specifier: 1.125.0
-        version: 1.125.0
+        specifier: 1.181.0
+        version: 1.181.0
       remult:
         specifier: 0.27.21
         version: 0.27.21
@@ -2260,11 +2260,8 @@ packages:
     resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.125.0:
-    resolution: {integrity: sha512-9DZIwIMvq6X6lL1GCzs+bibJ6L+hYhlv9T+OmA/PIGQmI1vSC8YJtUIFm94X1SeQ6oIYz/ZWebGD/owFuJFZOw==}
-
-  posthog-js@1.180.1:
-    resolution: {integrity: sha512-LV65maVrpqkAh0wu32YvU7FpCSEjg6o+sZFYCs1+6tnEa9VvXuz8J6ReLiyRpJABI4j1qX/PB2jaVY5tDbLalQ==}
+  posthog-js@1.181.0:
+    resolution: {integrity: sha512-bI+J+f4E8x4JwbGtG6LReQv1Xvss01F6cs7UDlvffHySpVhNq4ptkNjV88B92IVEsrCtNYhy/TjFnGxk6RN0Qw==}
 
   preact@10.20.2:
     resolution: {integrity: sha512-S1d1ernz3KQ+Y2awUxKakpfOg2CEmJmwOP+6igPx6dgr6pgDvenqYviyokWso2rhHvGtTlWWnJDa7RaPbQerTg==}
@@ -4743,7 +4740,7 @@ snapshots:
       date-fns: 3.6.0
       layercake: 8.4.2(svelte@5.1.9)(typescript@5.6.3)
       lodash-es: 4.17.21
-      posthog-js: 1.180.1
+      posthog-js: 1.181.0
       shapefile: 0.6.6
       svelte: 5.1.9
       topojson-client: 3.1.0
@@ -5031,12 +5028,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.125.0:
-    dependencies:
-      fflate: 0.4.8
-      preact: 10.20.2
-
-  posthog-js@1.180.1:
+  posthog-js@1.181.0:
     dependencies:
       core-js: 3.39.0
       fflate: 0.4.8
