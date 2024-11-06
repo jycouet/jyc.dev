@@ -73,7 +73,7 @@
         `${data.displayName} is ${dataApi?.category?.emoji} ${dataApi?.category?.title} on 🦋\n<br>` +
           `📎 https://jyc.dev/at/${data.handle}<br><br>\n\n` +
           `What about 🫵 ? 🐾 ! ?<br><br>\n\n` +
-          `👀@jyc.dev<br>\n`,
+          `👀 @jyc.dev<br> \n`,
       )}`,
   )
 
