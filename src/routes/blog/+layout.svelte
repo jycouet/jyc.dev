@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Og from '$lib/components/Og.svelte'
+
   interface Props {
     children?: import('svelte').Snippet
   }
@@ -6,6 +8,8 @@
   let { children }: Props = $props()
   // import "../../app.pcss";
 </script>
+
+<Og />
 
 <div class="mx-auto flex h-screen w-[800px] flex-col gap-4 p-4">
   <h1 class="text-3xl text-primary">

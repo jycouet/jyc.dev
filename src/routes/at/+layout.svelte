@@ -1,19 +1,10 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import Og from '$lib/components/Og.svelte'
 
   const description = 'Some stats about Atmosphere'
 </script>
 
-<svelte:head>
-  <title>Atmosphere - Stats</title>
-
-  <meta name="description" content={description} />
-  <!-- <meta name="referrer" content="no-referrer" /> -->
-  <meta property="og:type" content="WebApp" />
-  <meta property="og:title" content="Atmosphere - Stats" />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={$page.url.origin} />
-</svelte:head>
+<Og title={`Atmosphere - Stats`} {description} />
 
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">

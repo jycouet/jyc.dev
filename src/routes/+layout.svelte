@@ -6,8 +6,6 @@
   import { onNavigate } from '$app/navigation'
   import { page } from '$app/stores'
 
-  import fav from '$lib/assets/favicon.svg'
-
   interface Props {
     children?: import('svelte').Snippet
   }
@@ -37,31 +35,6 @@
       })
     })
   })
-
-  let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
 </script>
-
-<svelte:head>
-  <link rel="icon" href={fav} />
-
-  <title>jyc.dev</title>
-
-  <!-- Defaults Meta Tags -->
-  <link rel="canonical" href={canonicalUrl} />
-  <meta name="description" content="jyc.dev - a thing where I share my thoughts..." />
-  <meta property="og:title" content="jyc.dev" />
-  <meta property="og:description" content="A thing where I share my thoughts..." />
-  <meta property="og:type" content="blog" />
-  <meta property="og:url" content="https://jyc.dev" />
-  <meta property="og:image" content={fav} />
-
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta property="twitter:domain" content="jyc.dev" />
-  <meta property="twitter:url" content="https://jyc.dev" />
-  <meta name="twitter:title" content="jyc.dev" />
-  <meta name="twitter:description" content="A thing where I share my thoughts..." />
-  <meta name="twitter:image" content={fav} />
-</svelte:head>
 
 {@render children?.()}

@@ -2,8 +2,7 @@
   import { Area, AreaChart, LinearGradient, PieChart, ScatterChart, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
-  import { page } from '$app/stores'
-
+  import Og from '$lib/components/Og.svelte'
   import { AtController } from '$lib/modules/at/AtController'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -176,16 +175,7 @@
   }
 </script>
 
-<svelte:head>
-  <title>{data.displayName} | Atmosphere - Stats</title>
-
-  <meta name="description" content={description} />
-  <!-- <meta name="referrer" content="no-referrer" /> -->
-  <meta property="og:type" content="WebApp" />
-  <meta property="og:title" content="Atmosphere - Stats" />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={$page.url.origin} />
-</svelte:head>
+<Og title={`${data.displayName} | Atmosphere - Stats`} {description} />
 
 <div class="flex items-center justify-between">
   <a href="/at" class="btn btn-ghost">
