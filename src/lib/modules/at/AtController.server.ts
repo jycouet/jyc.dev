@@ -1,9 +1,8 @@
-import { DidResolver, getPds, HandleResolver } from '@atproto/identity'
+import { DidResolver, getPds } from '@atproto/identity'
 
-import { BackendMethod } from 'remult'
-import { Log, sleep } from '@kitql/helpers'
+import { Log } from '@kitql/helpers'
 
-import { listRecords, listRecordsAll } from '$lib/at/helper'
+import { listRecordsAll } from '$lib/at/helper'
 
 import { determineCategory } from './determineCategory'
 
