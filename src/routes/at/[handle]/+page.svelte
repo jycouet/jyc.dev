@@ -57,7 +57,7 @@
 
   const description = `${data.displayName} | Some stats about Atmosphere`
 
-  let selection = $state(['like', 'skeet', 'reskeet'])
+  let selection = $state(['like', 'post', 'repost'])
   const toggleSelection = (name: string) => {
     if (selection.includes(name)) {
       selection = selection.filter((c) => c !== name)
@@ -126,10 +126,10 @@
         if (selection.includes('like')) {
           colors.push(dataApi ? '#4ca2fe' : 'oklch(var(--n))')
         }
-        if (selection.includes('skeet')) {
+        if (selection.includes('post')) {
           colors.push(dataApi ? '#fd6f9c' : 'oklch(var(--n))')
         }
-        if (selection.includes('reskeet')) {
+        if (selection.includes('repost')) {
           colors.push(dataApi ? '#b387fa' : 'oklch(var(--n))')
         }
 
@@ -146,7 +146,7 @@
   )
 
   function generateFakePunchCard() {
-    const kinds = ['like', 'skeet', 'reskeet']
+    const kinds = ['like', 'post', 'repost']
     return kinds.map((kind) => ({
       kind,
       data: Array.from({ length: 25 }, () => ({
@@ -264,7 +264,7 @@
             : ['oklch(var(--n))']}
         ></PieChart>
         <div class="absolute mt-16 text-3xl">{dataApi?.category?.emoji ?? '💡'}</div>
-        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of skeet</div>
+        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           {#if dataApi}
             <h4 class="z-10 text-center text-xl font-bold text-primary">
@@ -305,7 +305,7 @@
           <div
             class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
           >
-            <span class="text-lg">No skeets yet...</span>
+            <span class="text-lg">No posts yet...</span>
             <span class="text-sm">Add something and come back! 😉</span>
           </div>
         {/if}
@@ -363,7 +363,7 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Today's skeets</div>
+      <div class="stat-title">Today's posts</div>
       <div class="stat-value text-secondary">
         {#if dataApi}
           {dataApi?.posts?.today}
@@ -375,7 +375,7 @@
         {@html getNumbersComparison(
           dataApi?.posts?.today ?? 0,
           dataApi?.posts?.yesterday ?? 0,
-          'skeet',
+          'post',
         )}
       </div>
     </div>
@@ -396,7 +396,7 @@
           ></path>
         </svg>
       </div>
-      <div class="stat-title">Today's reskeets</div>
+      <div class="stat-title">Today's reposts</div>
       <div class="stat-value text-purple-500">
         {#if dataApi}
           {dataApi?.reposts?.today}
@@ -408,7 +408,7 @@
         {@html getNumbersComparison(
           dataApi?.reposts?.today ?? 0,
           dataApi?.reposts?.yesterday ?? 0,
-          'reskeet',
+          'repost',
         )}
       </div>
     </div>
@@ -472,7 +472,7 @@
         <span>Your punchs</span>
         <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
       </h3>
-      <div class="flex flex-col items-center gap-4 md:flex-row">
+      <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
         <button onclick={() => toggleSelection('like')}>
           <span
             class="stat-value {selection.includes('like')
@@ -487,29 +487,29 @@
             {/if}
           </span>
         </button>
-        <button onclick={() => toggleSelection('skeet')}>
+        <button onclick={() => toggleSelection('post')}>
           <span
-            class="stat-value {selection.includes('skeet')
+            class="stat-value {selection.includes('post')
               ? 'text-[#fd6f9c]'
               : 'text-base-content/10'}"
           >
             {#if dataApi}
               {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
-              <span class="text-sm text-gray-500"> skeets</span>
+              <span class="text-sm text-gray-500"> posts</span>
             {:else}
               <div class="skeleton h-10 w-24 bg-base-200"></div>
             {/if}
           </span>
         </button>
-        <button onclick={() => toggleSelection('reskeet')}>
+        <button onclick={() => toggleSelection('repost')}>
           <span
-            class="stat-value {selection.includes('reskeet')
+            class="stat-value {selection.includes('repost')
               ? 'text-[#b387fa]'
               : 'text-base-content/10'}"
           >
             {#if dataApi}
               {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
-              <span class="text-sm text-gray-500"> reskeets</span>
+              <span class="text-sm text-gray-500"> reposts</span>
             {:else}
               <div class="skeleton h-10 w-24 bg-base-200"></div>
             {/if}

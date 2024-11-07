@@ -121,11 +121,11 @@ export async function getHandleStats(tzOffset: number, did: string) {
               data: generatePunchCardData(likes.records, tzOffset),
             },
             {
-              kind: 'skeet',
+              kind: 'post',
               data: generatePunchCardData(posts.records, tzOffset),
             },
             {
-              kind: 'reskeet',
+              kind: 'repost',
               data: generatePunchCardData(reposts.records, tzOffset),
             },
           ]
@@ -149,8 +149,8 @@ export async function getHandleStats(tzOffset: number, did: string) {
             posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
 
           const kindOfPost = [
-            { key: '🐣 Your new skeets', value: nbPostStared },
-            { key: '🦜 Replies in skeets you started', value: nbPostRepliesToAStartedOne },
+            { key: '🐣 Your new posts', value: nbPostStared },
+            { key: '🦜 Replies in posts you started', value: nbPostRepliesToAStartedOne },
             { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
           ]
 
