@@ -23,6 +23,14 @@
       <a href="https://bsky.app/profile/jyc.dev" class="link link-primary" target="_blank"
         >@jyc.dev</a
       >
+      <span>•</span>
+      <span
+        >Show <a
+          href="https://github.com/sponsors/jycouet"
+          class="link link-secondary"
+          target="_blank">Your Support</a
+        ></span
+      > and help make it all happen.
     </div>
   </footer>
 </div>
