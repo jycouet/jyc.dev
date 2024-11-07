@@ -591,6 +591,10 @@
           </Tooltip.Root>
         </svelte:fragment>
       </ScatterChart>
+      <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
+        Each time you press the like button or do a post, the app will count +1 on the correct day
+        (y) and time (x).
+      </div>
     </div>
   </div>
 </div>
