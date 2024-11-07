@@ -176,7 +176,7 @@
   function createBSkyIntent(msg: string[]) {
     // If I'm on windows it should be <br>, if not it should be \n
     const lineBreak = navigator.userAgent.toLowerCase().includes('windows') ? '<br>' : '\n'
-    return `https://bsky.app/intent/compose?text=${encodeURI(msg.join(lineBreak))}`
+    return `https://bsky.app/intent/compose?text=${encodeURIComponent(msg.join(lineBreak))}`
   }
 </script>
 
