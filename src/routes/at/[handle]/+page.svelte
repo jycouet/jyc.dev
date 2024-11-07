@@ -67,13 +67,12 @@
   }
 
   let hrefShare = $derived(
-    `https://bsky.app/intent/compose?text=` +
-      `${encodeURI(
-        `${data.displayName} is ${dataApi?.category?.emoji} ${dataApi?.category?.title} on 🦋\n<br>` +
-          `📎 https://jyc.dev/at/${data.handle}<br><br>\n\n` +
-          `What about 🫵 ? 🐾 ! ?<br><br>\n\n` +
-          `👀 @jyc.dev<br> \n`,
-      )}`,
+    createBSkyIntent([
+      `${data.displayName} is ${dataApi?.category?.emoji} ${dataApi?.category?.title} on 🦋`,
+      `📎 https://jyc.dev/at/${data.handle}`,
+      '',
+      `What about 🫵 ? 🐾 ! ?`,
+    ]),
   )
 
   let kindOfPost = $derived(
@@ -172,6 +171,12 @@
     // const weekEndsOn = (weekStartsOn + 6) % 7
 
     return [6, 0]
+  }
+
+  function createBSkyIntent(msg: string[]) {
+    // If I'm on windows it should be <br>, if not it should be \n
+    const lineBreak = navigator.userAgent.toLowerCase().includes('windows') ? '<br>' : '\n'
+    return `https://bsky.app/intent/compose?text=${encodeURI(msg.join(lineBreak))}`
   }
 </script>
 
@@ -593,9 +598,11 @@
 <div class="mt-12 text-center text-sm text-gray-500">
   You have a request? Ask me here: 🦋 <a
     target="_blank"
-    href="https://bsky.app/intent/compose?text={encodeURI(
+    href={createBSkyIntent([
       `Hey @jyc.dev could we have [YOUR REQUEST] 😉 ?`,
-    )}"
+      '',
+      '>> FOR THE MENTION TO WORK YOU NEED TO VALIDATE MY HANDLE IN THE MESSAGE <<',
+    ])}
     class="link link-primary">@jyc.dev</a
   > - I'll be happy to try ;)
 </div>
