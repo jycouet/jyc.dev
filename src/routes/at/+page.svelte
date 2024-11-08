@@ -1,9 +1,12 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
 
+  import { route } from '$lib/ROUTES'
+
   let handle: string = ''
   let error: string = ''
   let loading: boolean = false
+  let withFollow: boolean = true
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
@@ -15,7 +18,11 @@
 
     if (cleanHandle) {
       try {
-        await goto(`/at/${cleanHandle}`)
+        if (withFollow) {
+          await goto(route(`/at/[handle]`, { handle: cleanHandle }))
+        } else {
+          await goto(route(`/at/[handle]`, { handle: cleanHandle, skip_follow: true }))
+        }
       } catch (e) {
         error = 'An error occurred'
       } finally {
@@ -29,32 +36,40 @@
 </script>
 
 <form onsubmit={handleSubmit} class="mx-auto flex max-w-md flex-col gap-4">
-  <div class="form-control">
-    <div class="label">
-      <span class="label-text">Enter your handle</span>
-      {#if error}
-        <span class="label-text-alt text-error">{error}</span>
-      {/if}
+  <div class="form-control flex gap-4">
+    <div class="flex items-end gap-4">
+      <div class="flex-1">
+        <div class="label">
+          <span class="label-text">Enter your handle</span>
+          {#if error}
+            <span class="label-text-alt text-error">{error}</span>
+          {/if}
+        </div>
+
+        <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''}">
+          @
+          <input
+            type="text"
+            class="grow"
+            id="handle"
+            bind:value={handle}
+            placeholder="handle.bsky.social"
+          />
+        </label>
+      </div>
+      <div class="flex h-12 items-center gap-2">
+        <input type="checkbox" class="checkbox" id="skip_follow" bind:checked={withFollow} />
+        <label for="skip_follow" class="label-text cursor-pointer"> With follow</label>
+      </div>
     </div>
 
-    <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''}">
-      @
-      <input
-        type="text"
-        class="grow"
-        id="handle"
-        bind:value={handle}
-        placeholder="handle.bsky.social"
-      />
-    </label>
+    <button type="submit" class="btn btn-primary" disabled={loading}>
+      {#if loading}
+        <span class="loading loading-spinner"></span>
+      {/if}
+      Look up handle
+    </button>
   </div>
-
-  <button type="submit" class="btn btn-primary" disabled={loading}>
-    {#if loading}
-      <span class="loading loading-spinner"></span>
-    {/if}
-    Look up handle
-  </button>
 </form>
 
 <div class="mt-8 text-center text-sm text-base-content/70">

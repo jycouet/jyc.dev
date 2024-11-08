@@ -98,6 +98,9 @@ importers:
       vite:
         specifier: 5.4.10
         version: 5.4.10(@types/node@20.12.7)
+      vite-plugin-kit-routes:
+        specifier: ^0.6.11
+        version: 0.6.11
       vitest:
         specifier: ^2.1.4
         version: 2.1.4(@types/node@20.12.7)(@vitest/ui@2.1.4)
@@ -482,6 +485,10 @@ packages:
 
   '@kitql/helpers@0.8.9':
     resolution: {integrity: sha512-uDBFBvCYUT4UaZZKv7gJejQvbrOp4YyI1S0Z92DPiMbyLq0DPDXz3Lt2ZqUZKlQrinBX+W1TO6w0RudEX6Q6WA==}
+    engines: {node: ^16.14 || >=18}
+
+  '@kitql/internals@0.9.10':
+    resolution: {integrity: sha512-t0BUn/XenYdSpq3bLGFqB3Ic4lIFChsNObxKFl8g7+VP9SyS6cUrcFYZgE8hssBmDjsoeF7Nu4N2071bN8V8Fw==}
     engines: {node: ^16.14 || >=18}
 
   '@kitql/internals@0.9.5':
@@ -1061,6 +1068,10 @@ packages:
     resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
     engines: {node: '>=8'}
 
+  braces@3.0.3:
+    resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
+    engines: {node: '>=8'}
+
   browserslist@4.23.0:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -1578,6 +1589,10 @@ packages:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
 
+  fill-range@7.1.1:
+    resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
+    engines: {node: '>=8'}
+
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
@@ -2000,6 +2015,10 @@ packages:
 
   micromatch@4.0.5:
     resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
+    engines: {node: '>=8.6'}
+
+  micromatch@4.0.8:
+    resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
   mime-db@1.52.0:
@@ -2584,6 +2603,10 @@ packages:
     resolution: {integrity: sha512-LpLqY2Jr7cRxkrTc796/AaaoMLF/1ax7cto8Ot76wrvKQhrPmZ0JgajiWPmg9mTSDqO16SSLiD17r9MsvAPTmw==}
     engines: {node: '>=16'}
 
+  svelte@4.2.19:
+    resolution: {integrity: sha512-IY1rnGr6izd10B0A8LqsBfmlT5OILVuZ7XsI0vdGPEvuonFV7NYEUK4dAkm9Zg2q0Um92kYjTpS1CAP3Nh/KWw==}
+    engines: {node: '>=16'}
+
   svelte@5.1.9:
     resolution: {integrity: sha512-nzq+PPKGS2PoEWDjAcXSrKSbXmmmOAxd6dAz1IhRusUpVkFS6DMELWPyBPGwu6TpO/gsgtFXwX0M4+pAR5gzKw==}
     engines: {node: '>=18'}
@@ -2737,6 +2760,14 @@ packages:
     resolution: {integrity: sha512-kqa9v+oi4HwkG6g8ufRnb5AeplcRw8jUF6/7/Qz1qRQOXHImG8YnLbB+LLszENwFnoBl9xIf9nVdCFzNd7GQEg==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
+
+  vite-plugin-kit-routes@0.6.11:
+    resolution: {integrity: sha512-W1WNQt6DNM03KD6s/Q0z1bgTNNVbRC+ML8dg1P3XRMUzqEc8mOOOJ2iPxDtj6JFsu/YP4tmbibKCA7R58qq6kA==}
+    engines: {node: ^16.14 || >=18}
+
+  vite-plugin-watch-and-run@1.7.1:
+    resolution: {integrity: sha512-knLbovXBUwVrm0q4+LcpIhqTAZRoWVv5m8xRn42dy8hrF3rgJ7ucxm1d99KecED87NZI7v5oH3Pc2sPDcwJKEQ==}
+    engines: {node: ^16.14 || >=18}
 
   vite@5.4.10:
     resolution: {integrity: sha512-1hvaPshuPUtxeQ0hsVH3Mud0ZanOLwVTneA1EgbAM5LhaZEqyPWGRQ7BtaMvUrTDeEaC8pxtj6a6jku3x4z6SQ==}
@@ -3253,6 +3284,13 @@ snapshots:
   '@kitql/helpers@0.8.9':
     dependencies:
       esm-env: 1.0.0
+
+  '@kitql/internals@0.9.10':
+    dependencies:
+      '@babel/parser': 7.24.4
+      '@kitql/helpers': 0.8.10
+      recast: 0.23.6
+      svelte: 4.2.19
 
   '@kitql/internals@0.9.5':
     dependencies:
@@ -3872,6 +3910,10 @@ snapshots:
     dependencies:
       fill-range: 7.0.1
 
+  braces@3.0.3:
+    dependencies:
+      fill-range: 7.1.1
+
   browserslist@4.23.0:
     dependencies:
       caniuse-lite: 1.0.30001676
@@ -4389,6 +4431,10 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
+  fill-range@7.1.1:
+    dependencies:
+      to-regex-range: 5.0.1
+
   find-up@5.0.0:
     dependencies:
       locate-path: 6.0.0
@@ -4809,6 +4855,11 @@ snapshots:
   micromatch@4.0.5:
     dependencies:
       braces: 3.0.2
+      picomatch: 2.3.1
+
+  micromatch@4.0.8:
+    dependencies:
+      braces: 3.0.3
       picomatch: 2.3.1
 
   mime-db@1.52.0: {}
@@ -5359,6 +5410,23 @@ snapshots:
       magic-string: 0.30.9
       periscopic: 3.1.0
 
+  svelte@4.2.19:
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@jridgewell/sourcemap-codec': 1.5.0
+      '@jridgewell/trace-mapping': 0.3.25
+      '@types/estree': 1.0.6
+      acorn: 8.14.0
+      aria-query: 5.3.2
+      axobject-query: 4.1.0
+      code-red: 1.0.4
+      css-tree: 2.3.1
+      estree-walker: 3.0.3
+      is-reference: 3.0.2
+      locate-character: 3.0.0
+      magic-string: 0.30.12
+      periscopic: 3.1.0
+
   svelte@5.1.9:
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -5551,6 +5619,19 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  vite-plugin-kit-routes@0.6.11:
+    dependencies:
+      '@babel/parser': 7.24.4
+      '@kitql/helpers': 0.8.10
+      '@kitql/internals': 0.9.10
+      recast: 0.23.6
+      vite-plugin-watch-and-run: 1.7.1
+
+  vite-plugin-watch-and-run@1.7.1:
+    dependencies:
+      '@kitql/helpers': 0.8.10
+      micromatch: 4.0.8
 
   vite@5.4.10(@types/node@20.12.7):
     dependencies:

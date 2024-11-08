@@ -2,6 +2,8 @@
   import { Area, AreaChart, LinearGradient, PieChart, ScatterChart, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
+  import { page } from '$app/stores'
+
   import Og from '$lib/components/Og.svelte'
   import { AtController } from '$lib/modules/at/AtController'
 
@@ -12,13 +14,16 @@
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getFollowsPeriods>>>()
 
   let currentISOString = $state('')
+  let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
     AtController.getHandleStats(new Date().getTimezoneOffset(), data.did!).then((res) => {
       dataApi = res
     })
-    AtController.getFollowsPeriods(new Date().getTimezoneOffset(), data.did!).then((res) => {
-      dataApiFollows = res
-    })
+    if (!skipFollow) {
+      AtController.getFollowsPeriods(new Date().getTimezoneOffset(), data.did!).then((res) => {
+        dataApiFollows = res
+      })
+    }
 
     currentISOString = new Intl.DateTimeFormat(undefined, {
       dateStyle: 'short',
@@ -413,59 +418,6 @@
       </div>
     </div>
   </div>
-
-  <div class="card bg-base-300 p-4">
-    <div class="flex items-start justify-between">
-      <h3 class="mb-4 text-lg font-bold">
-        Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
-      </h3>
-      <div class="stat-value text-primary">
-        {#if dataApiFollows}
-          {dataApiFollows?.followsTotal}
-        {:else}
-          <div class="skeleton h-10 w-20 bg-base-200"></div>
-        {/if}
-      </div>
-    </div>
-
-    <div class="h-[200px] w-full">
-      <AreaChart
-        data={followsPeriods}
-        x="timestamp"
-        y="count"
-        axis="y"
-        padding={{ left: 24 }}
-        grid={false}
-        rule={false}
-        props={{
-          yAxis: {
-            tickLength: 0,
-            tickLabelProps: {
-              class: 'fill-base-content/50',
-            },
-          },
-        }}
-        series={[{ key: 'count', label: 'Follow', color: 'oklch(var(--p))' }]}
-      >
-        <svelte:fragment slot="marks">
-          <LinearGradient
-            class={dataApiFollows
-              ? 'from-primary/50 to-primary/0'
-              : 'from-gray-600/50 to-gray-600/0'}
-            vertical
-            let:url
-          >
-            <Area
-              tweened
-              line={{ class: `stroke-2 ${dataApiFollows ? 'stroke-primary' : 'stroke-gray-600'}` }}
-              fill={url}
-            />
-          </LinearGradient>
-        </svelte:fragment>
-      </AreaChart>
-    </div>
-  </div>
-
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
@@ -517,6 +469,7 @@
         </button>
       </div>
     </div>
+
     <div class="h-[250px] w-full">
       <ScatterChart
         x="hour"
@@ -600,6 +553,62 @@
       </div> -->
     </div>
   </div>
+
+  {#if !skipFollow}
+    <div class="card bg-base-300 p-4">
+      <div class="flex items-start justify-between">
+        <h3 class="mb-4 text-lg font-bold">
+          Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
+        </h3>
+        <div class="stat-value text-primary">
+          {#if dataApiFollows}
+            {dataApiFollows?.followsTotal}
+          {:else}
+            <div class="skeleton h-10 w-20 bg-base-200"></div>
+          {/if}
+        </div>
+      </div>
+
+      <div class="h-[200px] w-full">
+        <AreaChart
+          data={followsPeriods}
+          x="timestamp"
+          y="count"
+          axis="y"
+          padding={{ left: 24 }}
+          grid={false}
+          rule={false}
+          props={{
+            yAxis: {
+              tickLength: 0,
+              tickLabelProps: {
+                class: 'fill-base-content/50',
+              },
+            },
+          }}
+          series={[{ key: 'count', label: 'Follow', color: 'oklch(var(--p))' }]}
+        >
+          <svelte:fragment slot="marks">
+            <LinearGradient
+              class={dataApiFollows
+                ? 'from-primary/50 to-primary/0'
+                : 'from-gray-600/50 to-gray-600/0'}
+              vertical
+              let:url
+            >
+              <Area
+                tweened
+                line={{
+                  class: `stroke-2 ${dataApiFollows ? 'stroke-primary' : 'stroke-gray-600'}`,
+                }}
+                fill={url}
+              />
+            </LinearGradient>
+          </svelte:fragment>
+        </AreaChart>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <div class="mt-12 text-center text-sm text-gray-500">
