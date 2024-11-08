@@ -10,6 +10,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 0,
         nbPostRepliesToOthers: 0,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🦥"`)
   })
@@ -21,6 +22,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 3,
         nbPostRepliesToOthers: 4,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🦉"`)
   })
@@ -32,6 +34,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 36,
         nbPostRepliesToOthers: 13,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🦚"`)
   })
@@ -43,6 +46,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 32,
         nbPostRepliesToOthers: 68,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🦋"`)
   })
@@ -54,6 +58,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 8,
         nbPostRepliesToOthers: 22,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🐝"`)
   })
@@ -65,6 +70,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 4,
         nbPostRepliesToOthers: 5,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🕷️"`)
   })
@@ -76,6 +82,7 @@ describe('determineCategory', () => {
         nbPostRepliesToAStartedOne: 3,
         nbPostRepliesToOthers: 12,
         kindOfEmbed: [],
+        altPercentage: 0,
       }).emoji,
     ).toMatchInlineSnapshot(`"🐱"`)
   })

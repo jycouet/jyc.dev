@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "TZ=UTC && vite dev",
+    "test": "vitest",
     "//// ---- BEST PRACTICES ---- ////": "",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "format": "kitql-lint -f",
