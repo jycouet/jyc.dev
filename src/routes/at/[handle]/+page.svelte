@@ -60,7 +60,7 @@
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
 
-  const description = `${data.displayName} | Some stats about Atmosphere`
+  const description = `${data.displayName} | Stats on Bluesky, At Protocol, ...`
 
   let selection = $state(['like', 'post', 'repost'])
   const toggleSelection = (name: string) => {

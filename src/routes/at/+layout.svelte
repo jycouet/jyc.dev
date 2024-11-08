@@ -1,10 +1,10 @@
 <script lang="ts">
   import Og from '$lib/components/Og.svelte'
 
-  const description = 'Some stats about Atmosphere'
+  const description = 'Stats on Bluesky, At Protocol, ...'
 </script>
 
-<Og title={`Atmosphere - Stats`} {description} />
+<Og title="Atmosphere - Stats" {description} />
 
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
