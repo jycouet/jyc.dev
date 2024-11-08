@@ -592,9 +592,12 @@
         </svelte:fragment>
       </ScatterChart>
       <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
-        Each time you press the like button or do a post, the app will count +1 on the correct day
-        (y) and time (x).
+        Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and time
+        (x).
       </div>
+      <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
+        Clicking on the total number of likes, posts and reposts will hide/show on the punch card.
+      </div> -->
     </div>
   </div>
 </div>
@@ -602,11 +605,7 @@
 <div class="mt-12 text-center text-sm text-gray-500">
   You have a request? Ask me here: 🦋 <a
     target="_blank"
-    href={createBSkyIntent([
-      `Hey @jyc.dev could we have [YOUR REQUEST] 😉 ?`,
-      '',
-      '>> FOR THE MENTION TO WORK YOU NEED TO VALIDATE MY HANDLE IN THE MESSAGE <<',
-    ])}
+    href={createBSkyIntent([`Hey @jyc.dev could we have [YOUR REQUEST 😉] ?`])}
     class="link link-primary">@jyc.dev</a
   > - I'll be happy to try ;)
 </div>
