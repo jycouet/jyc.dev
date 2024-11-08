@@ -154,23 +154,56 @@ export async function getHandleStats(tzOffset: number, did: string) {
             { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
           ]
 
-          const kindOfEmbed = posts.records.reduce(
+          let imageAltRatio = 0
+          let kindOfEmbed = posts.records.reduce(
             (acc, post) => {
-              const embedType = (post.value.embed?.$type || 'text only')
+              let embedType = (post.value.embed?.$type || 'Text only')
                 .replaceAll('app.bsky.embed.', '')
-                .replaceAll('record', 'link to other post')
-                .replaceAll('external', 'link to outside')
-                .replaceAll('images', 'image')
+                .replaceAll('recordWithMedia', 'Link to other post')
+                .replaceAll('record', 'Link to other post')
+                .replaceAll('external', 'Link to outside')
+                .replaceAll('images', 'Image')
+
+              embedType = embedType.charAt(0).toUpperCase() + embedType.slice(1)
+
+              let inc = 1
+              if (embedType === 'Image') {
+                const hasAlt = post.value.embed.images.filter(
+                  (img: { alt: string }) => img.alt?.trim().length > 0,
+                ).length
+                const totalImages = post.value.embed.images.length
+                const altRatio = hasAlt / totalImages
+                imageAltRatio += altRatio
+                inc = totalImages
+              }
+
               const existingType = acc.find((t) => t.kind === embedType)
               if (existingType) {
-                existingType.count++
+                existingType.count = existingType.count + inc
               } else {
-                acc.push({ kind: embedType, count: 1 })
+                acc.push({ kind: embedType, count: inc })
               }
               return acc
             },
             [] as Array<{ kind: string; count: number }>,
           )
+          // console.log(`images`, images)
+          // console.log(`imageAltRatio`, imageAltRatio)
+          kindOfEmbed = kindOfEmbed.map((embed) => {
+            if (embed.kind === 'Image') {
+              const altPercentage =
+                embed.count > 0 ? Math.round((imageAltRatio / embed.count) * 100) : 100
+
+              return {
+                ...embed,
+                kind:
+                  altPercentage === 0
+                    ? 'Image (Would be better with alt)'
+                    : `Image (${altPercentage}% with alt)`,
+              }
+            }
+            return embed
+          })
 
           // **********
           // PERSONNALYTY - END
