@@ -268,11 +268,18 @@
             ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
             : ['oklch(var(--n))']}
         ></PieChart>
-        <div class="absolute mt-16 text-3xl">{dataApi?.category?.emoji ?? '💡'}</div>
+        <div
+          class="absolute mt-14 h-14 w-14 rounded-full bg-base-300 p-2 text-3xl {dataApi?.altPercentage ===
+          100
+            ? 'drop-shadow-[0_0_20px_rgba(234,179,8,1)]'
+            : ''} "
+        >
+          {dataApi?.category?.emoji ?? '💡'}
+        </div>
         <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
         <div class="mb-4 flex w-full flex-col items-center gap-2">
           {#if dataApi}
-            <h4 class="z-10 text-center text-xl font-bold text-primary">
+            <h4 class="z-10 -mx-4 text-center text-xl font-bold text-primary">
               {dataApi?.category?.title ?? '...'}
             </h4>
             <p class="z-10 text-center text-sm text-base-content/70">

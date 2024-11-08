@@ -155,6 +155,7 @@ export async function getHandleStats(tzOffset: number, did: string) {
           ]
 
           let imageAltRatio = 0
+          let altPercentage = 0
           let kindOfEmbed = posts.records.reduce(
             (acc, post) => {
               let embedType = (post.value.embed?.$type || 'Text only')
@@ -166,11 +167,14 @@ export async function getHandleStats(tzOffset: number, did: string) {
 
               embedType = embedType.charAt(0).toUpperCase() + embedType.slice(1)
 
+              // https://atproto-browser.vercel.app/at/did:plc:dacfxuonkf2qtqft22sc23tu/app.bsky.feed.post/3lahlaoiohs2j
+              // GIF is considered as external. Maybe I should consider it as GIF?
+
               let inc = 1
               if (embedType === 'Image') {
-                const hasAlt = post.value.embed.images.filter(
-                  (img: { alt: string }) => img.alt?.trim().length > 0,
-                ).length
+                const hasAlt = post.value.embed.images.filter((img: { alt: string }) => {
+                  return img.alt?.trim().length > 0
+                }).length
                 const totalImages = post.value.embed.images.length
                 const altRatio = hasAlt / totalImages
                 imageAltRatio += altRatio
@@ -191,8 +195,7 @@ export async function getHandleStats(tzOffset: number, did: string) {
           // console.log(`imageAltRatio`, imageAltRatio)
           kindOfEmbed = kindOfEmbed.map((embed) => {
             if (embed.kind === 'Image') {
-              const altPercentage =
-                embed.count > 0 ? Math.round((imageAltRatio / embed.count) * 100) : 100
+              altPercentage = embed.count > 0 ? Math.round((imageAltRatio / embed.count) * 100) : 50
 
               const kind =
                 altPercentage === 0
@@ -234,11 +237,13 @@ export async function getHandleStats(tzOffset: number, did: string) {
             totalReposts: reposts.records.length,
             kindOfPost,
             kindOfEmbed,
+            altPercentage,
             category: determineCategory({
               nbPostStared,
               nbPostRepliesToAStartedOne,
               nbPostRepliesToOthers,
               kindOfEmbed,
+              altPercentage,
             }),
           }
         }

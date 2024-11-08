@@ -73,8 +73,15 @@ export function determineCategory(args: {
     kind: string
     count: number
   }[]
+  altPercentage: number
 }): { title: string; traits: string; emoji: string } {
-  const { nbPostStared, nbPostRepliesToAStartedOne, nbPostRepliesToOthers, kindOfEmbed } = args
+  const {
+    nbPostStared,
+    nbPostRepliesToAStartedOne,
+    nbPostRepliesToOthers,
+    kindOfEmbed,
+    altPercentage,
+  } = args
 
   const totalReplies = nbPostRepliesToAStartedOne + nbPostRepliesToOthers
   const totalInteractions = nbPostStared + totalReplies
@@ -143,7 +150,7 @@ export function determineCategory(args: {
   }
 
   // Combine title and traits
-  const title = `The ${animalBase} ${specialty}`
+  const title = `${altPercentage === 100 ? 'Epic' : 'The'} ${animalBase} ${specialty}`
   const traits = `${categories[animalBase].trait} ${specialties[specialty].trait}`
 
   return {
