@@ -194,12 +194,20 @@ export async function getHandleStats(tzOffset: number, did: string) {
               const altPercentage =
                 embed.count > 0 ? Math.round((imageAltRatio / embed.count) * 100) : 100
 
+              const kind =
+                altPercentage === 0
+                  ? 'Image (Would be better with alt! 🙏)'
+                  : altPercentage < 25
+                    ? `Image (Good start, keep going! 🌱 ${altPercentage}% alted)`
+                    : altPercentage < 75
+                      ? `Image (Great, you are getting it! ✨ ${altPercentage}% alted)`
+                      : altPercentage < 100
+                        ? `Image (Almost perfect! 🎉 ${altPercentage}% alted)`
+                        : `Image (You rock! 🎸 ${altPercentage}% alted)`
+
               return {
                 ...embed,
-                kind:
-                  altPercentage === 0
-                    ? 'Image (Would be better with alt)'
-                    : `Image (${altPercentage}% with alt)`,
+                kind,
               }
             }
             return embed
