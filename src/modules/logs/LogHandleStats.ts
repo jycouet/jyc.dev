@@ -18,6 +18,9 @@ export class LogHandleStats {
   @Fields.string({ required: true })
   did!: string
 
+  @Fields.string()
+  emoji = ''
+
   @Fields.number()
   tzOffset = -1
 
@@ -27,6 +30,6 @@ export class LogHandleStats {
   @Fields.number()
   nbRequests = -1
 
-  @Fields.number()
-  nbFollow = -1
+  @Fields.json()
+  metadata = {}
 }

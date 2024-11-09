@@ -21,7 +21,7 @@
         if (withFollow) {
           await goto(route(`/at/[handle]`, { handle: cleanHandle }))
         } else {
-          await goto(route(`/at/[handle]`, { handle: cleanHandle, skip_follow: true }))
+          await goto(route(`/at/[handle]`, { handle: cleanHandle, skip_follow: 'true' }))
         }
       } catch (e) {
         error = 'An error occurred'

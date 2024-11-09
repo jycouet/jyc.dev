@@ -13,7 +13,7 @@ export default defineConfig({
           explicit_search_params: {
             skip_follow: {
               required: false,
-              type: 'boolean',
+              type: '"true" | "false"',
             },
           },
         },

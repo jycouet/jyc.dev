@@ -236,6 +236,8 @@ export async function getHandleStats(tzOffset: number, did: string) {
               totalLikes,
               totalPosts,
               totalReposts,
+              posts: { nbPostStared, nbPostRepliesToAStartedOne, nbPostRepliesToOthers },
+              kindOfEmbed,
             },
           })
 
@@ -292,14 +294,14 @@ export async function getHandleFollow(tzOffset: number, did: string) {
           // **********
           // FOLLOW CHART - START
           // **********
-          const followsTotal = follows.records.length
+          const nbFollow = follows.records.length
           const followsPeriods: { timestamp: Date; count: number }[] = []
 
           // Get current time and round down to nearest 12h period
           const currentPeriodStart = new Date()
           followsPeriods.unshift({
             timestamp: new Date(currentPeriodStart),
-            count: followsTotal,
+            count: nbFollow,
           })
           currentPeriodStart.setMinutes(0, 0, 0)
           if (currentPeriodStart.getHours() >= 12) {
@@ -335,7 +337,7 @@ export async function getHandleFollow(tzOffset: number, did: string) {
           if (followsPeriods.length === 1) {
             followsPeriods.unshift({
               timestamp: new Date(currentPeriodStart),
-              count: followsTotal,
+              count: nbFollow,
             })
           }
 
@@ -349,12 +351,12 @@ export async function getHandleFollow(tzOffset: number, did: string) {
             tzOffset,
             execTime,
             nbRequests,
-            nbFollow: followsTotal,
+            nbFollow,
           })
 
           return {
             followsPeriods,
-            followsTotal,
+            followsTotal: nbFollow,
           }
         }
       }

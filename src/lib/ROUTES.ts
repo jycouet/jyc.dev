@@ -10,7 +10,7 @@
  */
 const PAGES = {
   "/at": `/at`,
-  "/at/[handle]": (params: { handle: (string | number), skip_follow?: (boolean) }) => {
+  "/at/[handle]": (params: { handle: (string | number), skip_follow?: ("true" | "false") }) => {
     return `/at/${params.handle}${appendSp({ skip_follow: params.skip_follow })}`
   },
   "/blog": `/blog`,

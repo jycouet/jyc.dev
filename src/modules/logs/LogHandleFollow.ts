@@ -27,6 +27,6 @@ export class LogHandleFollow {
   @Fields.number()
   nbRequests = -1
 
-  @Fields.json()
-  metadata = {}
+  @Fields.number()
+  nbFollow = -1
 }
