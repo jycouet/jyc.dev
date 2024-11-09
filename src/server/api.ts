@@ -5,25 +5,27 @@ import { remultSveltekit } from 'remult/remult-sveltekit'
 import { DATABASE_URL } from '$env/static/private'
 
 import { AtController } from '$modules/at/AtController'
-import { getFollowsPeriods, getHandleStats } from '$modules/at/AtController.server'
+import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
 import { LogHandle } from '$modules/logs/LogHandle'
+import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 // import { Roles } from '../modules/auth/Roles'
-// SqlDatabase.LogToConsole = 'oneLiner'
+SqlDatabase.LogToConsole = false
 
 export const dataProvider = await createPostgresDataProvider({
   connectionString: DATABASE_URL,
 })
 
 export const api = remultSveltekit({
+  logApiEndPoints: false,
   // admin: Roles.admin,
-  admin: true,
+  admin: false,
   dataProvider,
-  entities: [LogHandle, LogHandleStats],
+  entities: [LogHandle, LogHandleStats, LogHandleFollow],
   controllers: [AtController],
   initApi: () => {
     AtController.getHandleStatsAbscact = getHandleStats
-    AtController.getFollowsPeriodsAbscact = getFollowsPeriods
+    AtController.getHandleFollowAbscact = getHandleFollow
   },
 })

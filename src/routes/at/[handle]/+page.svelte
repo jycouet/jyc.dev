@@ -11,16 +11,17 @@
 
   let { data } = $props()
   let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
-  let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getFollowsPeriods>>>()
+  let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
 
   let currentISOString = $state('')
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
-    AtController.getHandleStats(new Date().getTimezoneOffset(), data.did!).then((res) => {
+    const tzOffset = new Date().getTimezoneOffset()
+    AtController.getHandleStats(tzOffset, data.did!).then((res) => {
       dataApi = res
     })
     if (!skipFollow) {
-      AtController.getFollowsPeriods(new Date().getTimezoneOffset(), data.did!).then((res) => {
+      AtController.getHandleFollow(tzOffset, data.did!).then((res) => {
         dataApiFollows = res
       })
     }

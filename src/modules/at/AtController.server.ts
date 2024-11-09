@@ -2,9 +2,9 @@ import { performance } from 'perf_hooks'
 import { DidResolver, getPds } from '@atproto/identity'
 
 import { repo } from 'remult'
-import { green, Log, magenta } from '@kitql/helpers'
 
 import { listRecordsAll } from '$lib/at/helper'
+import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 import { determineCategory } from './determineCategory'
@@ -66,8 +66,6 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
 
   return result
 }
-
-const log = new Log('AtController')
 
 export async function getHandleStats(tzOffset: number, did: string) {
   const startTime = performance.now()
@@ -227,7 +225,6 @@ export async function getHandleStats(tzOffset: number, did: string) {
           const totalReposts = reposts.records.length
 
           const execTime = Math.round(performance.now() - startTime)
-
           await repo(LogHandleStats).insert({
             did,
             tzOffset,
@@ -266,9 +263,8 @@ export async function getHandleStats(tzOffset: number, did: string) {
   return null
 }
 
-export async function getFollowsPeriods(tzOffset: number, did: string) {
-  log.info(green(did), magenta(`getFollowsPeriods`), tzOffset)
-  let start = new Date()
+export async function getHandleFollow(tzOffset: number, did: string) {
+  const startTime = performance.now()
   // const dt = new Date()
   // const serverDate = new Date(dt)
   // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
@@ -291,16 +287,7 @@ export async function getFollowsPeriods(tzOffset: number, did: string) {
         if (pds) {
           const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow')
 
-          const totalRequests = follows.nbRequest
-
-          let end = new Date()
-          log.info(
-            green(did),
-            magenta(`getFollowsPeriods`),
-            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
-            totalRequests,
-          )
-          start = end
+          const nbRequests = follows.nbRequest
 
           // **********
           // FOLLOW CHART - START
@@ -356,12 +343,14 @@ export async function getFollowsPeriods(tzOffset: number, did: string) {
           // FOLLOW CHART - END
           // **********
 
-          end = new Date()
-          log.info(
-            green(did),
-            magenta(`getFollowsPeriods`),
-            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
-          )
+          const execTime = Math.round(performance.now() - startTime)
+          await repo(LogHandleFollow).insert({
+            did,
+            tzOffset,
+            execTime,
+            nbRequests,
+            nbFollow: followsTotal,
+          })
 
           return {
             followsPeriods,

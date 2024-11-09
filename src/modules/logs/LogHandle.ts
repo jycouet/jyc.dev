@@ -1,4 +1,7 @@
-import { Entity, Fields } from 'remult'
+import { Entity, Fields, Relations } from 'remult'
+
+import { LogHandleFollow } from './LogHandleFollow'
+import { LogHandleStats } from './LogHandleStats'
 
 @Entity<LogHandle>('log-handles', {
   defaultOrderBy: {
@@ -23,4 +26,12 @@ export class LogHandle {
 
   @Fields.json()
   metadata = {}
+
+  @Relations.toMany<LogHandle, LogHandleStats>(() => LogHandleStats, { fields: { did: 'did' } })
+  stats = []
+
+  @Relations.toMany<LogHandle, LogHandleFollow>(() => LogHandleFollow, {
+    fields: { did: 'did' },
+  })
+  follows = []
 }

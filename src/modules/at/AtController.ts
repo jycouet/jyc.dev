@@ -1,10 +1,10 @@
 import { BackendMethod } from 'remult'
 
-import type { getFollowsPeriods, getHandleStats } from './AtController.server'
+import type { getHandleFollow, getHandleStats } from './AtController.server'
 
 export class AtController {
   static getHandleStatsAbscact: typeof getHandleStats
-  static getFollowsPeriodsAbscact: typeof getFollowsPeriods
+  static getHandleFollowAbscact: typeof getHandleFollow
 
   @BackendMethod({ allowed: true })
   static async getHandleStats(tzOffset: number, did: string) {
@@ -12,7 +12,7 @@ export class AtController {
   }
 
   @BackendMethod({ allowed: true })
-  static async getFollowsPeriods(tzOffset: number, did: string) {
-    return AtController.getFollowsPeriodsAbscact(tzOffset, did)
+  static async getHandleFollow(tzOffset: number, did: string) {
+    return AtController.getHandleFollowAbscact(tzOffset, did)
   }
 }

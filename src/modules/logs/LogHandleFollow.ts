@@ -1,11 +1,11 @@
 import { Entity, Fields } from 'remult'
 
-@Entity<LogHandleStats>('log-handles-stats', {
+@Entity<LogHandleFollow>('log-handles-follows', {
   defaultOrderBy: {
     updatedAt: 'desc',
   },
 })
-export class LogHandleStats {
+export class LogHandleFollow {
   @Fields.cuid()
   id!: string
 
@@ -24,6 +24,6 @@ export class LogHandleStats {
   @Fields.number()
   nbRequests = -1
 
-  @Fields.number()
-  nbFollow = -1
+  @Fields.json()
+  metadata = {}
 }
