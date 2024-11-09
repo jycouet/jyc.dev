@@ -3,6 +3,7 @@ import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 
 import { DATABASE_URL } from '$env/static/private'
+import { building } from '$app/environment'
 
 import { AtController } from '$modules/at/AtController'
 import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
@@ -20,6 +21,7 @@ export const dataProvider = await createPostgresDataProvider({
 export const api = remultSveltekit({
   logApiEndPoints: false,
   // admin: Roles.admin,
+  ensureSchema: !building,
   admin: false,
   dataProvider,
   entities: [LogHandle, LogHandleStats, LogHandleFollow],
