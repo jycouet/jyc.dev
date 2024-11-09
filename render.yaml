@@ -28,4 +28,4 @@ databases:
     databaseName: main_db
     region: frankfurt
     plan: Basic-256mb
-    disksizeGB: 1
+    diskSizeGB: 1
