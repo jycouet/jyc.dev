@@ -18,3 +18,13 @@ services:
       - key: NODE_ENV
         value: production
       - fromGroup: jyc-dev
+      - key: DATABASE_URL
+        fromDatabase:
+          name: jyc-dev-db
+          property: connectionString
+
+databases:
+  - name: jyc-dev-db
+    databaseName: main_db
+    region: frankfurt
+    plan: Basic-256mb

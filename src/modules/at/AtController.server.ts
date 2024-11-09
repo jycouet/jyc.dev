@@ -1,8 +1,11 @@
+import { performance } from 'perf_hooks'
 import { DidResolver, getPds } from '@atproto/identity'
 
+import { repo } from 'remult'
 import { green, Log, magenta } from '@kitql/helpers'
 
 import { listRecordsAll } from '$lib/at/helper'
+import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 import { determineCategory } from './determineCategory'
 
@@ -67,8 +70,8 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
 const log = new Log('AtController')
 
 export async function getHandleStats(tzOffset: number, did: string) {
-  log.info(green(did), magenta(`getHandleStats   `), tzOffset)
-  let start = new Date()
+  const startTime = performance.now()
+
   // const dt = new Date()
   // const serverDate = new Date(dt)
   // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
@@ -101,16 +104,7 @@ export async function getHandleStats(tzOffset: number, did: string) {
             }),
           ])
 
-          const totalRequests = likes.nbRequest + posts.nbRequest + reposts.nbRequest
-
-          let end = new Date()
-          log.info(
-            green(did),
-            magenta(`getHandleStats   `),
-            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
-            totalRequests,
-          )
-          start = end
+          const nbRequests = likes.nbRequest + posts.nbRequest + reposts.nbRequest
 
           // **********
           // PUNCH CARD - START
@@ -220,31 +214,48 @@ export async function getHandleStats(tzOffset: number, did: string) {
           // PERSONNALYTY - END
           // **********
 
-          end = new Date()
-          log.info(
-            green(did),
-            magenta(`getHandleStats   `),
-            ((end.getTime() - start.getTime()) / 1000).toFixed(1) + 's',
-          )
+          const category = determineCategory({
+            nbPostStared,
+            nbPostRepliesToAStartedOne,
+            nbPostRepliesToOthers,
+            kindOfEmbed,
+            altPercentage,
+          })
+
+          const totalLikes = likes.records.length
+          const totalPosts = posts.records.length
+          const totalReposts = reposts.records.length
+
+          const execTime = Math.round(performance.now() - startTime)
+
+          await repo(LogHandleStats).insert({
+            did,
+            tzOffset,
+            execTime,
+            nbRequests,
+            emoji: category.emoji,
+            metadata: {
+              altPercentage,
+              totalLikes,
+              totalPosts,
+              totalReposts,
+            },
+          })
 
           return {
             likes: getActivityCounts(likes),
             posts: getActivityCounts(posts),
             reposts: getActivityCounts(reposts),
             punchCard,
-            totalLikes: likes.records.length,
-            totalPosts: posts.records.length,
-            totalReposts: reposts.records.length,
+
+            totalLikes,
+            totalPosts,
+            totalReposts,
+
             kindOfPost,
             kindOfEmbed,
             altPercentage,
-            category: determineCategory({
-              nbPostStared,
-              nbPostRepliesToAStartedOne,
-              nbPostRepliesToOthers,
-              kindOfEmbed,
-              altPercentage,
-            }),
+            category,
           }
         }
       }

@@ -2,6 +2,8 @@ import { type Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { parseAcceptLanguage } from 'intl-parse-accept-language'
 
+import { api as handleRemult } from './server/api'
+
 import { handleProxies } from '@kitql/handles'
 
 export const handleLang: Handle = ({ event, resolve }) => {
@@ -19,4 +21,5 @@ export const handle = sequence(
     ['/posthog/static', { to: 'https://eu-assets.i.posthog.com/static' }],
     ['/posthog', { to: 'https://eu.i.posthog.com' }],
   ]),
+  handleRemult
 )
