@@ -1,6 +1,9 @@
 import { Entity, Fields } from 'remult'
 
+import { Roles } from '$modules/auth/Roles'
+
 @Entity<LogHandleFollow>('log-handles-follows', {
+  allowApiCrud: Roles.admin,
   defaultOrderBy: {
     updatedAt: 'desc',
   },

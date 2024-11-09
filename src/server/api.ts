@@ -11,8 +11,9 @@ import { LogHandle } from '$modules/logs/LogHandle'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
-// import { Roles } from '../modules/auth/Roles'
-SqlDatabase.LogToConsole = false
+import { Roles } from '../modules/auth/Roles'
+
+SqlDatabase.LogToConsole = true
 
 export const dataProvider = await createPostgresDataProvider({
   connectionString: DATABASE_URL,
@@ -20,9 +21,8 @@ export const dataProvider = await createPostgresDataProvider({
 
 export const api = remultSveltekit({
   logApiEndPoints: false,
-  // admin: Roles.admin,
   ensureSchema: !building,
-  admin: false,
+  admin: Roles.admin,
   dataProvider,
   entities: [LogHandle, LogHandleStats, LogHandleFollow],
   controllers: [AtController],
