@@ -3,7 +3,7 @@ services:
     name: jyc.dev
     env: node
     repo: https://github.com/jycouet/jyc.dev
-    region: frankfurt
+    region: oregon
     branch: main
     buildCommand: npm i -g pnpm@9.0.1; pnpm install --production=false; pnpm build
     startCommand: pnpm start
@@ -27,6 +27,6 @@ services:
 databases:
   - name: jyc-dev-db
     databaseName: main_db
-    region: frankfurt
+    region: oregon
     plan: Basic-256mb
     diskSizeGB: 1
