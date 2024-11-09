@@ -9,54 +9,50 @@
  * PAGES
  */
 const PAGES = {
-  '/at': `/at`,
-  '/at/[handle]': (params: { handle: string | number; skip_follow?: boolean }) => {
+  "/at": `/at`,
+  "/at/[handle]": (params: { handle: (string | number), skip_follow?: (boolean) }) => {
     return `/at/${params.handle}${appendSp({ skip_follow: params.skip_follow })}`
   },
-  '/blog': `/blog`,
-  '/blog/[link_under_blog]': (params: { link_under_blog: string | number }) => {
+  "/blog": `/blog`,
+  "/blog/[link_under_blog]": (params: { link_under_blog: (string | number) }) => {
     return `/blog/${params.link_under_blog}`
   },
-  '/blog/[pds]/[repo]/[collection]/[rkey]': (params: {
-    pds: string | number
-    repo: string | number
-    collection: string | number
-    rkey: string | number
-  }) => {
+  "/blog/[pds]/[repo]/[collection]/[rkey]": (params: { pds: (string | number), repo: (string | number), collection: (string | number), rkey: (string | number) }) => {
     return `/blog/${params.pds}/${params.repo}/${params.collection}/${params.rkey}`
   },
-  '/thumb-meta': `/thumb-meta`,
-  '/thumb-meta/[videoId]': (params: { videoId: string | number }) => {
+  "/thumb-meta": `/thumb-meta`,
+  "/thumb-meta/[videoId]": (params: { videoId: (string | number) }) => {
     return `/thumb-meta/${params.videoId}`
-  },
+  }
 }
 
 /**
  * SERVERS
  */
 const SERVERS = {
-  'GET /api/healthz': `/api/healthz`,
+  "GET /api/healthz": `/api/healthz`
 }
 
 /**
  * ACTIONS
  */
-const ACTIONS = {}
+const ACTIONS = {
+  
+}
 
 /**
  * LINKS
  */
-const LINKS = {}
+const LINKS = {
+  
+}
 
 type ParamValue = string | number | undefined
 
 /**
  * Append search params to a string
  */
-export const appendSp = (
-  sp?: Record<string, ParamValue | ParamValue[]>,
-  prefix: '?' | '&' = '?',
-) => {
+export const appendSp = (sp?: Record<string, ParamValue | ParamValue[]>, prefix: '?' | '&' = '?') => {
   if (sp === undefined) return ''
 
   const params = new URLSearchParams()
@@ -85,12 +81,12 @@ export const appendSp = (
 
 /**
  * get the current search params
- *
+ * 
  * Could be use like this:
  * ```
  * route("/cities", { page: 2 }, { ...currentSP() })
  * ```
- */
+ */ 
 export const currentSp = () => {
   const params = new URLSearchParams(window.location.search)
   const record: Record<string, string> = {}
@@ -108,28 +104,23 @@ type FunctionParams<T> = T extends (...args: infer P) => any ? P : never
 const AllObjs = { ...PAGES, ...ACTIONS, ...SERVERS, ...LINKS }
 type AllTypes = typeof AllObjs
 
-export type Routes = keyof AllTypes extends `${string}/${infer Route}`
-  ? `/${Route}`
-  : keyof AllTypes
+export type Routes = keyof AllTypes extends `${string}/${infer Route}` ? `/${Route}` : keyof AllTypes
 export const routes = [
-  ...new Set(Object.keys(AllObjs).map((route) => /^\/.*|[^ ]?\/.*$/.exec(route)?.[0] ?? route)),
+	...new Set(Object.keys(AllObjs).map((route) => /^\/.*|[^ ]?\/.*$/.exec(route)?.[0] ?? route)),
 ] as Routes[]
 
 /**
- * To be used like this:
+ * To be used like this: 
  * ```ts
  * import { route } from './ROUTES'
- *
+ * 
  * route('site_id', { id: 1 })
  * ```
  */
-export function route<T extends FunctionKeys<AllTypes>>(
-  key: T,
-  ...params: FunctionParams<AllTypes[T]>
-): string
+export function route<T extends FunctionKeys<AllTypes>>(key: T, ...params: FunctionParams<AllTypes[T]>): string
 export function route<T extends NonFunctionKeys<AllTypes>>(key: T): string
 export function route<T extends keyof AllTypes>(key: T, ...params: any[]): string {
-  if ((AllObjs[key] as any) instanceof Function) {
+  if (AllObjs[key] as any instanceof Function) {
     const element = (AllObjs as any)[key] as (...args: any[]) => string
     return element(...params)
   } else {
@@ -138,41 +129,24 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 }
 
 /**
- * Add this type as a generic of the vite plugin `kitRoutes<KIT_ROUTES>`.
- *
- * Full example:
- * ```ts
- * import type { KIT_ROUTES } from './ROUTES'
- * import { kitRoutes } from 'vite-plugin-kit-routes'
- *
- * kitRoutes<KIT_ROUTES>({
- *  PAGES: {
- *    // here, key of object will be typed!
- *  }
- * })
- * ```
- */
+* Add this type as a generic of the vite plugin `kitRoutes<KIT_ROUTES>`.
+*
+* Full example:
+* ```ts
+* import type { KIT_ROUTES } from './ROUTES'
+* import { kitRoutes } from 'vite-plugin-kit-routes'
+*
+* kitRoutes<KIT_ROUTES>({
+*  PAGES: {
+*    // here, key of object will be typed!
+*  }
+* })
+* ```
+*/
 export type KIT_ROUTES = {
-  PAGES: {
-    '/at': never
-    '/at/[handle]': 'handle'
-    '/blog': never
-    '/blog/[link_under_blog]': 'link_under_blog'
-    '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey'
-    '/thumb-meta': never
-    '/thumb-meta/[videoId]': 'videoId'
-  }
+  PAGES: { '/at': never, '/at/[handle]': 'handle', '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never }
   ACTIONS: Record<string, never>
   LINKS: Record<string, never>
-  Params: {
-    handle: never
-    skip_follow: never
-    link_under_blog: never
-    pds: never
-    repo: never
-    collection: never
-    rkey: never
-    videoId: never
-  }
+  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never }
 }
