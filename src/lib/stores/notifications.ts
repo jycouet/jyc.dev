@@ -20,7 +20,7 @@ function createNotificationStore() {
       update((notifications) => [...notifications, { id, message, link, type }])
       setTimeout(() => {
         update((notifications) => notifications.filter((n) => n.id !== id))
-      }, 2500)
+      }, 4444)
     },
   }
 }
