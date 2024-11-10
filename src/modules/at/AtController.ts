@@ -7,8 +7,14 @@ export class AtController {
   static getHandleFollowAbscact: typeof getHandleFollow
 
   @BackendMethod({ allowed: true })
-  static async getHandleStats(tzOffset: number, did: string, handle: string, displayName: string) {
-    return AtController.getHandleStatsAbscact(tzOffset, did, handle, displayName)
+  static async getHandleStats(
+    tzOffset: number,
+    did: string,
+    handle: string,
+    displayName: string,
+    avatar: string,
+  ) {
+    return AtController.getHandleStatsAbscact(tzOffset, did, handle, displayName, avatar)
   }
 
   @BackendMethod({ allowed: true })

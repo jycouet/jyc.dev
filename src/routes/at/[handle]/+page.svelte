@@ -17,11 +17,15 @@
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
     const tzOffset = new Date().getTimezoneOffset()
-    AtController.getHandleStats(tzOffset, data.did!, data.handle!, data.displayName!).then(
-      (res) => {
-        dataApi = res
-      },
-    )
+    AtController.getHandleStats(
+      tzOffset,
+      data.did!,
+      data.handle!,
+      data.displayName!,
+      data.avatar!,
+    ).then((res) => {
+      dataApi = res
+    })
     if (!skipFollow) {
       AtController.getHandleFollow(tzOffset, data.did!).then((res) => {
         dataApiFollows = res

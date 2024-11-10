@@ -28,6 +28,9 @@ export class LogHandleStats {
   @Fields.string()
   emoji = ''
 
+  @Fields.string()
+  avatar = ''
+
   @Fields.number({ includeInApi: Roles.admin })
   tzOffset = -1
 

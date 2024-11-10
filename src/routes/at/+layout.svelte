@@ -36,10 +36,15 @@
       })
       .subscribe((info) => {
         if (first && info.items[0].handle !== $page.params.handle) {
-          notifications.add(
-            `${info.items[0].displayName} is a ${info.items[0].emoji}`,
-            `https://bsky.app/profile/${info.items[0].handle}`,
-          )
+          notifications.add({
+            id: info.items[0].handle,
+            bskyProfile: {
+              displayName: info.items[0].displayName,
+              handle: info.items[0].handle,
+              avatar: info.items[0].avatar,
+            },
+            emoji: info.items[0].emoji,
+          })
           // console.log(`info`, info)
         }
         first = true
@@ -59,13 +64,13 @@
       handle: 'tigur.com',
       avatar:
         'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg',
-      name: 'Tigur',
+      displayName: 'Tigur',
     },
     {
       handle: 'imlunahey.com',
       avatar:
         'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
-      name: 'Luna',
+      displayName: 'Luna',
     },
   ]
 </script>
@@ -100,9 +105,9 @@
 
       <Avatar
         handle="jyc.dev"
-        name="jyc"
+        displayName="jyc"
         avatar="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreifwequnkii37j2xkzjrpbh5cnuqjykocrxb4cfiwu4h7eonwrl3vm@jpeg"
-        size="sm"
+        size="w-6"
       />
 
       <a href="https://github.com/sponsors/jycouet" class="link link-secondary" target="_blank">

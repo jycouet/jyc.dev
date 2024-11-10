@@ -97,7 +97,7 @@
   </div>
 </form>
 
-<div class="mx-auto mt-16 flex w-full max-w-lg flex-col gap-8 text-center text-base-content/70">
+<div class="mx-auto mt-16 flex w-full max-w-lg flex-col gap-8 text-center text-base-content">
   <div class="grid gap-8">
     <!-- First row: 4 items -->
     <div class="grid grid-cols-2 gap-8 md:grid-cols-4">

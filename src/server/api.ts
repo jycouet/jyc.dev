@@ -1,4 +1,4 @@
-import { remult, SqlDatabase } from 'remult'
+import { SqlDatabase } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 

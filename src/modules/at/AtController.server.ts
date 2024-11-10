@@ -72,6 +72,7 @@ export async function getHandleStats(
   did: string,
   handle: string,
   displayName: string,
+  avatar: string,
 ) {
   const startTime = performance.now()
 
@@ -234,6 +235,7 @@ export async function getHandleStats(
             did,
             handle,
             displayName,
+            avatar,
             tzOffset,
             execTime,
             nbRequests,

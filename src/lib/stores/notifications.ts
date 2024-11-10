@@ -1,26 +1,27 @@
 import { writable } from 'svelte/store'
 
-export type NotificationType = 'info' | 'success' | 'warning' | 'error'
-
-export interface Notification {
-  id: number
-  message: string
-  link: string
-  type: NotificationType
+export type Notification = {
+  id: string
+  bskyProfile: {
+    displayName: string
+    handle: string
+    avatar: string
+  }
+  emoji: string
 }
 
 function createNotificationStore() {
   const { subscribe, update } = writable<Notification[]>([])
-  let nextId = 0
+  const nextId = 0
 
   return {
     subscribe,
-    add: (message: string, link: string = '', type: NotificationType = 'info') => {
-      const id = nextId++
-      update((notifications) => [...notifications, { id, message, link, type }])
+    add: (n: Notification) => {
+      const id = n.id
+      update((notifications) => [...notifications, n])
       setTimeout(() => {
         update((notifications) => notifications.filter((n) => n.id !== id))
-      }, 4444)
+      }, 5555)
     },
   }
 }
