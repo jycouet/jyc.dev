@@ -1,4 +1,4 @@
-import { SqlDatabase } from 'remult'
+import { repo, SqlDatabase } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 
@@ -7,6 +7,7 @@ import { building } from '$app/environment'
 
 import { AtController } from '$modules/at/AtController'
 import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
+import { BSkyty } from '$modules/at/BSkyty'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
   deleteSessionTokenCookie,
@@ -30,7 +31,7 @@ export const api = remultSveltekit({
   ensureSchema: !building,
   admin: Roles.admin,
   dataProvider,
-  entities: [LogHandle, LogHandleStats, LogHandleFollow, AppUser, AppUserSession],
+  entities: [LogHandle, LogHandleStats, LogHandleFollow, AppUser, AppUserSession, BSkyty],
   controllers: [AtController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null
@@ -52,8 +53,25 @@ export const api = remultSveltekit({
 
     return user ? { ...user, roles } : undefined
   },
-  initApi: () => {
+  initApi: async () => {
     AtController.getHandleStatsAbscact = getHandleStats
     AtController.getHandleFollowAbscact = getHandleFollow
+
+    const allStats = await repo(LogHandleStats).find({
+      orderBy: {
+        updatedAt: 'asc',
+      },
+    })
+    for (const stat of allStats) {
+      await repo(BSkyty).upsert({
+        where: { id: stat.did },
+        set: {
+          handle: stat.handle,
+          displayName: stat.displayName,
+          firstTimeHere: stat.updatedAt,
+          avatar: stat.avatar,
+        },
+      })
+    }
   },
 })
