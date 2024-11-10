@@ -72,6 +72,12 @@
         'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
       displayName: 'Luna',
     },
+    {
+      handle: 'harry-lewiston.bsky.social',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:aqkumzmd7yas67hexhiixkyq/bafkreieliyf4xvtyv3bdbn6wuon7l4mojhkvpybi5zoza25yptqvafbwx4@jpeg',
+      displayName: 'Harry Lewiston',
+    },
   ]
 </script>
 
