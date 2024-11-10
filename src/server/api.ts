@@ -5,6 +5,7 @@ import { remultSveltekit } from 'remult/remult-sveltekit'
 import { DATABASE_URL, DID_PLC_ADMIN } from '$env/static/private'
 import { building } from '$app/environment'
 
+import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
 import { BSkyty } from '$modules/at/BSkyty'
@@ -32,7 +33,7 @@ export const api = remultSveltekit({
   admin: Roles.admin,
   dataProvider,
   entities: [LogHandle, LogHandleStats, LogHandleFollow, AppUser, AppUserSession, BSkyty],
-  controllers: [AtController],
+  controllers: [AtController, AgentController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null
     if (token === null) {
@@ -58,22 +59,22 @@ export const api = remultSveltekit({
       AtController.getHandleStatsAbscact = getHandleStats
       AtController.getHandleFollowAbscact = getHandleFollow
 
-      const allStats = await repo(LogHandleStats).find({
-        orderBy: {
-          updatedAt: 'asc',
-        },
-      })
-      for (const stat of allStats) {
-        await repo(BSkyty).upsert({
-          where: { id: stat.did },
-          set: {
-            handle: stat.handle,
-            displayName: stat.displayName,
-            firstTimeHere: stat.updatedAt,
-            avatar: stat.avatar,
-          },
-        })
-      }
+      // const allStats = await repo(LogHandleStats).find({
+      //   orderBy: {
+      //     updatedAt: 'asc',
+      //   },
+      // })
+      // for (const stat of allStats) {
+      //   await repo(BSkyty).upsert({
+      //     where: { id: stat.did },
+      //     set: {
+      //       handle: stat.handle,
+      //       displayName: stat.displayName,
+      //       firstTimeHere: stat.updatedAt,
+      //       avatar: stat.avatar,
+      //     },
+      //   })
+      // }
     }
   },
 })
