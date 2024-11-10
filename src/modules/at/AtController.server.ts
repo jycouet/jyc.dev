@@ -3,7 +3,7 @@ import { DidResolver, getPds } from '@atproto/identity'
 
 import { repo } from 'remult'
 
-import { listRecordsAll } from '$lib/at/helper'
+import { listRecords, listRecordsAll } from '$lib/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -67,7 +67,12 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
   return result
 }
 
-export async function getHandleStats(tzOffset: number, did: string) {
+export async function getHandleStats(
+  tzOffset: number,
+  did: string,
+  handle: string,
+  displayName: string,
+) {
   const startTime = performance.now()
 
   // const dt = new Date()
@@ -227,6 +232,8 @@ export async function getHandleStats(tzOffset: number, did: string) {
           const execTime = Math.round(performance.now() - startTime)
           await repo(LogHandleStats).insert({
             did,
+            handle,
+            displayName,
             tzOffset,
             execTime,
             nbRequests,

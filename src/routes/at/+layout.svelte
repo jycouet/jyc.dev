@@ -1,14 +1,67 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte'
+
+  import { remult, repo } from 'remult'
+
+  import { page } from '$app/stores'
+
+  import Notification from '$lib/components/Notification.svelte'
   import Og from '$lib/components/Og.svelte'
+  import { notifications } from '$lib/stores/notifications'
+  import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
   const description = 'Stats on Bluesky, At Protocol, ...'
+  let hideOthers = false
+  let unSub: (() => void) | null = null
+  let { data } = $props()
+
+  let first = $state(false)
+  $effect(() => {
+    remult.user = data.user
+
+    unSub = remult
+      .repo(LogHandleStats)
+      .liveQuery({
+        limit: 1,
+        // where: { handle: { $not: $page.params.handle } },
+      })
+      .subscribe((info) => {
+        if (first && info.items[0].handle !== $page.params.handle) {
+          notifications.add(
+            `${info.items[0].displayName} is ${info.items[0].emoji}`,
+            `/at/${info.items[0].handle}`,
+          )
+          // console.log(`info`, info)
+        }
+        first = true
+      })
+  })
+
+  onDestroy(() => {
+    unSub && unSub()
+  })
+
+  // function handleHideOthersChange() {
+  //   notifications.add(hideOthers ? 'Others hidden' : 'Others visible', 'info')
+  // }
 </script>
 
 <Og title="Atmosphere - Stats" {description} />
 
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
-    <h1 class="mb-8 text-center text-4xl font-bold">Atmosphere - Stats</h1>
+    <div class="mb-8 flex items-center justify-center">
+      <h1 class="text-4xl font-bold">Atmosphere - Stats</h1>
+      <!-- <label class="flex items-center gap-1">
+        <input
+          type="checkbox"
+          bind:checked={hideOthers}
+          on:change={handleHideOthersChange}
+          class="checkbox scale-75"
+        />
+        <span class="cursor-pointer text-sm">Hide others</span>
+      </label> -->
+    </div>
 
     <div class="mx-auto max-w-3xl">
       <slot />
@@ -34,3 +87,5 @@
     </div>
   </footer>
 </div>
+
+<Notification />

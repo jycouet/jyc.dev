@@ -24,6 +24,9 @@ export class LogHandle {
   @Fields.string()
   handle = ''
 
+  @Fields.string()
+  displayName = ''
+
   @Fields.number()
   execTime = -1
 
