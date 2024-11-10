@@ -1,4 +1,4 @@
-import { SqlDatabase } from 'remult'
+import { remult, SqlDatabase } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 
@@ -50,7 +50,7 @@ export const api = remultSveltekit({
       roles.push(Roles.admin)
     }
 
-    return user ? user : undefined
+    return user ? { ...user, roles } : undefined
   },
   initApi: () => {
     AtController.getHandleStatsAbscact = getHandleStats
