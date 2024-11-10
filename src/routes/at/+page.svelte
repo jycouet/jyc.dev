@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { BarChart } from 'layerchart'
   import { fade } from 'svelte/transition'
 
   import { repo } from 'remult'
@@ -13,7 +14,19 @@
   let loading = $state(false)
   let withFollow = $state(true)
 
-  let stats: { emoji: string; $count: number }[] = $state([])
+  let loadingChart = $state(true)
+
+  let stats: { emoji: string; $count: number }[] = $state(
+    [
+      { emoji: '🦚', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🐝', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🦥', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🕷️', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🦋', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🐱', $count: Math.floor(Math.random() * 500) + 100 },
+      { emoji: '🦉', $count: Math.floor(Math.random() * 500) + 100 },
+    ].sort(() => Math.random() - 0.5),
+  )
 
   $effect(() => {
     repo(LogHandleStats)
@@ -22,6 +35,8 @@
         orderBy: { $count: 'asc' },
       })
       .then((c) => {
+        loadingChart = false
+        stats = []
         Object.entries(c).forEach(([key, { emoji, $count }]) => {
           if (emoji !== '') {
             stats.push({
@@ -97,31 +112,18 @@
   </div>
 </form>
 
-<div class="mx-auto mt-16 flex w-full max-w-lg flex-col gap-8 text-center text-base-content">
-  <div class="grid gap-8">
-    <!-- First row: 4 items -->
-    <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
-      {#each stats.slice(0, 4) as { emoji, $count }}
-        <div transition:fade={{ duration: 100 }} class="flex flex-col items-center gap-4">
-          <span class="text-5xl">{emoji}</span>
-          <span class="text-3xl">{$count.toLocaleString()}</span>
-        </div>
-      {/each}
-    </div>
-
-    <!-- Second row: 3 items -->
-    <div class="grid grid-cols-2 gap-8 md:grid-cols-3">
-      {#each stats.slice(4) as { emoji, $count }}
-        <div
-          transition:fade={{ duration: 100 }}
-          class="flex flex-col items-center gap-4 md:col-span-1"
-        >
-          <span class="text-5xl">{emoji}</span>
-          <span class="text-3xl">{$count.toLocaleString()}</span>
-        </div>
-      {/each}
-    </div>
-  </div>
+<div class="mt-10 h-[300px]">
+  <BarChart
+    data={stats}
+    x="emoji"
+    y="$count"
+    props={{
+      bars: { tweened: true },
+      xAxis: { tickLabelProps: { class: 'text-xl md:text-3xl', dy: 30 }, tickLength: 0 },
+      yAxis: { placement: 'right', tickLength: 0 },
+    }}
+    cRange={loadingChart ? ['oklch(var(--n)/1)'] : ['oklch(var(--s)/0.3)']}
+  />
 </div>
 
 <div class="mt-16 text-center text-sm text-base-content/70">
