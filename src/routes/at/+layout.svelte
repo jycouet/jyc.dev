@@ -5,6 +5,7 @@
 
   import { page } from '$app/stores'
 
+  import Avatar from '$lib/components/Avatar.svelte'
   import Notification from '$lib/components/Notification.svelte'
   import Og from '$lib/components/Og.svelte'
   import { notifications } from '$lib/stores/notifications'
@@ -52,6 +53,21 @@
   // function handleHideOthersChange() {
   //   notifications.add(hideOthers ? 'Others hidden' : 'Others visible', 'info')
   // }
+
+  const sponsors = [
+    {
+      handle: 'tigur.com',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg',
+      name: 'Tigur',
+    },
+    {
+      handle: 'imlunahey.com',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
+      name: 'Luna',
+    },
+  ]
 </script>
 
 <Og title="Atmosphere - Stats" {description} />
@@ -82,34 +98,23 @@
       <span>•</span>
       <span>Made by </span>
 
-      <a
-        href="https://bsky.app/profile/jyc.dev"
-        class="link link-primary flex items-center gap-1"
-        target="_blank"
-      >
-        <img
-          src="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreifwequnkii37j2xkzjrpbh5cnuqjykocrxb4cfiwu4h7eonwrl3vm@jpeg"
-          alt="jyc.dev avatar"
-          class="h-6 w-6 rounded-full"
-        />
-      </a>
+      <Avatar
+        handle="jyc.dev"
+        name="jyc"
+        avatar="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreifwequnkii37j2xkzjrpbh5cnuqjykocrxb4cfiwu4h7eonwrl3vm@jpeg"
+        size="sm"
+      />
 
       <a href="https://github.com/sponsors/jycouet" class="link link-secondary" target="_blank">
         support me
       </a>
       <span>•</span>
       Sponsors 💖
-      <a
-        href="https://bsky.app/profile/tigur.com"
-        class="link link-primary flex items-center gap-1"
-        target="_blank"
-      >
-        <img
-          src="https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg"
-          alt="Tigur avatar"
-          class="h-6 w-6 rounded-full"
-        />
-      </a>
+      <div class="avatar-group -space-x-1">
+        {#each sponsors as sponsor}
+          <Avatar {...sponsor} />
+        {/each}
+      </div>
     </div>
   </footer>
 </div>
