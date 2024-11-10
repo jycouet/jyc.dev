@@ -10,8 +10,12 @@
  */
 const PAGES = {
   "/at": `/at`,
+  "/at/login": `/at/login`,
   "/at/[handle]": (params: { handle: (string | number), skip_follow?: ("true" | "false") }) => {
     return `/at/${params.handle}${appendSp({ skip_follow: params.skip_follow })}`
+  },
+  "/at/[handle]/extra": (params: { handle: (string | number) }) => {
+    return `/at/${params.handle}/extra`
   },
   "/blog": `/blog`,
   "/blog/[link_under_blog]": (params: { link_under_blog: (string | number) }) => {
@@ -37,7 +41,7 @@ const SERVERS = {
  * ACTIONS
  */
 const ACTIONS = {
-  
+  "login /at/login": `/at/login?/login`
 }
 
 /**
@@ -144,9 +148,9 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/at': never, '/at/[handle]': 'handle', '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
+  PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never }
-  ACTIONS: Record<string, never>
+  ACTIONS: { 'login /at/login': never }
   LINKS: Record<string, never>
   Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never }
 }

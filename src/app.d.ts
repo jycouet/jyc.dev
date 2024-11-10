@@ -15,3 +15,13 @@ declare global {
 }
 
 export {}
+
+declare module 'remult' {
+  interface UserInfo {
+    handle: string
+    avatar: string
+    followersCount: number
+    followsCount: number
+    postsCount: number
+  }
+}
