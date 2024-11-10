@@ -54,24 +54,26 @@ export const api = remultSveltekit({
     return user ? { ...user, roles } : undefined
   },
   initApi: async () => {
-    AtController.getHandleStatsAbscact = getHandleStats
-    AtController.getHandleFollowAbscact = getHandleFollow
+    if (!building) {
+      AtController.getHandleStatsAbscact = getHandleStats
+      AtController.getHandleFollowAbscact = getHandleFollow
 
-    const allStats = await repo(LogHandleStats).find({
-      orderBy: {
-        updatedAt: 'asc',
-      },
-    })
-    for (const stat of allStats) {
-      await repo(BSkyty).upsert({
-        where: { id: stat.did },
-        set: {
-          handle: stat.handle,
-          displayName: stat.displayName,
-          firstTimeHere: stat.updatedAt,
-          avatar: stat.avatar,
+      const allStats = await repo(LogHandleStats).find({
+        orderBy: {
+          updatedAt: 'asc',
         },
       })
+      for (const stat of allStats) {
+        await repo(BSkyty).upsert({
+          where: { id: stat.did },
+          set: {
+            handle: stat.handle,
+            displayName: stat.displayName,
+            firstTimeHere: stat.updatedAt,
+            avatar: stat.avatar,
+          },
+        })
+      }
     }
   },
 })
