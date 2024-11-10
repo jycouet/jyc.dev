@@ -3,7 +3,7 @@ import { DidResolver, getPds } from '@atproto/identity'
 
 import { repo } from 'remult'
 
-import { listRecords, listRecordsAll } from '$lib/at/helper'
+import { listRecordsAll } from '$lib/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
 
-  import { remult, repo } from 'remult'
+  import { remult } from 'remult'
 
   import { page } from '$app/stores'
 
@@ -10,10 +10,18 @@
   import { notifications } from '$lib/stores/notifications'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
+  import type { LayoutData } from './$types'
+
   const description = 'Stats on Bluesky, At Protocol, ...'
-  let hideOthers = false
+  // let hideOthers = false
   let unSub: (() => void) | null = null
-  let { data } = $props()
+
+  interface Props {
+    children?: import('svelte').Snippet
+    data: LayoutData
+  }
+
+  let { children, data }: Props = $props()
 
   let first = $state(false)
   $effect(() => {
@@ -29,7 +37,7 @@
         if (first && info.items[0].handle !== $page.params.handle) {
           notifications.add(
             `${info.items[0].displayName} is ${info.items[0].emoji}`,
-            `/at/${info.items[0].handle}`,
+            `https://bsky.app/profile/${info.items[0].handle}`,
           )
           // console.log(`info`, info)
         }
@@ -64,7 +72,7 @@
     </div>
 
     <div class="mx-auto max-w-3xl">
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 

@@ -11,7 +11,7 @@
       class:bg-green-500={notification.type === 'success'}
       class:bg-yellow-500={notification.type === 'warning'}
       class:bg-red-500={notification.type === 'error'} -->
-      <a class="link link-accent" href={notification.link}>
+      <a target="_blank" class="link link-accent" href={notification.link}>
         {notification.message}
       </a>
     </div>
