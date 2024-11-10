@@ -152,8 +152,7 @@ export async function getHandleStats(
             { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
           ]
 
-          let imageAltRatio = 0
-          let altPercentage = 0
+          let imageWithAlt = 0
           let kindOfEmbed = posts.records.reduce(
             (acc, post) => {
               let embedType = (post.value.embed?.$type || 'Text only')
@@ -173,10 +172,9 @@ export async function getHandleStats(
                 const hasAlt = post.value.embed.images.filter((img: { alt: string }) => {
                   return img.alt?.trim().length > 0
                 }).length
-                const totalImages = post.value.embed.images.length
-                const altRatio = hasAlt / totalImages
-                imageAltRatio += altRatio
-                inc = totalImages
+
+                imageWithAlt += hasAlt
+                inc = post.value.embed.images.length
               }
 
               const existingType = acc.find((t) => t.kind === embedType)
@@ -189,11 +187,11 @@ export async function getHandleStats(
             },
             [] as Array<{ kind: string; count: number }>,
           )
-          // console.log(`images`, images)
-          // console.log(`imageAltRatio`, imageAltRatio)
+
+          let altPercentage = 0
           kindOfEmbed = kindOfEmbed.map((embed) => {
             if (embed.kind === 'Image') {
-              altPercentage = embed.count > 0 ? Math.round((imageAltRatio / embed.count) * 100) : 50
+              altPercentage = embed.count > 0 ? Math.round((imageWithAlt / embed.count) * 100) : 50
 
               const kind =
                 altPercentage === 0
