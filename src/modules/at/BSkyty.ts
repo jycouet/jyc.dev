@@ -40,4 +40,13 @@ export class BSkyty {
 
   @Fields.string()
   lastFollowDid = ''
+
+  @Fields.number()
+  followersCount = 0
+
+  @Fields.number()
+  followsCount = 0
+
+  @Fields.number()
+  postsCount = 0
 }

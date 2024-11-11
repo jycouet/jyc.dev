@@ -1,4 +1,4 @@
-import { performance } from 'perf_hooks'
+import { Agent } from '@atproto/api'
 import { DidResolver, getPds, HandleResolver } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
@@ -6,15 +6,38 @@ import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { listRecords } from '$lib/at/helper'
-import { LogHandle } from '$modules/logs/LogHandle'
+import { BSkyty } from '$modules/at/BSkyty'
 
 import type { PageServerLoad } from './$types'
 
 const log = new Log('at/[handle]/+page.server.ts')
 
 export const load = (async (event) => {
-  const startTime = performance.now()
   try {
+    const agent = new Agent(new URL('https://public.api.bsky.app'))
+    const profile = await agent.getProfile({ actor: event.params.handle })
+    // console.dir(profile, { depth: null })
+
+    await repo(BSkyty).upsert({
+      where: { id: profile.data.did },
+      set: {
+        handle: profile.data.handle,
+        displayName: profile.data.displayName,
+        avatar: profile.data.avatar,
+        followersCount: profile.data.followersCount,
+        followsCount: profile.data.followsCount,
+        postsCount: profile.data.postsCount,
+      },
+    })
+
+    return {
+      did: profile.data.did,
+      handle: profile.data.handle,
+      displayName: profile.data.displayName,
+      avatar: profile.data.avatar,
+      description: profile.data.description || '',
+    }
+
     const handleResolver = new HandleResolver({})
     let did = undefined
     if ((event.params.handle ?? '').startsWith('did:plc:')) {
@@ -33,9 +56,6 @@ export const load = (async (event) => {
         // const repo = await describeRepo(event.fetch, pds!, did);
         // console.log(`repo`, repo);
 
-        const four_weeks_ago = new Date()
-        four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
-
         if (pds) {
           log.info(event.params.handle)
           const profile = await listRecords(pds, did, 'app.bsky.actor.profile', { limit: 1 })
@@ -43,15 +63,6 @@ export const load = (async (event) => {
 
           const handle = event.params.handle
           const displayName = profileData?.displayName || handle
-          const execTime = Math.round(performance.now() - startTime)
-          await repo(LogHandle).insert({
-            did,
-            handle,
-            execTime,
-            metadata: {
-              displayName,
-            },
-          })
 
           return {
             did,

@@ -15,7 +15,6 @@ import {
   setSessionTokenCookie,
   validateSessionToken,
 } from '$modules/auth/lucia'
-import { LogHandle } from '$modules/logs/LogHandle'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -33,15 +32,7 @@ export const api = remultSveltekit({
   ensureSchema: !building,
   admin: Roles.admin,
   dataProvider,
-  entities: [
-    LogHandle,
-    LogHandleStats,
-    LogHandleFollow,
-    AppUser,
-    AppUserSession,
-    BSkyty,
-    RecordFollow,
-  ],
+  entities: [LogHandleStats, LogHandleFollow, AppUser, AppUserSession, BSkyty, RecordFollow],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null
@@ -84,6 +75,9 @@ export const api = remultSveltekit({
             ALTER TABLE "log-handles-follows" DROP COLUMN "displayName";
           END IF;
         END $$;
+      `)
+      await dataProvider.execute(`
+        DROP TABLE IF EXISTS "log-handles";
       `)
       // console.log(`res`, res)
 
