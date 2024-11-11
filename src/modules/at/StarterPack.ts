@@ -10,9 +10,9 @@ import { ListItem } from './ListItem'
 @Entity<StarterPack>('starter-packs', {
   allowApiRead: true,
   allowApiCrud: Roles.admin,
-  // defaultOrderBy: {
-  //   firstTimeHere: 'desc',
-  // },
+  defaultOrderBy: {
+    updatedAt: 'desc',
+  },
 })
 export class StarterPack {
   @Fields.string({ caption: 'id / uri' })

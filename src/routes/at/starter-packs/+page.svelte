@@ -27,8 +27,21 @@
   })
 </script>
 
-{#if $paginator.loading.init}
-  <div class="container mx-auto">
+<div class="container mx-auto space-y-4">
+  <div class="relative mb-8">
+    <input
+      type="text"
+      bind:value={search}
+      placeholder="Search starter packs..."
+      class="input input-bordered w-full"
+    />
+    <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+      <span class="text-2xl font-semibold text-gray-400">
+        {$paginator?.aggregates?.$count ?? '...'}
+      </span>
+    </div>
+  </div>
+  {#if $paginator.loading.init}
     <div class="overflow-x-auto">
       <table class="table w-full">
         <thead>
@@ -60,9 +73,7 @@
         </tbody>
       </table>
     </div>
-  </div>
-{:else}
-  <div class="container mx-auto">
+  {:else}
     <div class="overflow-x-auto">
       <table class="table w-full">
         <thead>
@@ -97,9 +108,30 @@
                 </div>
               </td>
             </tr>
+          {:else}
+            <tr>
+              <td colspan="2" class="text-center">No starter packs found</td>
+            </tr>
           {/each}
         </tbody>
       </table>
+
+      {#if $paginator.items.length > 0 && pageSize < ($paginator?.aggregates?.$count ?? 0)}
+        {#if $paginator.loading.nextPage}
+          {#each Array(pageSize) as _}
+            Loading...
+          {/each}
+        {/if}
+        <div class="col-span-full mt-8 flex justify-center">
+          <button
+            disabled={!$paginator.hasNextPage}
+            class="btn btn-primary px-8 py-3 text-lg"
+            onclick={paginator.loadMore}
+          >
+            Load more
+          </button>
+        </div>
+      {/if}
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
