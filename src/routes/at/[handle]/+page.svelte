@@ -5,6 +5,11 @@
   import { page } from '$app/stores'
 
   import Og from '$lib/components/Og.svelte'
+  import Stat from '$lib/components/Stat.svelte'
+  import ArrowLeft from '$lib/icons/ArrowLeft.svelte'
+  import Heart from '$lib/icons/Heart.svelte'
+  import Repost from '$lib/icons/Repost.svelte'
+  import Send from '$lib/icons/Send.svelte'
   import { AtController } from '$modules/at/AtController'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -198,20 +203,7 @@
 
 <div class="flex items-center justify-between">
   <a href="/at" class="btn btn-ghost">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M10 19l-7-7m0 0l7-7m-7 7h18"
-      />
-    </svg>
+    <ArrowLeft />
     Check another handle
   </a>
   {#if currentISOString}
@@ -334,104 +326,35 @@
   </div>
 
   <div class="stats stats-vertical bg-base-300 shadow md:stats-horizontal">
-    <div class="stat">
-      <div class="stat-figure text-accent">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block h-8 w-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title">Today's likes</div>
-      <div class="stat-value text-accent">
-        {#if dataApi}
-          {dataApi?.likes?.today}
-        {:else}
-          <div class="skeleton h-10 w-24 bg-base-200"></div>
-        {/if}
-      </div>
-      <div class="stat-desc">
-        {@html getNumbersComparison(
-          dataApi?.likes?.today ?? 0,
-          dataApi?.likes?.yesterday ?? 0,
-          'like',
-        )}
-      </div>
-    </div>
+    <Stat
+      title="likes"
+      value={dataApi?.likes?.today}
+      comparisonToday={dataApi?.likes?.today ?? 0}
+      comparisonYesterday={dataApi?.likes?.yesterday ?? 0}
+      color="oklch(var(--a))"
+      loading={!dataApi}
+      icon={Heart}
+    />
 
-    <div class="stat">
-      <div class="stat-figure text-secondary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block h-8 w-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title">Today's posts</div>
-      <div class="stat-value text-secondary">
-        {#if dataApi}
-          {dataApi?.posts?.today}
-        {:else}
-          <div class="skeleton h-10 w-24 bg-base-200"></div>
-        {/if}
-      </div>
-      <div class="stat-desc">
-        {@html getNumbersComparison(
-          dataApi?.posts?.today ?? 0,
-          dataApi?.posts?.yesterday ?? 0,
-          'post',
-        )}
-      </div>
-    </div>
+    <Stat
+      title="posts"
+      value={dataApi?.posts?.today}
+      comparisonToday={dataApi?.posts?.today ?? 0}
+      comparisonYesterday={dataApi?.posts?.yesterday ?? 0}
+      color="oklch(var(--s))"
+      loading={!dataApi}
+      icon={Send}
+    />
 
-    <div class="stat">
-      <div class="stat-figure text-purple-500">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block h-8 w-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title">Today's reposts</div>
-      <div class="stat-value text-purple-500">
-        {#if dataApi}
-          {dataApi?.reposts?.today}
-        {:else}
-          <div class="skeleton h-10 w-24 bg-base-200"></div>
-        {/if}
-      </div>
-      <div class="stat-desc">
-        {@html getNumbersComparison(
-          dataApi?.reposts?.today ?? 0,
-          dataApi?.reposts?.yesterday ?? 0,
-          'repost',
-        )}
-      </div>
-    </div>
+    <Stat
+      title="reposts"
+      value={dataApi?.reposts?.today}
+      comparisonToday={dataApi?.reposts?.today ?? 0}
+      comparisonYesterday={dataApi?.reposts?.yesterday ?? 0}
+      color="rgb(168, 85, 247)"
+      loading={!dataApi}
+      icon={Repost}
+    />
   </div>
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
