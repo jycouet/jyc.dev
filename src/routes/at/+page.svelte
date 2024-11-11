@@ -108,9 +108,14 @@
     </div>
   </form>
 
-  <!-- <div class="md:col-span-4">
-    <a href="/at/starter-packs" class="btn btn-info h-28 w-full text-lg"> Starter Packs browser </a>
-  </div> -->
+  <div class="md:col-span-4">
+    <a href="/at/starter-packs" class="btn btn-info flex h-28 w-full flex-col text-lg">
+      <span>Starter Packs Browser</span>
+      <span class="relative bottom-0 -mb-6 text-xs opacity-40"
+        >To add a starter pack, enter your handle on the left!</span
+      >
+    </a>
+  </div>
 </div>
 
 <div class="mt-10 h-[300px]">
