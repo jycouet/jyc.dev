@@ -1,6 +1,7 @@
 <script lang="ts">
   import { parseUri } from '$lib/at/helper'
   import Avatar from '$lib/components/Avatar.svelte'
+  import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
   import { containsWords } from '$lib/remultHelper'
   import { StarterPack } from '$modules/at/StarterPack'
@@ -25,7 +26,11 @@
       }, 433)
     }
   })
+
+  const description = 'Looking for a starter pack? Here you go!'
 </script>
+
+<Og title="Atmosphere - Starter Packs Browser" {description} />
 
 <div class="container mx-auto space-y-4">
   <div class="relative mb-8">
