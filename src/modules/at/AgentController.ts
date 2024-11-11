@@ -47,7 +47,7 @@ export class AgentController {
     const profile = await agent.getProfile({ actor: 'jyc.dev' })
 
     // Get all followers using cursor pagination
-    const allFollowers = []
+    let allFollowers = []
     let cursor: string | undefined
 
     do {
@@ -56,19 +56,38 @@ export class AgentController {
         limit: 100,
         cursor,
       })
+      const ttt = followers.data.followers.map((f) => {
+        return { handle: f.handle, indexedAt: f.indexedAt }
+      })
+      // console.log(`followers.data.followers`, ttt[0])
+      // console.log(`followers.data.followers`, ttt[1])
+      // console.log(`followers.data.followers`, ttt[2])
+
+      // console.log(
+      //   `followers.data.followers`,
+      //   followers.data.followers[followers.data.followers.length - 1],
+      // )
+      // throw new Error('sdsd3')
 
       const rateLimit = parseRateLimitHeaders(followers.headers as Record<string, string>)
-      // console.log('Rate limit:', rateLimit)
+      console.log('Rate limit:', rateLimit)
 
-      console.log(`followers.data`, followers.data)
-      throw new Error('stop')
+      // console.log(`followers.data`, followers.data)
+      // throw new Error('stop')
       allFollowers.push(...followers.data.followers)
       cursor = followers.data.cursor
     } while (cursor)
 
     const nbFollowers = allFollowers.length
-    const followersPeriods = chunkRecords(allFollowers, { createdAtLocation: 'createdAt' })
-    console.log(`followersPeriods`, followersPeriods)
+    // console.log(`allFollowers`, allFollowers)
+    allFollowers = allFollowers.sort(
+      (a, b) => new Date(a.indexedAt!).getTime() - new Date(b.indexedAt!).getTime(),
+    )
+    // console.log(`allFollowers`, allFollowers[0])
+    // console.log(`allFollowers`, allFollowers[allFollowers.length - 1])
+
+    // const followersPeriods = chunkRecords(allFollowers)
+    // console.log(`followersPeriods`, followersPeriods)
 
     // Get current timestamp adjusted for timezone
     const now = new Date()
@@ -76,7 +95,7 @@ export class AgentController {
 
     return {
       nbFollowers,
-      followersPeriods,
+      followersPeriods: [],
     }
   }
 }

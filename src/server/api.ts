@@ -9,6 +9,7 @@ import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
 import { BSkyty } from '$modules/at/BSkyty'
+import { RecordFollow } from '$modules/at/Record'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
   deleteSessionTokenCookie,
@@ -22,6 +23,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
 import { Roles } from '../modules/auth/Roles'
 
 SqlDatabase.LogToConsole = false
+// SqlDatabase.LogToConsole = 'oneLiner'
 
 export const dataProvider = await createPostgresDataProvider({
   connectionString: DATABASE_URL,
@@ -32,7 +34,15 @@ export const api = remultSveltekit({
   ensureSchema: !building,
   admin: Roles.admin,
   dataProvider,
-  entities: [LogHandle, LogHandleStats, LogHandleFollow, AppUser, AppUserSession, BSkyty],
+  entities: [
+    LogHandle,
+    LogHandleStats,
+    LogHandleFollow,
+    AppUser,
+    AppUserSession,
+    BSkyty,
+    RecordFollow,
+  ],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null

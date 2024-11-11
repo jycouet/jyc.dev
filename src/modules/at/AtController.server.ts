@@ -1,13 +1,16 @@
 import { performance } from 'perf_hooks'
 import { DidResolver, getPds } from '@atproto/identity'
+import { AtUri } from '@atproto/syntax'
 
 import { repo } from 'remult'
 
-import { chunkRecords, listRecordsAll } from '$lib/at/helper'
+import { chunkRecords, listRecordsAll, parseUri } from '$lib/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
+import { BSkyty } from './BSkyty'
 import { determineCategory } from './determineCategory'
+import { RecordFollow } from './Record'
 
 interface ActivityCounts {
   yesterday: number
@@ -296,6 +299,34 @@ export async function getHandleFollow(tzOffset: number, did: string) {
         if (pds) {
           const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow')
           const nbRequests = follows.nbRequest
+          console.log(`nbRequests`, nbRequests)
+          // Get first and last follow
+          // const sortedFollows = [...follows.records].sort(
+          //   (a, b) => new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime(),
+          // )
+
+          for (const follow of follows.records) {
+            const uriMeta = parseUri(follow.uri)
+            await repo(RecordFollow).upsert({
+              where: { id: follow.uri },
+              set: {
+                did: uriMeta.did,
+                rkey: uriMeta.rkey,
+                on: follow.value.createdAt,
+                didFollow: follow.value.subject,
+              },
+            })
+          }
+
+          await repo(BSkyty).upsert({
+            where: { id: did },
+            set: {
+              // did: uriMeta.did,
+              // rkey: uriMeta.rkey,
+              // on: follow.value.createdAt,
+              // didFollow: follow.value.subject,
+            },
+          })
 
           // **********
           // FOLLOW CHART - START

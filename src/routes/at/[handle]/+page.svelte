@@ -10,7 +10,7 @@
   import Heart from '$lib/icons/Heart.svelte'
   import Repost from '$lib/icons/Repost.svelte'
   import Send from '$lib/icons/Send.svelte'
-  import { AtController } from '$modules/at/AtController'
+  import { AtController } from '$modules/at/AtController.js'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
 

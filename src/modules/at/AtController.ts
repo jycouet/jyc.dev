@@ -1,3 +1,5 @@
+import { DidResolver, getPds } from '@atproto/identity'
+
 import { BackendMethod } from 'remult'
 
 import type { getHandleFollow, getHandleStats } from './AtController.server'
@@ -14,6 +16,16 @@ export class AtController {
     displayName: string,
     avatar: string,
   ) {
+    // console.time('getHandleStats')
+    // const didResolver = new DidResolver({})
+    // const didDocument = await didResolver.resolve(did)
+    // console.log(`didDocument`, didDocument)
+    // if (didDocument) {
+    //   const pds = getPds(didDocument)
+    //   console.log(`pds`, pds)
+    // }
+    // console.timeEnd('getHandleStats')
+
     return AtController.getHandleStatsAbscact(tzOffset, did, handle, displayName, avatar)
   }
 

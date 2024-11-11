@@ -1,3 +1,5 @@
+import { AtUri } from '@atproto/syntax'
+
 import { Log } from '@kitql/helpers'
 
 export const describeRepo = async (pds: string, repo: string) => {
@@ -107,12 +109,7 @@ export const listRecordsAll = async (
   return { records: allRecords, nbRequest }
 }
 
-export function chunkRecords(
-  records: any[],
-  options?: { createdAtLocation: 'createdAt' | 'value.createdAt' },
-) {
-  const createdAtLocation = options?.createdAtLocation ?? 'value.createdAt'
-
+export function chunkRecords(records: any[]) {
   const periods: { timestamp: Date; count: number }[] = []
   const count = records.length
 
@@ -137,12 +134,7 @@ export function chunkRecords(
 
   // Loop through records from newest to oldest to build cumulative counts
   for (let i = records.length - 1; i >= 0; i--) {
-    console.log(`records[i]`, records[i])
-
-    const date =
-      createdAtLocation === 'createdAt'
-        ? new Date(records[i].createdAt)
-        : new Date(records[i].value.createdAt)
+    const date = new Date(records[i].value.createdAt)
 
     // Skip if before 7 days ago
     if (date < sevenDaysAgo) continue
@@ -165,4 +157,16 @@ export function chunkRecords(
   }
 
   return periods
+}
+
+export const parseUri = (uri: string) => {
+  const aturi = new AtUri(uri)
+
+  const segments = aturi.pathname.split('/')
+
+  return {
+    did: aturi.host,
+    collection: segments[1],
+    rkey: segments[2],
+  }
 }
