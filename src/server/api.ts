@@ -1,4 +1,4 @@
-import { repo, SqlDatabase } from 'remult'
+import { SqlDatabase } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 
@@ -7,7 +7,6 @@ import { building } from '$app/environment'
 
 import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
-import { getHandleFollow, getHandleStats } from '$modules/at/AtController.server'
 import { BSkyty } from '$modules/at/BSkyty'
 import { RecordFollow } from '$modules/at/Record'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
@@ -66,9 +65,6 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     if (!building) {
-      AtController.getHandleStatsAbscact = getHandleStats
-      AtController.getHandleFollowAbscact = getHandleFollow
-
       // const allStats = await repo(LogHandleStats).find({
       //   orderBy: {
       //     updatedAt: 'asc',

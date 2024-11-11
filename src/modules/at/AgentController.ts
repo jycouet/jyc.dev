@@ -1,12 +1,8 @@
-import { Agent, CredentialSession } from '@atproto/api'
-import { DidResolver, getPds } from '@atproto/identity'
+import { Agent } from '@atproto/api'
 
-import { BackendMethod, remult, repo } from 'remult'
+import { BackendMethod } from 'remult'
 
-import { AppUser } from '$modules/auth/Entities'
 import { Roles } from '$modules/auth/Roles'
-
-import { chunkRecords, listRecordsAll } from '../../lib/at/helper'
 
 interface RateLimitInfo {
   remaining: number
@@ -70,7 +66,7 @@ export class AgentController {
       // throw new Error('sdsd3')
 
       const rateLimit = parseRateLimitHeaders(followers.headers as Record<string, string>)
-      console.log('Rate limit:', rateLimit)
+      console.info('Rate limit:', rateLimit)
 
       // console.log(`followers.data`, followers.data)
       // throw new Error('stop')

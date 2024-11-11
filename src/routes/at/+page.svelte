@@ -1,6 +1,5 @@
 <script lang="ts">
   import { BarChart } from 'layerchart'
-  import { fade } from 'svelte/transition'
 
   import { repo } from 'remult'
 
