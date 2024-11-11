@@ -46,16 +46,17 @@
       </span>
     </div>
   </div>
-  {#if $paginator.loading.init}
-    <div class="overflow-x-auto">
-      <table class="table w-full">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
+
+  <div class="overflow-x-auto">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#if $paginator.loading.init}
           {#each Array(20) as _}
             <tr>
               <td>
@@ -75,19 +76,11 @@
               </td>
             </tr>
           {/each}
-        </tbody>
-      </table>
-    </div>
-  {:else}
-    <div class="overflow-x-auto">
-      <table class="table w-full">
-        <thead>
+        {:else if $paginator.items.length === 0}
           <tr>
-            <th>Name</th>
-            <th>Description</th>
+            <td colspan="2" class="text-center">No starter packs found</td>
           </tr>
-        </thead>
-        <tbody>
+        {:else}
           {#each $paginator.items as pack}
             <tr
               class="cursor-pointer hover:bg-base-200"
@@ -107,36 +100,44 @@
               </td>
               <td>
                 {#each pack.description.split('\n') as line}<p>{line}</p>{/each}
-
                 <div class="text-right text-sm text-secondary">
                   {pack.nbMembers ?? 0} members
                 </div>
               </td>
             </tr>
-          {:else}
-            <tr>
-              <td colspan="2" class="text-center">No starter packs found</td>
-            </tr>
           {/each}
-        </tbody>
-      </table>
-
-      {#if $paginator.items.length > 0 && pageSize < ($paginator?.aggregates?.$count ?? 0)}
-        {#if $paginator.loading.nextPage}
-          {#each Array(pageSize) as _}
-            Loading...
-          {/each}
+          {#if $paginator.loading.nextPage}
+            {#each Array(pageSize) as _}
+              <tr>
+                <td>
+                  <div class="flex items-center gap-3">
+                    <div class="skeleton h-8 w-8 rounded-full"></div>
+                    <div class="skeleton h-4 w-32"></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="skeleton h-4 w-full"></div>
+                  <div class="mt-2 text-right">
+                    <div class="skeleton inline-block h-4 w-24"></div>
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          {/if}
         {/if}
-        <div class="col-span-full mt-8 flex justify-center">
-          <button
-            disabled={!$paginator.hasNextPage}
-            class="btn btn-primary px-8 py-3 text-lg"
-            onclick={paginator.loadMore}
-          >
-            Load more
-          </button>
-        </div>
-      {/if}
-    </div>
-  {/if}
+      </tbody>
+    </table>
+
+    {#if $paginator.items.length > 0 && pageSize < ($paginator?.aggregates?.$count ?? 0)}
+      <div class="col-span-full mt-8 flex justify-center">
+        <button
+          disabled={!$paginator.hasNextPage}
+          class="btn btn-primary px-8 text-lg"
+          onclick={paginator.loadMore}
+        >
+          Load more
+        </button>
+      </div>
+    {/if}
+  </div>
 </div>
