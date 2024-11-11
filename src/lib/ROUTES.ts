@@ -17,6 +17,7 @@ const PAGES = {
   "/at/[handle]/extra": (params: { handle: (string | number) }) => {
     return `/at/${params.handle}/extra`
   },
+  "/at/starter-packs": `/at/starter-packs`,
   "/blog": `/blog`,
   "/blog/[link_under_blog]": (params: { link_under_blog: (string | number) }) => {
     return `/blog/${params.link_under_blog}`
@@ -148,7 +149,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
+  PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/at/starter-packs': never, '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never }
   ACTIONS: { 'login /at/login': never }
   LINKS: Record<string, never>

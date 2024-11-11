@@ -74,42 +74,44 @@
   }
 </script>
 
-<form onsubmit={handleSubmit} class="mx-auto flex max-w-lg flex-col gap-4">
-  <div class="form-control flex gap-4">
-    <div class="flex items-end gap-4">
-      <div class="flex-1">
-        <div class="label">
-          <span class="label-text">Enter your handle</span>
-          {#if error}
-            <span class="label-text-alt text-error">{error}</span>
-          {/if}
+<div class="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
+  <form onsubmit={handleSubmit} class="flex flex-col gap-4 md:col-span-8">
+    <div class="form-control flex gap-4">
+      <div class="flex items-end gap-4">
+        <div class="flex-1">
+          <div class="label">
+            <span class="label-text">Enter your handle</span>
+            {#if error}
+              <span class="label-text-alt text-error">{error}</span>
+            {/if}
+          </div>
+
+          <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} ">
+            @
+            <input
+              type="text"
+              class="grow placeholder:text-base-content/30"
+              id="handle"
+              bind:value={handle}
+              placeholder="handle.bsky.social"
+            />
+          </label>
         </div>
-
-        <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} ">
-          @
-          <input
-            type="text"
-            class="grow placeholder:text-base-content/30"
-            id="handle"
-            bind:value={handle}
-            placeholder="handle.bsky.social"
-          />
-        </label>
       </div>
-      <!-- <div class="flex h-12 items-center gap-2">
-        <input type="checkbox" class="checkbox" id="skip_follow" bind:checked={withFollow} />
-        <label for="skip_follow" class="label-text cursor-pointer"> With follow</label>
-      </div> -->
-    </div>
 
-    <button type="submit" class="btn btn-primary" disabled={loading}>
-      {#if loading}
-        <span class="loading loading-spinner"></span>
-      {/if}
-      Look up handle
-    </button>
-  </div>
-</form>
+      <button type="submit" class="btn btn-primary" disabled={loading}>
+        {#if loading}
+          <span class="loading loading-spinner"></span>
+        {/if}
+        Look up handle
+      </button>
+    </div>
+  </form>
+
+  <!-- <div class="md:col-span-4">
+    <a href="/at/starter-packs" class="btn btn-info h-28 w-full text-lg"> Starter Packs browser </a>
+  </div> -->
+</div>
 
 <div class="mt-10 h-[300px]">
   <BarChart

@@ -8,7 +8,9 @@ import { building } from '$app/environment'
 import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
+import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/Record'
+import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
   deleteSessionTokenCookie,
@@ -32,7 +34,16 @@ export const api = remultSveltekit({
   ensureSchema: !building,
   admin: Roles.admin,
   dataProvider,
-  entities: [LogHandleStats, LogHandleFollow, AppUser, AppUserSession, BSkyty, RecordFollow],
+  entities: [
+    LogHandleStats,
+    LogHandleFollow,
+    AppUser,
+    AppUserSession,
+    BSkyty,
+    RecordFollow,
+    StarterPack,
+    ListItem,
+  ],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null

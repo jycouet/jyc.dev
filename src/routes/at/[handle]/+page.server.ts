@@ -5,8 +5,10 @@ import { redirect } from '@sveltejs/kit'
 import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
-import { listRecords } from '$lib/at/helper'
+import { listRecords, listRecordsAll } from '$lib/at/helper'
 import { BSkyty } from '$modules/at/BSkyty'
+import { ListItem } from '$modules/at/ListItem'
+import { StarterPack } from '$modules/at/StarterPack'
 
 import type { PageServerLoad } from './$types'
 
@@ -16,7 +18,11 @@ export const load = (async (event) => {
   try {
     const agent = new Agent(new URL('https://public.api.bsky.app'))
     const profile = await agent.getProfile({ actor: event.params.handle })
+
     // console.dir(profile, { depth: null })
+
+    // Don't await this
+    addStarterPack(profile.data.did)
 
     await repo(BSkyty).upsert({
       where: { id: profile.data.did },
@@ -81,3 +87,40 @@ export const load = (async (event) => {
     redirect(307, `/at`)
   }
 }) satisfies PageServerLoad
+
+const addStarterPack = async (did: string) => {
+  const didResolver = new DidResolver({})
+  const didDocument = await didResolver.resolve(did)
+  if (didDocument) {
+    const pds = getPds(didDocument)
+    if (pds) {
+      const [starterPacks, listitems] = await Promise.all([
+        listRecordsAll(pds, did, 'app.bsky.graph.starterpack'),
+        listRecordsAll(pds, did, 'app.bsky.graph.listitem'),
+      ])
+      for (const starterPack of starterPacks.records) {
+        await repo(StarterPack).upsert({
+          where: { id: starterPack.uri },
+          set: {
+            creatorDid: did,
+            listUri: starterPack.value.list,
+            name: starterPack.value.name,
+            createdAt: starterPack.value.createdAt,
+            updatedAt: starterPack.value.updatedAt,
+            description: starterPack.value.description,
+          },
+        })
+      }
+      for (const listItem of listitems.records) {
+        await repo(ListItem).upsert({
+          where: { id: listItem.uri },
+          set: {
+            listUri: listItem.value.list,
+            subject: listItem.value.subject,
+            createdAt: listItem.value.createdAt,
+          },
+        })
+      }
+    }
+  }
+}

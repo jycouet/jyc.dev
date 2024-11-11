@@ -11,7 +11,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
   },
 })
 export class BSkyty {
-  @Fields.cuid({ caption: 'id / did' })
+  @Fields.string({ caption: 'id / did' })
   id!: string
 
   @Fields.string()
