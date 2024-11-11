@@ -11,7 +11,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
   },
 })
 export class BSkyty {
-  @Fields.cuid({ caption: 'did' })
+  @Fields.cuid({ caption: 'id / did' })
   id!: string
 
   @Fields.string()
@@ -37,4 +37,7 @@ export class BSkyty {
     field: 'did',
   })
   stats: LogHandleStats[] = []
+
+  @Fields.string()
+  lastFollowDid = ''
 }

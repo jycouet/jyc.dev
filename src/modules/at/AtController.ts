@@ -1,8 +1,9 @@
+import { Agent } from '@atproto/api'
 import { DidResolver, getPds } from '@atproto/identity'
 
 import { BackendMethod, repo } from 'remult'
 
-import { chunkRecords, listRecordsAll, parseUri } from '$lib/at/helper'
+import { listRecordsAll, parseUri } from '$lib/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -69,9 +70,6 @@ function generatePunchCardData(records: any[], tzOffset: number): PunchCardEntry
 }
 
 export class AtController {
-  // static getHandleStatsAbscact: typeof getHandleStats
-  // static getHandleFollowAbscact: typeof getHandleFollow
-
   @BackendMethod({ allowed: true })
   static async getHandleStats(
     tzOffset: number,
@@ -81,11 +79,6 @@ export class AtController {
     avatar: string,
   ) {
     const startTime = performance.now()
-
-    // const dt = new Date()
-    // const serverDate = new Date(dt)
-    // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
-    // console.log(`clientDate`, serverDate, clientDate)
 
     try {
       if (did) {
@@ -282,12 +275,7 @@ export class AtController {
 
   @BackendMethod({ allowed: true })
   static async getHandleFollow(tzOffset: number, did: string) {
-    // return AtController.getHandleFollowAbscact(tzOffset, did)
     const startTime = performance.now()
-    // const dt = new Date()
-    // const serverDate = new Date(dt)
-    // const clientDate = new Date(dt.setTime(dt.getTime() - tzOffset * 60000))
-    // console.log(`clientDate`, serverDate, clientDate)
 
     try {
       if (did) {
@@ -296,20 +284,20 @@ export class AtController {
 
         if (didDocument) {
           const pds = getPds(didDocument)
-          // console.log(`pds`, pds);
-          // const repo = await describeRepo( pds!, did);
-          // console.log(`repo`, repo);
-
-          const four_weeks_ago = new Date()
-          four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
 
           if (pds) {
-            const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow')
+            const bSkyty = await repo(BSkyty).findFirst({
+              id: did,
+            })
+            const one_weeks_ago = new Date()
+            one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
+
+            const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
+              while: (r) =>
+                new Date(r.value.createdAt) > one_weeks_ago &&
+                r.value.subject !== bSkyty?.lastFollowDid,
+            })
             const nbRequests = follows.nbRequest
-            // Get first and last follow
-            // const sortedFollows = [...follows.records].sort(
-            //   (a, b) => new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime(),
-            // )
 
             for (const follow of follows.records) {
               const uriMeta = parseUri(follow.uri)
@@ -324,27 +312,69 @@ export class AtController {
               })
             }
 
-            await repo(BSkyty).upsert({
-              where: { id: did },
-              set: {
-                // did: uriMeta.did,
-                // rkey: uriMeta.rkey,
-                // on: follow.value.createdAt,
-                // didFollow: follow.value.subject,
-              },
-            })
+            if (follows.records.length > 0) {
+              await repo(BSkyty).upsert({
+                where: { id: did },
+                set: {
+                  lastFollowDid: follows.records[0].value.subject,
+                },
+              })
+            }
 
             // **********
             // FOLLOW CHART - START
             // **********
-            const nbFollow = follows.records.length
-            const followsPeriods = chunkRecords(follows.records)
+
+            // const nbFollow = follows.records.length
+            // const followsPeriods = chunkRecords(follows.records)
+
+            // Reverse array so it goes from oldest to newest
+            // followsPeriods.reverse()
+
+            const agent = new Agent(new URL('https://public.api.bsky.app'))
+            const profile = await agent.getProfile({ actor: did })
+
+            const nbFollow = profile.data.followsCount ?? 0
+
+            // Start from current hour
+            const now = new Date()
+            const startDate = new Date(now)
+            startDate.setDate(startDate.getDate() - 7) // Go back 7 days
+
+            const followsPeriods = await repo(RecordFollow).groupBy({
+              group: ['onDay'],
+              where: { did, on: { $gte: startDate } },
+              orderBy: { onDay: 'desc' },
+            })
+
+            // Create array starting from now and walking back 7 days
+            const followsPeriodsToRet: Array<{ timestamp: Date; count: number }> = []
+            let nbFollowNow = nbFollow
+
+            // Walk through each hour from now back to startDate
+            for (let date = new Date(now); date >= startDate; date.setHours(date.getHours() - 1)) {
+              const hourStr =
+                date.toISOString().split('T')[0] + '-' + date.getHours().toString().padStart(2, '0')
+
+              const periodData = followsPeriods.find((p) => p.onDay === hourStr)
+
+              followsPeriodsToRet.unshift({
+                timestamp: new Date(date),
+                count: nbFollowNow,
+              })
+
+              // Subtract the follows that happened in this hour
+              if (periodData) {
+                nbFollowNow -= periodData.$count
+              }
+            }
 
             // **********
             // FOLLOW CHART - END
             // **********
 
             const execTime = Math.round(performance.now() - startTime)
+
             await repo(LogHandleFollow).insert({
               did,
               tzOffset,
@@ -354,7 +384,8 @@ export class AtController {
             })
 
             return {
-              followsPeriods,
+              // followsPeriods,
+              followsPeriods: followsPeriodsToRet,
               followsTotal: nbFollow,
             }
           }

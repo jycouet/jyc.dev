@@ -21,6 +21,13 @@ export class RecordFollow {
   @Fields.date()
   on!: Date
 
+  @Fields.string<RecordFollow>({
+    sqlExpression: () => {
+      return `TO_CHAR("on", 'YYYY-MM-DD-HH24')`
+    },
+  })
+  onDay!: string
+
   @Fields.string()
   didFollow = ''
 }

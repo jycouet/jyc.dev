@@ -85,21 +85,21 @@
           {/if}
         </div>
 
-        <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''}">
+        <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} ">
           @
           <input
             type="text"
-            class="grow"
+            class="grow placeholder:text-base-content/30"
             id="handle"
             bind:value={handle}
             placeholder="handle.bsky.social"
           />
         </label>
       </div>
-      <div class="flex h-12 items-center gap-2">
+      <!-- <div class="flex h-12 items-center gap-2">
         <input type="checkbox" class="checkbox" id="skip_follow" bind:checked={withFollow} />
         <label for="skip_follow" class="label-text cursor-pointer"> With follow</label>
-      </div>
+      </div> -->
     </div>
 
     <button type="submit" class="btn btn-primary" disabled={loading}>

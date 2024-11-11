@@ -18,12 +18,6 @@ export class LogHandleFollow {
   @Fields.string({ required: true })
   did!: string
 
-  @Fields.string()
-  handle = ''
-
-  @Fields.string()
-  displayName = ''
-
   @Fields.number()
   tzOffset = -1
 

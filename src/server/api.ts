@@ -65,6 +65,28 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     if (!building) {
+      await dataProvider.execute(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'log-handles-follows' 
+            AND column_name = 'handle'
+          ) THEN
+            ALTER TABLE "log-handles-follows" DROP COLUMN handle;
+          END IF;
+          
+          IF EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'log-handles-follows' 
+            AND column_name = 'displayName'
+          ) THEN
+            ALTER TABLE "log-handles-follows" DROP COLUMN "displayName";
+          END IF;
+        END $$;
+      `)
+      // console.log(`res`, res)
+
       // const allStats = await repo(LogHandleStats).find({
       //   orderBy: {
       //     updatedAt: 'asc',

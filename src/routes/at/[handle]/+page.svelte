@@ -129,10 +129,9 @@
         { timestamp: new Date('2024-01-14'), count: 415 }, // Third pick
         { timestamp: new Date('2024-01-15'), count: 420 },
       ]
-    ).map((d) => ({
-      timestamp: new Date(d.timestamp),
-      count: d.count,
-    })),
+    ).map((d) => {
+      return { timestamp: new Date(d.timestamp), count: d.count }
+    }),
   )
 
   let punchCard = $derived(
