@@ -3,7 +3,7 @@ import { DidResolver, getPds } from '@atproto/identity'
 
 import { repo } from 'remult'
 
-import { listRecordsAll } from '$lib/at/helper'
+import { chunkRecords, listRecordsAll } from '$lib/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -295,58 +295,13 @@ export async function getHandleFollow(tzOffset: number, did: string) {
 
         if (pds) {
           const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow')
-
           const nbRequests = follows.nbRequest
 
           // **********
           // FOLLOW CHART - START
           // **********
           const nbFollow = follows.records.length
-          const followsPeriods: { timestamp: Date; count: number }[] = []
-
-          // Get current time and round down to nearest 12h period
-          const currentPeriodStart = new Date()
-          followsPeriods.unshift({
-            timestamp: new Date(currentPeriodStart),
-            count: nbFollow,
-          })
-          currentPeriodStart.setMinutes(0, 0, 0)
-          if (currentPeriodStart.getHours() >= 12) {
-            currentPeriodStart.setHours(12)
-          } else {
-            currentPeriodStart.setHours(0)
-          }
-
-          // Get periods for last 7 days with cumulative counts
-          const sevenDaysAgo = new Date(currentPeriodStart)
-          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-          follows.records.reverse()
-
-          // Loop through follows from newest to oldest to build cumulative counts
-          for (let i = follows.records.length - 1; i >= 0; i--) {
-            const followDate = new Date(follows.records[i].value.createdAt)
-            // console.log(`currentPeriodStart`, followDate, currentPeriodStart)
-
-            // Skip if before 7 days ago
-            if (followDate < sevenDaysAgo) continue
-
-            if (followDate < currentPeriodStart) {
-              followsPeriods.unshift({
-                timestamp: new Date(currentPeriodStart),
-                count: i + 1,
-              })
-              currentPeriodStart.setTime(currentPeriodStart.getTime() - 12 * 60 * 60 * 1000)
-            }
-          }
-
-          // If this... That mean that nothing happened in the last 7 days
-          if (followsPeriods.length === 1) {
-            followsPeriods.unshift({
-              timestamp: new Date(currentPeriodStart),
-              count: nbFollow,
-            })
-          }
+          const followsPeriods = chunkRecords(follows.records)
 
           // **********
           // FOLLOW CHART - END

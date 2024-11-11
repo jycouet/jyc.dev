@@ -496,7 +496,7 @@
     <div class="card bg-base-300 p-4">
       <div class="flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">
-          Follow <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
+          Following <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
         </h3>
         <div class="stat-value text-primary">
           {#if dataApiFollows}

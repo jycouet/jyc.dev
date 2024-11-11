@@ -106,3 +106,63 @@ export const listRecordsAll = async (
 
   return { records: allRecords, nbRequest }
 }
+
+export function chunkRecords(
+  records: any[],
+  options?: { createdAtLocation: 'createdAt' | 'value.createdAt' },
+) {
+  const createdAtLocation = options?.createdAtLocation ?? 'value.createdAt'
+
+  const periods: { timestamp: Date; count: number }[] = []
+  const count = records.length
+
+  // Get current time and round down to nearest 12h period
+  const currentPeriodStart = new Date()
+  periods.unshift({
+    timestamp: new Date(currentPeriodStart),
+    count: count,
+  })
+  currentPeriodStart.setMinutes(0, 0, 0)
+  if (currentPeriodStart.getHours() >= 12) {
+    currentPeriodStart.setHours(12)
+  } else {
+    currentPeriodStart.setHours(0)
+  }
+
+  // Get periods for last 7 days with cumulative counts
+  const sevenDaysAgo = new Date(currentPeriodStart)
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+  records.reverse()
+
+  // Loop through records from newest to oldest to build cumulative counts
+  for (let i = records.length - 1; i >= 0; i--) {
+    console.log(`records[i]`, records[i])
+
+    const date =
+      createdAtLocation === 'createdAt'
+        ? new Date(records[i].createdAt)
+        : new Date(records[i].value.createdAt)
+
+    // Skip if before 7 days ago
+    if (date < sevenDaysAgo) continue
+
+    if (date < currentPeriodStart) {
+      periods.unshift({
+        timestamp: new Date(currentPeriodStart),
+        count: i + 1,
+      })
+      currentPeriodStart.setTime(currentPeriodStart.getTime() - 12 * 60 * 60 * 1000)
+    }
+  }
+
+  // If this... That mean that nothing happened in the last 7 days
+  if (periods.length === 1) {
+    periods.unshift({
+      timestamp: new Date(currentPeriodStart),
+      count: count,
+    })
+  }
+
+  return periods
+}

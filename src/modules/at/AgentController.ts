@@ -1,44 +1,82 @@
 import { Agent, CredentialSession } from '@atproto/api'
+import { DidResolver, getPds } from '@atproto/identity'
 
 import { BackendMethod, remult, repo } from 'remult'
 
 import { AppUser } from '$modules/auth/Entities'
 import { Roles } from '$modules/auth/Roles'
 
-import type { getHandleFollow, getHandleStats } from './AtController.server'
+import { chunkRecords, listRecordsAll } from '../../lib/at/helper'
+
+interface RateLimitInfo {
+  remaining: number
+  resetDate: Date
+}
+
+function parseRateLimitHeaders(headers: Record<string, string>): RateLimitInfo {
+  const remaining = parseInt(headers['ratelimit-remaining'] || '0', 10)
+  const resetTimestamp = parseInt(headers['ratelimit-reset'] || '0', 10)
+
+  return {
+    remaining,
+    resetDate: new Date(resetTimestamp * 1000), // Convert Unix timestamp to Date
+  }
+}
 
 export class AgentController {
   @BackendMethod({ allowed: Roles.admin })
-  static async getExtraInfo(tzOffset: number) {
-    const credentialSession = new CredentialSession(new URL('https://bsky.social'))
-    const u = await repo(AppUser).findId(remult.user!.id)
-    // console.log(`u`, u)
-    credentialSession.resumeSession(u!.atpSessionData)
-    const agent = new Agent(credentialSession)
+  static async getHandleFollowers(tzOffset: number) {
+    // const didResolver = new DidResolver({})
+    // const didDocument = await didResolver.resolve('did:plc:dacfxuonkf2qtqft22sc23tu')
+    // const pds = getPds(didDocument!)
+    // const ttt = await listRecordsAll(pds!, 'did:plc:dacfxuonkf2qtqft22sc23tu', 'app.bsky.graph.getFollowers')
+    // console.log(`ttt`, ttt)
 
-    // const res3 = await agent.app.bsky.feed.post.create(
-    //   { repo: u!.id },
-    //   {
-    //     text: 'Is it working to post something in the future ?',
-    //     createdAt: new Date('2024-11-11T10:00:00Z').toISOString(),
+    // throw new Error('stop')
+    // https://public.api.bsky.app
+    //     const credentialSession = new CredentialSession(new URL('https://bsky.social'))
+    // // const u = await repo(AppUser).findId(remult.user!.id)
+    // const u = await repo(AppUser).findFirst({ handle: 'jyc.dev' })
+    // if (!u?.atpSessionData) throw new Error('User not authenticated with Bluesky')
 
-    //   },
-    // )
-    // console.log(`res3`, res3)
+    // credentialSession.resumeSession(u.atpSessionData)
+    // const agent = new Agent(credentialSession)
+    const agent = new Agent(new URL('https://public.api.bsky.app'))
 
-    // const uu = await agent.getLikes({
-    //   uri: 'at://did:plc:dacfxuonkf2qtqft22sc23tu/app.bsky.feed.post/3lamowjvknc2q',
-    //   limit: 10000,
-    // })
-    // console.log(`uu`, uu)
+    // Get the user's handle from the session
+    const profile = await agent.getProfile({ actor: 'jyc.dev' })
 
-    // const tt = await agent.getProfile({ actor: 'jyc.dev' })
-    // console.log(tt.data.viewer?.knownFollowers)
+    // Get all followers using cursor pagination
+    const allFollowers = []
+    let cursor: string | undefined
 
-    // const tt = await agent.getFollowers({ actor: 'jyc.dev', limit: 100 })
-    // console.log(tt)
+    do {
+      const followers = await agent.getFollowers({
+        actor: profile.data.handle,
+        limit: 100,
+        cursor,
+      })
 
-    // const tt = await agent.app.bsky.actor.getProfile({ actor: 'jyc.dev' })
-    // console.log(tt)
+      const rateLimit = parseRateLimitHeaders(followers.headers as Record<string, string>)
+      // console.log('Rate limit:', rateLimit)
+
+      console.log(`followers.data`, followers.data)
+      throw new Error('stop')
+      allFollowers.push(...followers.data.followers)
+      cursor = followers.data.cursor
+    } while (cursor)
+
+    const nbFollowers = allFollowers.length
+    const followersPeriods = chunkRecords(allFollowers, { createdAtLocation: 'createdAt' })
+    console.log(`followersPeriods`, followersPeriods)
+
+    // Get current timestamp adjusted for timezone
+    const now = new Date()
+    now.setMinutes(now.getMinutes() - tzOffset)
+
+    return {
+      nbFollowers,
+      followersPeriods,
+    }
   }
 }
