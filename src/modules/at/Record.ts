@@ -4,9 +4,6 @@ import { Roles } from '$modules/auth/Roles'
 
 @Entity<RecordFollow>('record-follows', {
   allowApiCrud: Roles.admin,
-  defaultOrderBy: {
-    did: 'asc',
-  },
 })
 export class RecordFollow {
   @Fields.string({ caption: 'uri' })
