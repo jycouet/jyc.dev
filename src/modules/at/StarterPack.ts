@@ -2,7 +2,6 @@ import { Entity, Fields, Relations } from 'remult'
 import { sqlRelations } from 'remult/internals'
 
 import { Roles } from '$modules/auth/Roles'
-import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 import { BSkyty } from './BSkyty'
 import { ListItem } from './ListItem'

@@ -1,4 +1,4 @@
-import { getRecord } from '$lib/at/helper'
+import { getRecord } from '$modules/at/helper'
 
 // export const entries: EntryGenerator = () => {
 //   const data = getMdsInfo();

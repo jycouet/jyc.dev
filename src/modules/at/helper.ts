@@ -1,7 +1,5 @@
 import { AtUri } from '@atproto/syntax'
 
-import { Log } from '@kitql/helpers'
-
 export const describeRepo = async (pds: string, repo: string) => {
   const describeRepoUrl = new URL(`${pds}/xrpc/com.atproto.repo.describeRepo`)
   describeRepoUrl.searchParams.set('repo', repo)
@@ -19,8 +17,6 @@ export const describeRepo = async (pds: string, repo: string) => {
     collections: string[]
   }
 }
-
-const log = new Log('at/helper')
 
 export const listRecords = async (
   pds: string,

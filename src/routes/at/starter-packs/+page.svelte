@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { parseUri } from '$lib/at/helper'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
   import { containsWords } from '$lib/remultHelper'
+  import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
   let pageSize = 20

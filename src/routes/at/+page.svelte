@@ -4,7 +4,6 @@
   import { repo } from 'remult'
 
   import { goto } from '$app/navigation'
-  import { page } from '$app/stores'
 
   import { route } from '$lib/ROUTES'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'

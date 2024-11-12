@@ -1,8 +1,8 @@
 import { DidResolver, getPds, HandleResolver } from '@atproto/identity'
 import { AtUri } from '@atproto/syntax'
 
-import { listRecords } from '$lib/at/helper'
 import { getMdInfo, getMdsInfo } from '$lib/mdInfos'
+import { listRecords } from '$modules/at/helper'
 
 export const load = async (event) => {
   const mds = getMdsInfo().map((file) => {
