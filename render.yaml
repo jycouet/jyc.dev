@@ -29,4 +29,4 @@ databases:
     databaseName: main_db
     region: oregon
     plan: Basic-256mb
-    diskSizeGB: 1
+    diskSizeGB: 5
