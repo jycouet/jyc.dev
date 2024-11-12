@@ -1,5 +1,6 @@
 <script lang="ts">
   import { BarChart } from 'layerchart'
+  import { queryParameters } from 'sveltekit-search-params'
 
   import { repo } from 'remult'
 
@@ -10,6 +11,27 @@
 
   let handle = $state('')
   let error = $state('')
+
+  const params = queryParameters({
+    h: true,
+    e: true,
+  })
+
+  $effect(() => {
+    if ($params.h) {
+      handle = $params.h
+      $params.h = null
+    }
+    if ($params.e) {
+      if ($params.e === 'not-valid') {
+        error = 'Not a valid handle'
+      } else {
+        error = $params.e
+      }
+      $params.e = null
+    }
+  })
+
   let loading = $state(false)
   let withFollow = $state(true)
 

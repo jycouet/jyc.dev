@@ -5,6 +5,7 @@ import { Roles } from '$modules/auth/Roles'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 @Entity<BSkyty>('bskyties', {
+  allowApiRead: true,
   allowApiCrud: Roles.admin,
   defaultOrderBy: {
     firstTimeHere: 'desc',
@@ -21,6 +22,7 @@ export class BSkyty {
   displayName = ''
 
   @Fields.string({
+    includeInApi: Roles.admin,
     sqlExpression: () => {
       return sqlRelations(BSkyty).stats.$first({ orderBy: { updatedAt: 'desc' } }).emoji
     },
@@ -30,7 +32,7 @@ export class BSkyty {
   @Fields.string()
   avatar = ''
 
-  @Fields.date()
+  @Fields.date({ includeInApi: Roles.admin })
   firstTimeHere = new Date()
 
   @Relations.toMany<BSkyty, LogHandleStats>(() => LogHandleStats, {
@@ -38,15 +40,15 @@ export class BSkyty {
   })
   stats: LogHandleStats[] = []
 
-  @Fields.string()
+  @Fields.string({ includeInApi: Roles.admin })
   lastFollowDid = ''
 
-  @Fields.number()
+  @Fields.number({ includeInApi: Roles.admin })
   followersCount = 0
 
-  @Fields.number()
+  @Fields.number({ includeInApi: Roles.admin })
   followsCount = 0
 
-  @Fields.number()
+  @Fields.number({ includeInApi: Roles.admin })
   postsCount = 0
 }

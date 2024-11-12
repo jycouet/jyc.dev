@@ -17,7 +17,7 @@ export class StarterPack {
   @Fields.string({ caption: 'id / uri' })
   id!: string
 
-  @Fields.string()
+  @Fields.string({ includeInApi: Roles.admin })
   listUri!: string
 
   @Fields.string()
@@ -29,10 +29,10 @@ export class StarterPack {
   @Fields.string()
   name!: string
 
-  @Fields.date()
+  @Fields.date({ includeInApi: Roles.admin })
   createdAt!: Date
 
-  @Fields.date()
+  @Fields.date({ includeInApi: Roles.admin })
   updatedAt!: Date
 
   @Fields.string()

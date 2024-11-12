@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { queryParameters } from 'sveltekit-search-params'
+
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
@@ -6,8 +8,14 @@
   import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
+  const params = queryParameters(
+    {
+      q: true,
+    },
+    { pushHistory: false },
+  )
+
   let pageSize = 20
-  let search: string = $state('')
 
   const paginator = paginatorStore(StarterPack, {
     pageSize,
@@ -17,12 +25,12 @@
 
   let debounceTimer: ReturnType<typeof setTimeout>
   $effect(() => {
-    if (search === '') {
-      paginator.load(containsWords(StarterPack, ['name', 'description'], search))
+    if ($params.q === '') {
+      paginator.load(containsWords(StarterPack, ['name', 'description'], $params.q))
     } else {
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => {
-        paginator.load(containsWords(StarterPack, ['name', 'description'], search))
+        paginator.load(containsWords(StarterPack, ['name', 'description'], $params.q ?? ''))
       }, 433)
     }
   })
@@ -36,7 +44,7 @@
   <div class="relative mb-8">
     <input
       type="text"
-      bind:value={search}
+      bind:value={$params.q}
       placeholder="Search starter packs..."
       class="input input-bordered w-full"
     />
