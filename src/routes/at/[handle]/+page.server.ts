@@ -83,8 +83,12 @@ export const load = (async (event) => {
       }
     }
   } catch (error) {
-    console.error(`error`, error)
-    redirect(307, `/at`)
+    if (error instanceof Error && error.message.includes('actor must be a valid did or a handle')) {
+      redirect(307, `/at?h=${event.params.handle}&e=not-valid`)
+    } else {
+      console.error(`error in PageServerLoadss`, event.params.handle, error)
+      redirect(307, `/at`)
+    }
   }
 }) satisfies PageServerLoad
 
@@ -99,27 +103,35 @@ const addStarterPack = async (did: string) => {
         listRecordsAll(pds, did, 'app.bsky.graph.listitem'),
       ])
       for (const starterPack of starterPacks.records) {
-        await repo(StarterPack).upsert({
-          where: { id: starterPack.uri },
-          set: {
-            creatorDid: did,
-            listUri: starterPack.value.list,
-            name: starterPack.value.name,
-            createdAt: starterPack.value.createdAt,
-            updatedAt: starterPack.value.updatedAt,
-            description: starterPack.value.description,
-          },
-        })
+        try {
+          await repo(StarterPack).upsert({
+            where: { id: starterPack.uri },
+            set: {
+              creatorDid: did,
+              listUri: starterPack.value.list,
+              name: starterPack.value.name,
+              createdAt: starterPack.value.createdAt,
+              updatedAt: starterPack.value.updatedAt,
+              description: starterPack.value.description,
+            },
+          })
+        } catch (error) {
+          log.error(`error adding StarterPack`, error)
+        }
       }
       for (const listItem of listitems.records) {
-        await repo(ListItem).upsert({
-          where: { id: listItem.uri },
-          set: {
-            listUri: listItem.value.list,
-            subject: listItem.value.subject,
-            createdAt: listItem.value.createdAt,
-          },
-        })
+        try {
+          await repo(ListItem).upsert({
+            where: { id: listItem.uri },
+            set: {
+              listUri: listItem.value.list,
+              subject: listItem.value.subject,
+              createdAt: listItem.value.createdAt,
+            },
+          })
+        } catch (error) {
+          log.error(`error adding ListItem`, error)
+        }
       }
     }
   }
