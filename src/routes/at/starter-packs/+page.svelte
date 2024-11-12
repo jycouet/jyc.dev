@@ -22,7 +22,14 @@
     include: { creator: true },
     aggregate: {},
   })
+  // remult.apiClient.httpClient = async (input: RequestInfo | URL, init?: RequestInit) => {
+  //   console.log(init)
+  //   const res = await fetch(input, {
+  //     ...init,
+  //   })
 
+  //   return res
+  // }
   let debounceTimer: ReturnType<typeof setTimeout>
   $effect(() => {
     if ($params.q === '') {

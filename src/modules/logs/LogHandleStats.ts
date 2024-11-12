@@ -1,21 +1,13 @@
-import { Entity, Fields, repo } from 'remult'
+import { Entity, Fields, Relations } from 'remult'
 
 import { BSkyty } from '$modules/at/BSkyty'
 import { Roles } from '$modules/auth/Roles'
 
 @Entity<LogHandleStats>('log-handles-stats', {
-  allowApiCrud: Roles.admin,
   allowApiRead: true,
+  allowApiCrud: Roles.admin,
   defaultOrderBy: {
     updatedAt: 'desc',
-  },
-  async saved(item, e) {
-    if (e.isNew) {
-      await repo(BSkyty).upsert({
-        where: { id: item.did },
-        set: { handle: item.handle, displayName: item.displayName, avatar: item.avatar },
-      })
-    }
   },
 })
 export class LogHandleStats {
@@ -28,6 +20,9 @@ export class LogHandleStats {
   @Fields.string({ required: true, includeInApi: Roles.admin })
   did!: string
 
+  @Relations.toOne<LogHandleStats, BSkyty>(() => BSkyty, { fields: { id: 'did' } })
+  bskyty?: BSkyty
+
   @Fields.string()
   handle = ''
 
@@ -35,10 +30,10 @@ export class LogHandleStats {
   displayName = ''
 
   @Fields.string()
-  emoji = ''
+  avatar = ''
 
   @Fields.string()
-  avatar = ''
+  emoji = ''
 
   @Fields.number({ includeInApi: Roles.admin })
   tzOffset = -1

@@ -17,9 +17,22 @@ const log = new Log('at/[handle]/+page.server.ts')
 export const load = (async (event) => {
   try {
     const agent = new Agent(new URL('https://public.api.bsky.app'))
-    const profile = await agent.getProfile({ actor: event.params.handle })
+    let profile
+    for (let i = 0; i < 3; i++) {
+      try {
+        profile = await agent.getProfile({ actor: event.params.handle })
+        break
+      } catch (error) {
+        if (i >= 2) throw error
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
+    }
+    // const toto = await agent.getFollows({ actor: event.params.handle })
+    // console.log(`toto`, toto.data.follows[0])
 
     // console.dir(profile, { depth: null })
+
+    profile = profile!
 
     // Don't await this
     addStarterPack(profile.data.did)
@@ -83,10 +96,11 @@ export const load = (async (event) => {
     //   }
     // }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('actor must be a valid did or a handle')) {
+    const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']
+    if (error instanceof Error && notValidError.includes(error.message)) {
       redirect(307, `/at?h=${event.params.handle}&e=not-valid`)
     } else {
-      console.error(`error in PageServerLoadss`, event.params.handle, error)
+      console.error(`error in PageServerLoad`, event.params.handle, error)
       redirect(307, `/at`)
     }
   }
