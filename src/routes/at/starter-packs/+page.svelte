@@ -33,11 +33,16 @@
   let debounceTimer: ReturnType<typeof setTimeout>
   $effect(() => {
     if ($params.q === '') {
-      paginator.load(containsWords(StarterPack, ['name', 'description'], $params.q))
+      paginator.load({})
     } else {
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => {
-        paginator.load(containsWords(StarterPack, ['name', 'description'], $params.q ?? ''))
+        paginator.load({
+          $or: [
+            containsWords(StarterPack, ['name', 'description'], $params.q ?? ''),
+            StarterPack.filterByCreator({ str: $params.q ?? '' }),
+          ],
+        })
       }, 433)
     }
   })

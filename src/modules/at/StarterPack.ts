@@ -1,5 +1,5 @@
-import { Entity, Fields, Relations } from 'remult'
-import { sqlRelations } from 'remult/internals'
+import { Entity, Fields, Filter, Relations } from 'remult'
+import { sqlRelations, sqlRelationsFilter } from 'remult/internals'
 
 import { Roles } from '$modules/auth/Roles'
 
@@ -47,4 +47,14 @@ export class StarterPack {
     },
   })
   nbMembers!: number
+
+  static filterByCreator = Filter.createCustom<StarterPack, { str: string }>(async ({ str }) => {
+    return sqlRelationsFilter(StarterPack).creator.some({
+      $or: [
+        { displayName: { $contains: str } },
+        { handle: { $contains: str } },
+        { id: { $contains: str } },
+      ],
+    })
+  })
 }
