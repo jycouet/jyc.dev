@@ -3,6 +3,7 @@ import { Entity, EntityBase, Fields } from 'remult'
 import { Roles } from '$modules/auth/Roles'
 
 @Entity<PlcRecord>('plc-record', {
+  allowApiRead: true,
   allowApiCrud: Roles.admin,
 })
 export class PlcRecord extends EntityBase {
