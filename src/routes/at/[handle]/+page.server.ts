@@ -17,17 +17,21 @@ const log = new Log('at/[handle]/+page.server.ts')
 export const load = (async (event) => {
   try {
     const agent = new Agent(new URL('https://public.api.bsky.app'))
+
+    // Remove @ if user included it
+    const cleanHandle = event.params.handle.replace('@', '').toLowerCase()
+
     let profile
     for (let i = 0; i < 3; i++) {
       try {
-        profile = await agent.getProfile({ actor: event.params.handle })
+        profile = await agent.getProfile({ actor: cleanHandle })
         break
       } catch (error) {
         if (i >= 2) throw error
         await new Promise((resolve) => setTimeout(resolve, 1000))
       }
     }
-    // const toto = await agent.getFollows({ actor: event.params.handle })
+    // const toto = await agent.getFollows({ actor: cleanHandle })
     // console.log(`toto`, toto.data.follows[0])
 
     // console.dir(profile, { depth: null })
@@ -59,10 +63,10 @@ export const load = (async (event) => {
 
     // const handleResolver = new HandleResolver({})
     // let did = undefined
-    // if ((event.params.handle ?? '').startsWith('did:plc:')) {
-    //   did = event.params.handle
+    // if ((cleanHandle ?? '').startsWith('did:plc:')) {
+    //   did = cleanHandle
     // } else {
-    //   did = await handleResolver.resolve(event.params.handle)
+    //   did = await handleResolver.resolve(cleanHandle)
     // }
 
     // if (did) {
@@ -76,11 +80,11 @@ export const load = (async (event) => {
     //     // console.log(`repo`, repo);
 
     //     if (pds) {
-    //       log.info(event.params.handle)
+    //       log.info(cleanHandle)
     //       const profile = await listRecords(pds, did, 'app.bsky.actor.profile', { limit: 1 })
     //       const profileData = profile.records[0]?.value
 
-    //       const handle = event.params.handle
+    //       const handle = cleanHandle
     //       const displayName = profileData?.displayName || handle
 
     //       return {
@@ -98,9 +102,9 @@ export const load = (async (event) => {
   } catch (error) {
     const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']
     if (error instanceof Error && notValidError.includes(error.message)) {
-      redirect(307, `/at?h=${event.params.handle}&e=not-valid`)
+      redirect(307, `/at?h=${cleanHandle}&e=not-valid`)
     } else {
-      console.error(`error in PageServerLoad`, event.params.handle, error)
+      console.error(`error in PageServerLoad`, cleanHandle, error)
       redirect(307, `/at`)
     }
   }

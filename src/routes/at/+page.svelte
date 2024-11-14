@@ -74,15 +74,14 @@
     error = ''
     loading = true
 
-    // Remove @ if user included it
-    const cleanHandle = handle.replace('@', '')
+    const cleanHandle = handle.replace('@', '').toLowerCase()
 
     if (cleanHandle) {
       try {
         if (withFollow) {
-          await goto(route(`/at/[handle]`, { handle: cleanHandle }))
+          await goto(route(`/at/[handle]`, { handle }))
         } else {
-          await goto(route(`/at/[handle]`, { handle: cleanHandle, skip_follow: 'true' }))
+          await goto(route(`/at/[handle]`, { handle, skip_follow: 'true' }))
         }
       } catch (e) {
         error = 'An error occurred'
