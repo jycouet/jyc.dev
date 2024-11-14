@@ -72,7 +72,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
         break
       }
 
-      console.log(
+      console.info(
         `Empty response #${emptyResponseCount + 1}, waiting ${retryDelay / 1000} seconds before retry...`,
       )
       await sleep(retryDelay)
@@ -80,7 +80,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     }
 
     if (emptyResponseCount === maxEmptyResponses) {
-      console.log(`No records found after ${maxEmptyResponses} attempts`)
+      console.info(`No records found after ${maxEmptyResponses} attempts`)
       hasMore = false
       break
     }
@@ -123,7 +123,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     const estimatedSecondsRemaining = remainingRecords / overallRecordsPerSecond
     const estimatedHoursRemaining = estimatedSecondsRemaining / 3600
 
-    console.log(`
+    console.info(`
       Batch Stats:
       - Processed ${records.length} records in ${loopDuration}ms
       - records created: ${createdRecords.length}
