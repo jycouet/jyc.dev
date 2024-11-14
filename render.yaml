@@ -8,7 +8,7 @@ services:
     buildCommand: npm i -g pnpm@9.0.1; pnpm install --production=false; pnpm build
     startCommand: pnpm start
     numInstances: 1
-    healthCheckPath: /api/healthz
+    # healthCheckPath: /api/healthz
     envVars:
       - key: NODE_VERSION
         value: 22.11.0
@@ -18,8 +18,8 @@ services:
         value: utc
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
+      # - key: PORT
+      #   value: 10000
       - fromGroup: jyc-dev
       - key: DATABASE_URL
         fromDatabase:
