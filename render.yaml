@@ -18,6 +18,8 @@ services:
         value: utc
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
       - fromGroup: jyc-dev
       - key: DATABASE_URL
         fromDatabase:
