@@ -19,6 +19,8 @@
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
 
   let currentISOString = $state('')
+  let pos = $state('')
+  let createdAt = $state<Date | undefined>(undefined)
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
     const tzOffset = new Date().getTimezoneOffset()
@@ -41,6 +43,11 @@
       dateStyle: 'short',
       timeStyle: 'medium',
     }).format(new Date())
+
+    pos = data.pos ? new Intl.NumberFormat().format(data.pos) : ''
+    createdAt = data.createdAt
+      ? new Intl.DateTimeFormat().format(new Date(data.createdAt))
+      : undefined
   })
 
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {
@@ -212,8 +219,10 @@
 
 <div class="flex flex-col gap-4">
   <div class="card bg-base-300">
-    <div class="card-body">
-      <div class="flex items-center justify-between">
+    <div class="card-body pb-3">
+      <div
+        class="flex flex-col items-center justify-between gap-4 md:flex-row md:items-start md:gap-0"
+      >
         <h2 class="card-title flex flex-col items-start gap-2">
           <span class="flex items-end gap-2 text-2xl font-bold text-primary">
             {data.displayName}
@@ -226,7 +235,7 @@
             {/each}
           </div>
         </h2>
-        <div class="flex flex-col items-center gap-2">
+        <div class="flex flex-col items-center gap-1">
           <a href={`https://bsky.app/profile/${data.handle}`} target="_blank">
             <div class="avatar">
               <div class="mask mask-hexagon w-20">
@@ -234,7 +243,23 @@
               </div>
             </div>
           </a>
-          <span class="font-mono text-sm text-secondary">@{data.handle}</span>
+          <div class="flex flex-col items-center gap-0">
+            <span class="font-mono text-sm text-primary">@{data.handle}</span>
+            {#if pos}
+              <span class="font-mono text-sm text-secondary" title="User joined in position #{pos}">
+                #{pos}
+              </span>
+            {:else}
+              <span class="h-5 text-base-content/50">&nbsp;</span>
+            {/if}
+            {#if createdAt}
+              <span class="text-xs text-base-content/50" title={`User joined on ${createdAt}`}>
+                {createdAt}
+              </span>
+            {:else}
+              <span class="h-4 text-base-content/50">&nbsp;</span>
+            {/if}
+          </div>
         </div>
       </div>
     </div>

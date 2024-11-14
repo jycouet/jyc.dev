@@ -8,6 +8,7 @@ import { Log } from '@kitql/helpers'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
+import { PlcRecord } from '$modules/at/PlcRecord'
 import { StarterPack } from '$modules/at/StarterPack'
 
 import type { PageServerLoad } from './$types'
@@ -53,12 +54,16 @@ export const load = (async (event) => {
       },
     })
 
+    const plcRecord = await repo(PlcRecord).findFirst({ did: profile.data.did })
+
     return {
       did: profile.data.did,
       handle: profile.data.handle,
       displayName: profile.data.displayName,
       avatar: profile.data.avatar,
       description: profile.data.description || '',
+      pos: plcRecord?.id,
+      createdAt: plcRecord?.createdAt,
     }
 
     // const handleResolver = new HandleResolver({})

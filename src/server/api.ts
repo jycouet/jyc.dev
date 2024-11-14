@@ -9,6 +9,7 @@ import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
+import { PlcRecord } from '$modules/at/PlcRecord'
 import { RecordFollow } from '$modules/at/Record'
 import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
@@ -43,6 +44,7 @@ export const api = remultSveltekit({
     RecordFollow,
     StarterPack,
     ListItem,
+    PlcRecord,
   ],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
@@ -105,6 +107,20 @@ export const api = remultSveltekit({
       //     },
       //   })
       // }
+
+      await dataProvider.execute(`
+        ALTER TABLE "plc-record" DROP CONSTRAINT IF EXISTS "plc-record_pkey";
+      `)
+
+      // await dataProvider.execute(`
+      //   DO $$
+      //   BEGIN
+      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_did') THEN
+      //       CREATE INDEX idx_plc_record_did ON "plc-record" (did);
+      //     END IF;
+      //   END
+      //   $$;
+      // `)
     }
   },
 })
