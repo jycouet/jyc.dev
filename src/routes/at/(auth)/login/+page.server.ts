@@ -26,7 +26,7 @@ export const actions = {
       }
     }
 
-    const cleanHandle = handle.toString().replace('@', '')
+    const cleanHandle = handle.toString().replace('@', '').toLowerCase()
 
     const credentialSession = new CredentialSession(new URL('https://bsky.social'))
     await credentialSession.login({

@@ -20,7 +20,7 @@
 
   let currentISOString = $state('')
   let pos = $state('')
-  let createdAt = $state<Date | undefined>(undefined)
+  let createdAt = $state('')
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
     const tzOffset = new Date().getTimezoneOffset()
@@ -45,9 +45,7 @@
     }).format(new Date())
 
     pos = data.pos ? new Intl.NumberFormat().format(data.pos) : ''
-    createdAt = data.createdAt
-      ? new Intl.DateTimeFormat().format(new Date(data.createdAt))
-      : undefined
+    createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
   })
 
   function getNumbersComparison(today: number, yesterday: number, topic: string): string {

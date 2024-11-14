@@ -16,11 +16,11 @@ import type { PageServerLoad } from './$types'
 const log = new Log('at/[handle]/+page.server.ts')
 
 export const load = (async (event) => {
+  // Remove @ if user included it
+  const cleanHandle = event.params.handle.replace('@', '').toLowerCase()
+
   try {
     const agent = new Agent(new URL('https://public.api.bsky.app'))
-
-    // Remove @ if user included it
-    const cleanHandle = event.params.handle.replace('@', '').toLowerCase()
 
     let profile
     for (let i = 0; i < 3; i++) {
