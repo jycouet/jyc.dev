@@ -1,3 +1,5 @@
+import { PostHog } from 'posthog-node'
+
 import { SqlDatabase } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
@@ -69,6 +71,15 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     if (!building) {
+      const clientPostHog = new PostHog('phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL', {
+        host: 'https://eu.i.posthog.com',
+      })
+      clientPostHog.capture({
+        distinctId: new Date().toISOString(),
+        event: 'server-start',
+      })
+      clientPostHog.flush()
+
       // await dataProvider.execute(`
       //   DO $$
       //   BEGIN

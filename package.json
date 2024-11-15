@@ -41,6 +41,7 @@
     "postcss": "8.4.38",
     "postcss-load-config": "5.0.3",
     "posthog-js": "1.181.0",
+    "posthog-node": "^4.2.1",
     "remult": "0.27.23-next.2",
     "remult-kit": "0.0.3",
     "svelte": "5.1.9",
