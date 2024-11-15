@@ -4,7 +4,7 @@ import { sleep } from '@kitql/helpers'
 
 import { PlcRecord } from '$modules/at/PlcRecord'
 
-import { dataProvider } from '../../../server/api'
+import { dataProvider } from '../../../../server/api'
 import type { RequestHandler } from './$types'
 
 interface PLCOperation {
