@@ -39,6 +39,9 @@ const SERVERS = {
   "GET /at/plc/[did]": (params: { did: (string | number) }) => {
     return `/at/plc/${params.did}`
   },
+  "GET /at/plc/[pos=int]": (params: { pos: (Parameters<typeof import('../params/int.ts').match>[0]) }) => {
+    return `/at/plc/${params.pos}`
+  },
   "GET /at/plc/count": `/at/plc/count`,
   "GET /at/plc/last": `/at/plc/last`,
   "GET /at/plc/sync": `/at/plc/sync`
@@ -156,8 +159,8 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 */
 export type KIT_ROUTES = {
   PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/at/starter-packs': never, '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
-  SERVERS: { 'GET /api/healthz': never, 'GET /at/plc/[did]': 'did', 'GET /at/plc/count': never, 'GET /at/plc/last': never, 'GET /at/plc/sync': never }
+  SERVERS: { 'GET /api/healthz': never, 'GET /at/plc/[did]': 'did', 'GET /at/plc/[pos=int]': 'pos', 'GET /at/plc/count': never, 'GET /at/plc/last': never, 'GET /at/plc/sync': never }
   ACTIONS: { 'login /at/login': never }
   LINKS: Record<string, never>
-  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never, did: never }
+  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never, did: never, pos: never }
 }
