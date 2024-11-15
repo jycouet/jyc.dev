@@ -9,6 +9,7 @@ const config = {
         'surface-200': 'oklch(var(--b2) / <alpha-value>)',
         'surface-300': 'oklch(var(--b3) / <alpha-value>)',
         'surface-content': 'oklch(var(--bc) / <alpha-value>)',
+        bsky: '#4da2fe',
       },
     },
   },

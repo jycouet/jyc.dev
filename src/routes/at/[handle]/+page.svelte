@@ -48,27 +48,6 @@
     createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
   })
 
-  function getNumbersComparison(today: number, yesterday: number, topic: string): string {
-    if (today === yesterday) {
-      return "<span class='text-gray-500'>Same as yesterday</span>"
-    }
-    if (yesterday === 0) {
-      return `<span class='text-error'>No ${topic} yesterday</span>`
-    }
-    if (today === 0) {
-      return `<span class='text-gray-500'>No ${topic}... yet 🙈</span>`
-    }
-
-    const diff = today - yesterday
-    // const percentage = Math.abs(Math.round((diff / yesterday) * 100));
-
-    if (diff > 0) {
-      return `${diff} <span class='text-success'>more</span> than yesterday`
-    } else {
-      return `${-diff} <span class='text-error'>less</span> than yesterday`
-    }
-  }
-
   export function getBackgroundColor(
     name: string,
     options?: { saturation?: number; lightness?: number },
@@ -201,6 +180,70 @@
     const lineBreak = navigator.userAgent.toLowerCase().includes('windows') ? '<br>' : '\n'
     return `https://bsky.app/intent/compose?text=${encodeURIComponent(msg.join(lineBreak))}`
   }
+
+  function formatDescriptionLine(
+    line: string,
+  ): Array<string | { type: 'handle' | 'link'; content: string }> {
+    const parts: Array<string | { type: 'handle' | 'link'; content: string }> = []
+    let currentText = ''
+
+    // Regular expression for URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    // Split by URLs first
+    const segments = line.split(urlRegex)
+
+    segments.forEach((segment, index) => {
+      // If it's an odd index, it's a URL
+      if (index % 2 !== 0) {
+        if (currentText) {
+          parts.push(currentText)
+          currentText = ''
+        }
+        parts.push({ type: 'link', content: segment })
+        return
+      }
+
+      // Process regular text for @ mentions
+      const words = segment.split(' ')
+      words.forEach((word, wordIndex) => {
+        if (word.startsWith('@')) {
+          if (currentText) {
+            parts.push(currentText)
+            currentText = ''
+          }
+          parts.push({ type: 'handle', content: word.slice(1) })
+        } else {
+          if (currentText && wordIndex > 0) currentText += ' '
+          currentText += word
+        }
+      })
+    })
+
+    if (currentText) {
+      parts.push(currentText)
+    }
+
+    return parts
+  }
+
+  // Helper function to render the formatted content
+  function renderFormattedContent(part: string | { type: 'handle' | 'link'; content: string }) {
+    if (typeof part === 'string') {
+      return part
+    }
+
+    if (part.type === 'handle') {
+      return ` <a href="https://bsky.app/profile/${part.content}" 
+        class="text-bsky hover:underline" 
+        target="_blank">@${part.content}</a> `
+    }
+
+    if (part.type === 'link') {
+      return ` <a href="${part.content}" 
+        class="text-white hover:underline" 
+        target="_blank">${part.content.replace(/^https?:\/\//, '')}</a> `
+    }
+  }
 </script>
 
 <Og title={`${data.displayName} | Atmosphere - Stats`} {description} />
@@ -229,7 +272,9 @@
           </span>
           <div class="flex flex-col gap-1 border-l pl-4">
             {#each (data.description ?? '').split('\n') ?? [] as line}
-              <p class="text-sm">{line}</p>
+              <p class="text-sm">
+                {@html formatDescriptionLine(line).map(renderFormattedContent).join('')}
+              </p>
             {/each}
           </div>
         </h2>
