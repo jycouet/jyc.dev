@@ -78,6 +78,12 @@
         'https://cdn.bsky.app/img/avatar/plain/did:plc:aqkumzmd7yas67hexhiixkyq/bafkreieliyf4xvtyv3bdbn6wuon7l4mojhkvpybi5zoza25yptqvafbwx4@jpeg',
       displayName: 'Harry Lewiston',
     },
+    {
+      handle: 'patak.dev',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:2gkh62xvzokhlf6li4ol3b3d/bafkreifgzl4e5jqlakd77ajvnilsb5tufsv24h2sxfwmitkzxrh3sk6mhq@jpeg',
+      displayName: 'patak',
+    },
   ]
 </script>
 
