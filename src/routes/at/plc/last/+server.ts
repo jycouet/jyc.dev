@@ -6,7 +6,7 @@ import { PlcRecord } from '$modules/at/PlcRecord'
 
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = async ({}) => {
+export const GET: RequestHandler = async () => {
   const res = await repo(PlcRecord).findFirst({}, { orderBy: { createdAt: 'desc' } })
   return json(res)
 }
