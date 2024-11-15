@@ -108,15 +108,25 @@ export const api = remultSveltekit({
       //   })
       // }
 
-      await dataProvider.execute(`
-        ALTER TABLE "plc-record" DROP CONSTRAINT IF EXISTS "plc-record_pkey";
-      `)
+      // await dataProvider.execute(`
+      //   ALTER TABLE "plc-record" DROP CONSTRAINT IF EXISTS "plc-record_pkey";
+      // `)
+
+      // await dataProvider.execute(`
+      //   DO $$
+      //   BEGIN
+      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_did') THEN
+      //       CREATE INDEX idx_plc_record_did ON "plc-record" (did);
+      //     END IF;
+      //   END
+      //   $$;
+      // `)
 
       await dataProvider.execute(`
         DO $$
         BEGIN
-          IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_did') THEN
-            CREATE INDEX idx_plc_record_did ON "plc-record" (did);
+          IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
+            CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
           END IF;
         END
         $$;

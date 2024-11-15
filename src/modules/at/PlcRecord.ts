@@ -4,6 +4,7 @@ import { Roles } from '$modules/auth/Roles'
 
 @Entity<PlcRecord>('plc-record', {
   allowApiCrud: Roles.admin,
+  defaultOrderBy: { createdAt: 'desc' },
 })
 export class PlcRecord extends EntityBase {
   @Fields.number()
