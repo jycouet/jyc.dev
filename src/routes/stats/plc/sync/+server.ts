@@ -3,6 +3,8 @@ import type { EntityBase } from 'remult'
 import { Log, sleep } from '@kitql/helpers'
 import { read, write } from '@kitql/internals'
 
+import { dev } from '$app/environment'
+
 import { PlcRecord } from '$modules/at/PlcRecord'
 
 import { dataProvider } from '../../../../server/api'
@@ -50,7 +52,11 @@ export const GET: RequestHandler = async ({ fetch }) => {
     },
   )
 
-  const mode = 'localfile-to-db' as 'plc-to-localfile' | 'localfile-to-db' | 'plc-to-db'
+  type Mode = 'plc-to-localfile' | 'localfile-to-db' | 'plc-to-db'
+  let mode: Mode = 'plc-to-db' as Mode
+  if (!dev) {
+    mode = 'plc-to-db'
+  }
   let cursor = latestRecord ? latestRecord.createdAt.toISOString() : '1986-11-07T00:35:16.390Z'
   let nextPosition = latestRecord ? latestRecord.pos_atproto + 1 : 1
   let nextPositionBsky = latestRecordBSky ? latestRecordBSky.pos_bsky! + 1 : 1
