@@ -41,7 +41,7 @@
     </aside>
 
     <a href={route('/thumb-meta')} class="link link-primary">thumb-meta</a>
-    <a href={route('/at')} class="link link-primary">Atmosphere - Stats</a>
+    <a href={route('/at')} class="link link-primary">Sky Zoo</a>
 
     <nav class="grid-flow-col items-center gap-4 md:place-self-center md:justify-self-end">
       <a href="https://dynamicprocess.io/" target="_blank" aria-label="Youtube"

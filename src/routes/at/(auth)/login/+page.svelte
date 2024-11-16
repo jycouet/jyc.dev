@@ -48,7 +48,7 @@
                 >
               </li>
               <li>b. Click on "Create App Password"</li>
-              <li>c. Give it a name (e.g., "Atm Stats")</li>
+              <li>c. Give it a name (e.g., "Sky Zoo")</li>
               <li>d. Copy your new app password</li>
             </ul>
           </div>

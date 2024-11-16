@@ -53,7 +53,7 @@
   const description = 'Looking for a starter pack? Here you go!'
 </script>
 
-<Og title="Atmosphere - Starter Packs Browser" {description} />
+<Og title="Sky Zoo - Starter Packs Browser" {description} />
 
 <div class="container mx-auto space-y-4">
   <div class="relative mb-8">

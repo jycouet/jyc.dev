@@ -282,7 +282,7 @@
   }
 </script>
 
-<Og title={`${data.displayName} | Atmosphere - Stats`} {description} />
+<Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
 
 <div class="flex items-center justify-between">
   <a href={route(`/at`)} class="btn btn-ghost">

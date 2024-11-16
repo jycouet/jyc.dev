@@ -88,13 +88,13 @@
   ]
 </script>
 
-<Og title="Atmosphere - Stats" {description} />
+<Og title="Sky Zoo" {description} />
 
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
     <div class="mb-8 flex items-center justify-center">
       <h1 class="text-4xl font-bold">
-        <a href={route(`/at`)}>Atmosphere - Stats</a>
+        <a href={route(`/at`)}>Sky Zoo</a>
       </h1>
       <!-- <label class="flex items-center gap-1">
         <input
