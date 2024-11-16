@@ -100,68 +100,72 @@
 
 <Og title="Sky Zoo" {description} />
 
-<div class="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
-  <form onsubmit={handleSubmit} class="flex flex-col gap-4 md:col-span-8">
-    <div class="form-control flex gap-4">
-      <div class="flex items-end gap-4">
-        <div class="flex-1">
-          <div class="label">
-            <span class="label-text">Enter your handle</span>
-            {#if error}
-              <span class="label-text-alt text-error">{error}</span>
-            {/if}
+<div class="flex flex-col gap-8">
+  <div class="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
+    <form onsubmit={handleSubmit} class="flex flex-col gap-4 md:col-span-8">
+      <div class="form-control flex gap-4">
+        <div class="flex items-end gap-4">
+          <div class="flex-1">
+            <div class="label">
+              <span class="label-text">Enter your handle</span>
+              {#if error}
+                <span class="label-text-alt text-error">{error}</span>
+              {/if}
+            </div>
+
+            <label
+              class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} "
+            >
+              @
+              <input
+                type="text"
+                class="grow placeholder:text-base-content/30"
+                id="handle"
+                bind:value={handle}
+                placeholder="handle.bsky.social"
+              />
+            </label>
           </div>
-
-          <label class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} ">
-            @
-            <input
-              type="text"
-              class="grow placeholder:text-base-content/30"
-              id="handle"
-              bind:value={handle}
-              placeholder="handle.bsky.social"
-            />
-          </label>
         </div>
+
+        <button type="submit" class="btn btn-primary" disabled={loading}>
+          {#if loading}
+            <span class="loading loading-spinner"></span>
+          {/if}
+          Look up handle
+        </button>
       </div>
+    </form>
 
-      <button type="submit" class="btn btn-primary" disabled={loading}>
-        {#if loading}
-          <span class="loading loading-spinner"></span>
-        {/if}
-        Look up handle
-      </button>
+    <div class="md:col-span-4">
+      <a href={route(`/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+        <span>Starter Packs Browser</span>
+        <span class="relative bottom-0 -mb-6 text-xs opacity-40"
+          >To add a starter pack, enter your handle on the left!</span
+        >
+      </a>
     </div>
-  </form>
-
-  <div class="md:col-span-4">
-    <a href={route(`/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
-      <span>Starter Packs Browser</span>
-      <span class="relative bottom-0 -mb-6 text-xs opacity-40"
-        >To add a starter pack, enter your handle on the left!</span
-      >
-    </a>
   </div>
-</div>
 
-<div class="mt-10 h-[300px]">
-  <BarChart
-    data={stats}
-    x="emoji"
-    y="$count"
-    props={{
-      bars: { tweened: true },
-      xAxis: { tickLabelProps: { class: 'text-xl md:text-3xl', dy: 30 }, tickLength: 0 },
-      yAxis: { placement: 'right', tickLength: 0 },
-    }}
-    cRange={loadingChart ? ['oklch(var(--n)/1)'] : ['oklch(var(--s)/0.3)']}
-  />
-</div>
+  <div class="mt-10 h-[300px]">
+    <BarChart
+      data={stats}
+      x="emoji"
+      y="$count"
+      props={{
+        bars: { tweened: true },
+        xAxis: { tickLabelProps: { class: 'text-xl md:text-3xl', dy: 30 }, tickLength: 0 },
+        yAxis: { placement: 'right', tickLength: 0 },
+      }}
+      cRange={loadingChart ? ['oklch(var(--n)/1)'] : ['oklch(var(--s)/0.3)']}
+    />
+  </div>
 
-<div class="mt-16 text-center text-sm text-base-content/70">
-  <p>TIP: If you're viewing a profile on blue sky,</p>
-  <p>
-    <span class="text-secondary">prefix with</span>
-    "<code class="font-mono text-primary">skyzoo.blue/</code>" to open it here!
-  </p>
+  <div class="mt-16 text-center text-sm text-base-content/70">
+    <p>TIP: If you're viewing a profile on blue sky,</p>
+    <p>
+      <span class="text-secondary">prefix with</span>
+      "<code class="font-mono text-primary">skyzoo.blue/</code>" to open it here!
+    </p>
+  </div>
 </div>

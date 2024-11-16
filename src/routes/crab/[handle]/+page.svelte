@@ -664,27 +664,4 @@
   {/if}
 </div>
 
-<div class="mt-12 flex justify-center gap-2 text-sm text-gray-500">
-  <div>
-    🙏 <a
-      target="_blank"
-      href={route(`bsky_profile`, { handle: 'jyc.dev' })}
-      class="link link-secondary"
-    >
-      Follow me</a
-    > for updates
-  </div>
-  <span class="text-gray-500">|</span>
-  <div>
-    <a
-      target="_blank"
-      href={createBSkyIntent([`Hey @jyc.dev could we have [YOUR REQUEST 😉] ?`])}
-      class="link link-primary"
-    >
-      Request
-    </a>
-    a feature
-  </div>
-</div>
-
 <!-- <pre class="code text-xs">{JSON.stringify(dataApi, null, 2)}</pre> -->
