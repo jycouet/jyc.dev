@@ -24,11 +24,11 @@
   let { children, data }: Props = $props()
 
   let first = $state(false)
-  $effect(() => {
-    if ($page.url.host === 'jyc.dev') {
-      window.location.href = window.location.href.replace('jyc.dev', 'skyzoo.blue')
-    }
-  })
+  // $effect(() => {
+  //   if ($page.url.host === 'jyc.dev') {
+  //     window.location.href = window.location.href.replace('jyc.dev', 'skyzoo.blue')
+  //   }
+  // })
 
   $effect(() => {
     remult.user = data.user
