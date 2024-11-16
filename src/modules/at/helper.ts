@@ -25,6 +25,7 @@ export const listRecords = async (
   options?: {
     cursor?: string
     limit?: number
+    reverse?: boolean
   },
 ) => {
   const listRecordsUrl = new URL(`${pds}/xrpc/com.atproto.repo.listRecords`)
@@ -33,6 +34,9 @@ export const listRecords = async (
   listRecordsUrl.searchParams.set('limit', options?.limit?.toString() ?? '50')
   if (options?.cursor) {
     listRecordsUrl.searchParams.set('cursor', options.cursor)
+  }
+  if (options?.reverse) {
+    listRecordsUrl.searchParams.set('reverse', 'true')
   }
   const url = listRecordsUrl.toString()
   // log.info(`fetch`, url)
@@ -62,6 +66,7 @@ export const listRecordsAll = async (
   collection: string,
   options?: {
     while?: (record: any) => boolean
+    reverse?: boolean
   },
 ) => {
   const allRecords: Array<{
@@ -77,6 +82,7 @@ export const listRecordsAll = async (
     const response = await listRecords(pds, repo, collection, {
       cursor,
       limit: 100,
+      reverse: options?.reverse,
     })
     nbRequest++
 
