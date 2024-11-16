@@ -285,7 +285,7 @@
 <Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
 
 <div class="flex items-center justify-between">
-  <a href={route(`/at`)} class="btn btn-ghost">
+  <a href={route(`/crab`)} class="btn btn-ghost">
     <ArrowLeft />
     Check another handle
   </a>
@@ -342,7 +342,7 @@
             {/if}
             {#if startedToBeActiveOn}
               <span
-                class="text-xs text-base-content/50"
+                class="hidden text-xs text-base-content/50 md:block"
                 title={`User started to be active on ${startedToBeActiveOn}`}
               >
                 {startedToBeActiveOn}

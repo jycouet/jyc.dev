@@ -58,7 +58,7 @@ export const actions = {
       const session = await createSession(token, credentialSession.did!)
       setSessionTokenCookie(event, token, session.expiresAt)
 
-      return redirect(302, route('/at/[handle]', { handle: credentialSession.session.handle }))
+      return redirect(302, route('/crab/[handle]', { handle: credentialSession.session.handle }))
     }
 
     fail(401)

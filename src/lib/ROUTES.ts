@@ -9,15 +9,6 @@
  * PAGES
  */
 const PAGES = {
-  "/at": `/at`,
-  "/at/login": `/at/login`,
-  "/at/[handle]": (params: { handle: (string | number), skip_follow?: ("true" | "false") }) => {
-    return `/at/${params.handle}${appendSp({ skip_follow: params.skip_follow })}`
-  },
-  "/at/[handle]/extra": (params: { handle: (string | number) }) => {
-    return `/at/${params.handle}/extra`
-  },
-  "/at/wolf": `/at/wolf`,
   "/blog": `/blog`,
   "/blog/[link_under_blog]": (params: { link_under_blog: (string | number) }) => {
     return `/blog/${params.link_under_blog}`
@@ -25,10 +16,19 @@ const PAGES = {
   "/blog/[pds]/[repo]/[collection]/[rkey]": (params: { pds: (string | number), repo: (string | number), collection: (string | number), rkey: (string | number) }) => {
     return `/blog/${params.pds}/${params.repo}/${params.collection}/${params.rkey}`
   },
+  "/crab": `/crab`,
+  "/crab/login": `/crab/login`,
+  "/crab/[handle]": (params: { handle: (string | number), skip_follow?: ("true" | "false") }) => {
+    return `/crab/${params.handle}${appendSp({ skip_follow: params.skip_follow })}`
+  },
+  "/crab/[handle]/extra": (params: { handle: (string | number) }) => {
+    return `/crab/${params.handle}/extra`
+  },
   "/thumb-meta": `/thumb-meta`,
   "/thumb-meta/[videoId]": (params: { videoId: (string | number) }) => {
     return `/thumb-meta/${params.videoId}`
-  }
+  },
+  "/wolf": `/wolf`
 }
 
 /**
@@ -36,22 +36,22 @@ const PAGES = {
  */
 const SERVERS = {
   "GET /api/healthz": `/api/healthz`,
-  "GET /at/plc/[did]": (params: { did: (string | number) }) => {
-    return `/at/plc/${params.did}`
+  "GET /crab/plc/[did]": (params: { did: (string | number) }) => {
+    return `/crab/plc/${params.did}`
   },
-  "GET /at/plc/[pos=int]": (params: { pos: (Parameters<typeof import('../params/int.ts').match>[0]) }) => {
-    return `/at/plc/${params.pos}`
+  "GET /crab/plc/[pos=int]": (params: { pos: (Parameters<typeof import('../params/int.ts').match>[0]) }) => {
+    return `/crab/plc/${params.pos}`
   },
-  "GET /at/plc/count": `/at/plc/count`,
-  "GET /at/plc/last": `/at/plc/last`,
-  "GET /at/plc/sync": `/at/plc/sync`
+  "GET /crab/plc/count": `/crab/plc/count`,
+  "GET /crab/plc/last": `/crab/plc/last`,
+  "GET /crab/plc/sync": `/crab/plc/sync`
 }
 
 /**
  * ACTIONS
  */
 const ACTIONS = {
-  "login /at/login": `/at/login?/login`
+  "login /crab/login": `/crab/login?/login`
 }
 
 /**
@@ -166,9 +166,9 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/at/wolf': never, '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
-  SERVERS: { 'GET /api/healthz': never, 'GET /at/plc/[did]': 'did', 'GET /at/plc/[pos=int]': 'pos', 'GET /at/plc/count': never, 'GET /at/plc/last': never, 'GET /at/plc/sync': never }
-  ACTIONS: { 'login /at/login': never }
+  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/crab': never, '/crab/login': never, '/crab/[handle]': 'handle', '/crab/[handle]/extra': 'handle', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId', '/wolf': never }
+  SERVERS: { 'GET /api/healthz': never, 'GET /crab/plc/[did]': 'did', 'GET /crab/plc/[pos=int]': 'pos', 'GET /crab/plc/count': never, 'GET /crab/plc/last': never, 'GET /crab/plc/sync': never }
+  ACTIONS: { 'login /crab/login': never }
   LINKS: { 'bsky_profile': 'handle', 'bsky_hashtag': 'hashtag', 'bsky_starter_pack': 'creator_handle' | 'rkey' }
-  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
+  Params: { link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, handle: never, skip_follow: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
 }

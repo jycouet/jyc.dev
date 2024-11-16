@@ -6,8 +6,11 @@
 
   import { goto } from '$app/navigation'
 
+  import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
+
+  const description = 'Stats on Bluesky, At Protocol, ...'
 
   let handle = $state('')
   let error = $state('')
@@ -79,9 +82,9 @@
     if (cleanHandle) {
       try {
         if (withFollow) {
-          await goto(route(`/at/[handle]`, { handle }))
+          await goto(route(`/crab/[handle]`, { handle }))
         } else {
-          await goto(route(`/at/[handle]`, { handle, skip_follow: 'true' }))
+          await goto(route(`/crab/[handle]`, { handle, skip_follow: 'true' }))
         }
       } catch (e) {
         error = 'An error occurred'
@@ -94,6 +97,8 @@
     }
   }
 </script>
+
+<Og title="Sky Zoo" {description} />
 
 <div class="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
   <form onsubmit={handleSubmit} class="flex flex-col gap-4 md:col-span-8">
@@ -130,7 +135,7 @@
   </form>
 
   <div class="md:col-span-4">
-    <a href={route(`/at/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+    <a href={route(`/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
       <span>Starter Packs Browser</span>
       <span class="relative bottom-0 -mb-6 text-xs opacity-40"
         >To add a starter pack, enter your handle on the left!</span

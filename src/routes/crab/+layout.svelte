@@ -7,14 +7,12 @@
 
   import Avatar from '$lib/components/Avatar.svelte'
   import Notification from '$lib/components/Notification.svelte'
-  import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { notifications } from '$lib/stores/notifications'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
   import type { LayoutData } from './$types'
 
-  const description = 'Stats on Bluesky, At Protocol, ...'
   // let hideOthers = false
   let unSub: (() => void) | null = null
 
@@ -27,6 +25,10 @@
 
   let first = $state(false)
   $effect(() => {
+    // if ($page.url.host === 'localhost:5173') {
+    //   window.location.href = 'https://skyzoo.blue'
+    // }
+
     remult.user = data.user
 
     unSub = remult
@@ -88,13 +90,11 @@
   ]
 </script>
 
-<Og title="Sky Zoo" {description} />
-
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
     <div class="mb-8 flex items-center justify-center">
       <h1 class="text-4xl font-bold">
-        <a href={route(`/at`)}>Sky Zoo</a>
+        <a href={route(`/crab`)}>Sky Zoo</a>
       </h1>
       <!-- <label class="flex items-center gap-1">
         <input

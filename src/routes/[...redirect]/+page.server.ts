@@ -12,9 +12,16 @@ export const load = (async ({ params, url }) => {
     // thus url should look like: jyc.dev/bsky.app/profile/mikek.me
     // we should redirect to /at/mikek.me
     const handle = params.redirect.split('/').pop()
-    redirect(302, route(`/at/[handle]`, { handle: handle ?? '' }))
+    redirect(302, route(`/crab/[handle]`, { handle: handle ?? '' }))
   } else {
-    redirect(302, route(`/blog`))
+    if (url.host === 'localhost:5173') {
+      // Just for dev purposes
+      redirect(302, route(`/crab`))
+    } else if (url.host === 'jyc.dev') {
+      redirect(302, route(`/blog`))
+    } else {
+      redirect(302, route(`/crab`))
+    }
   }
 
   return {}
