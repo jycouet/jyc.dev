@@ -10,15 +10,15 @@ export const load = (async ({ params, url }) => {
     redirect(302, route(`/thumb-meta/[videoId]`, { videoId: videoId ?? '' }))
   } else if (params.redirect.includes('bsky.app')) {
     const handle = params.redirect.split('/').pop()
-    redirect(302, route(`/crab/[handle]`, { handle: handle ?? '' }))
+    redirect(302, route(`/stats/[handle]`, { handle: handle ?? '' }))
   } else {
     if (url.host === 'localhost:5173') {
       // Just for dev purposes
-      redirect(302, route(`/crab`))
+      redirect(302, route(`/stats`))
     } else if (url.host === 'jyc.dev') {
       redirect(302, route(`/blog`))
     } else {
-      redirect(302, route(`/crab`))
+      redirect(302, route(`/stats`))
     }
   }
 

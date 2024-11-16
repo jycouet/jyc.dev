@@ -13,7 +13,7 @@
       {$page.error?.message || 'Something went wrong'}
     </p>
     <a
-      href={route(`/crab`)}
+      href={route(`/stats`)}
       class="hover:bg-primary-focus link link-secondary transform rounded-xl bg-primary px-8 py-4 text-lg text-primary-content shadow-lg transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-xl"
     >
       Go Home

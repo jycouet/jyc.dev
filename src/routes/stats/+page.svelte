@@ -82,9 +82,9 @@
     if (cleanHandle) {
       try {
         if (withFollow) {
-          await goto(route(`/crab/[handle]`, { handle }))
+          await goto(route(`/stats/[handle]`, { handle }))
         } else {
-          await goto(route(`/crab/[handle]`, { handle, skip_follow: 'true' }))
+          await goto(route(`/stats/[handle]`, { handle, skip_follow: 'true' }))
         }
       } catch (e) {
         error = 'An error occurred'
@@ -138,7 +138,7 @@
     </form>
 
     <div class="md:col-span-4">
-      <a href={route(`/crab/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+      <a href={route(`/stats/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
         <span>Starter Packs Browser</span>
         <span class="relative bottom-0 -mb-6 text-xs opacity-40"
           >To add a starter pack, enter your handle on the left!</span

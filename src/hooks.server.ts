@@ -12,7 +12,7 @@ export const handleRedirects: Handle = async ({ event, resolve }) => {
 
   // Define a permanent redirect condition
   if (pathname.startsWith('/at')) {
-    throw redirect(308, pathname.replace('/at', '/crab')) // Permanent redirect
+    throw redirect(308, pathname.replace('/at', '/stats')) // Permanent redirect
   }
 
   // Default behavior

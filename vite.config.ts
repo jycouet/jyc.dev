@@ -9,7 +9,7 @@ export default defineConfig({
     sveltekit(),
     kitRoutes<KIT_ROUTES>({
       PAGES: {
-        '/crab/[handle]': {
+        '/stats/[handle]': {
           explicit_search_params: {
             skip_follow: {
               required: false,

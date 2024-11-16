@@ -18,7 +18,7 @@
 
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body">
-        <form action={route('login /crab/login')} method="post" class="flex flex-col gap-6">
+        <form action={route('login /stats/login')} method="post" class="flex flex-col gap-6">
           <!-- Step 1: Handle -->
           <div class="form-control">
             <label for="handle" class="label">

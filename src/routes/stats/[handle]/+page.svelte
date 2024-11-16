@@ -285,7 +285,7 @@
 <Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
 
 <div class="flex items-center justify-between">
-  <a href={route(`/crab`)} class="btn btn-ghost">
+  <a href={route(`/stats`)} class="btn btn-ghost">
     <ArrowLeft />
     Check another handle
   </a>
