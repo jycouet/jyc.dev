@@ -140,7 +140,7 @@ export const load = (async (event) => {
     return {
       did: profile.data.did,
       handle: profile.data.handle,
-      displayName: profile.data.displayName,
+      displayName: profile.data.displayName || profile.data.handle,
       avatar: profile.data.avatar,
       description: profile.data.description || '',
       pos,

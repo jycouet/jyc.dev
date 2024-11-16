@@ -340,7 +340,7 @@
             {:else}
               <span class="h-4 text-base-content/50">&nbsp;</span>
             {/if}
-            {#if startedToBeActiveOn}
+            {#if startedToBeActiveOn && startedToBeActiveOn !== createdAt}
               <span
                 class="hidden text-xs text-base-content/50 md:block"
                 title={`User started to be active on ${startedToBeActiveOn}`}
