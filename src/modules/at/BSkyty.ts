@@ -51,4 +51,13 @@ export class BSkyty {
 
   @Fields.number({ includeInApi: Roles.admin })
   postsCount = 0
+
+  @Fields.number({ allowNull: true })
+  pos: number | null = null
+
+  @Fields.date({ includeInApi: Roles.admin, allowNull: true })
+  createdAt: Date | null = null
+
+  @Fields.date({ includeInApi: Roles.admin, allowNull: true })
+  startedToBeActiveOn: Date | null = null
 }

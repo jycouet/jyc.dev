@@ -21,6 +21,7 @@
   let currentISOString = $state('')
   let pos = $state('')
   let createdAt = $state('')
+  let startedToBeActiveOn = $state('')
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
   $effect(() => {
     const tzOffset = new Date().getTimezoneOffset()
@@ -46,6 +47,9 @@
 
     pos = data.pos ? new Intl.NumberFormat().format(data.pos) : ''
     createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
+    startedToBeActiveOn = data.startedToBeActiveOn
+      ? new Intl.DateTimeFormat().format(new Date(data.startedToBeActiveOn))
+      : ''
   })
 
   export function getBackgroundColor(
@@ -321,7 +325,9 @@
             <span class="font-mono text-sm text-primary">@{data.handle}</span>
             {#if pos}
               <span class="font-mono text-sm text-secondary" title="User joined in position #{pos}">
-                #{pos}
+                #{pos}<span class="italic"
+                  >{#if data.did.startsWith('did:web')}web{/if}</span
+                >
               </span>
             {:else}
               <span class="h-5 text-base-content/50">&nbsp;</span>
@@ -329,6 +335,16 @@
             {#if createdAt}
               <span class="text-xs text-base-content/50" title={`User joined on ${createdAt}`}>
                 {createdAt}
+              </span>
+            {:else}
+              <span class="h-4 text-base-content/50">&nbsp;</span>
+            {/if}
+            {#if startedToBeActiveOn}
+              <span
+                class="text-xs text-base-content/50"
+                title={`User started to be active on ${startedToBeActiveOn}`}
+              >
+                {startedToBeActiveOn}
               </span>
             {:else}
               <span class="h-4 text-base-content/50">&nbsp;</span>

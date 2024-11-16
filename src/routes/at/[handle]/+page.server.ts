@@ -6,7 +6,7 @@ import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { BSkyty } from '$modules/at/BSkyty'
-import { listRecordsAll } from '$modules/at/helper'
+import { listRecords, listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
 import { PlcRecord } from '$modules/at/PlcRecord'
 import { StarterPack } from '$modules/at/StarterPack'
@@ -42,7 +42,7 @@ export const load = (async (event) => {
     // Don't await this
     addStarterPack(profile.data.did)
 
-    await repo(BSkyty).upsert({
+    let bskyty = await repo(BSkyty).upsert({
       where: { id: profile.data.did },
       set: {
         handle: profile.data.handle,
@@ -54,7 +54,88 @@ export const load = (async (event) => {
       },
     })
 
-    const plcRecord = await repo(PlcRecord).findFirst({ did: profile.data.did })
+    let createdAt = bskyty.createdAt
+    let pos = bskyty.pos
+    if (!createdAt || !pos) {
+      const plcRecord = await repo(PlcRecord).findFirst({ did: profile.data.did })
+      createdAt = plcRecord?.createdAt ?? null
+      pos = plcRecord?.id ?? null
+    }
+
+    if (!bskyty.startedToBeActiveOn || !pos) {
+      const didResolver = new DidResolver({})
+      const didDocument = await didResolver.resolve(bskyty.id)
+      if (didDocument) {
+        const pds = getPds(didDocument)
+        if (pds) {
+          const firstPosts = await listRecords(pds, bskyty.id, 'app.bsky.feed.post', {
+            limit: 100,
+            reverse: true,
+          })
+
+          const sortedDates = firstPosts.records.map(
+            (r: { value: { createdAt: string } }) => new Date(r.value.createdAt),
+          ) as Date[]
+          // sortedDates.sort((a, b) => a.getTime() - b.getTime()) // Ensure chronological order
+          if (!createdAt) {
+            createdAt = sortedDates[0]
+          }
+
+          if (!pos && profile.data.did.startsWith('did:web')) {
+            const plcRecordWeb = await repo(PlcRecord).findFirst(
+              { createdAt: { $gte: createdAt } },
+              { orderBy: { createdAt: 'asc' } },
+            )
+            pos = plcRecordWeb?.id ?? null
+          }
+
+          // Calculate average delta days between posts
+          const datesWithDeltas = sortedDates.map((date: Date, i: number) => {
+            const prevDate = i > 0 ? sortedDates[i - 1] : null
+            const delta = prevDate
+              ? Math.ceil(Math.abs(date.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24))
+              : 0
+            return {
+              date,
+              deltaDays: delta,
+            }
+          })
+
+          // Calculate average delta days
+          const avgDeltaDays =
+            datesWithDeltas.reduce((sum: number, curr: any) => sum + curr.deltaDays, 0) /
+            (datesWithDeltas.length - 1)
+
+          // Find the median index
+          const midIndex = Math.floor(sortedDates.length / 2)
+
+          // Start from median and go backwards until we find a gap larger than average
+          let startedToBeActiveOn = sortedDates[0] // Default to first post if no significant gap found
+          for (let i = midIndex; i > 0; i--) {
+            if (datesWithDeltas[i].deltaDays > avgDeltaDays * 2) {
+              // Using 2x average as threshold
+              startedToBeActiveOn = datesWithDeltas[i].date
+              break
+            }
+          }
+
+          // Update the BSkyty record with the start date
+          bskyty = await repo(BSkyty).update(bskyty.id, {
+            createdAt,
+            startedToBeActiveOn,
+          })
+
+          // console.log({
+          //   startedToBeActiveOn: startedToBeActiveOn.toISOString(),
+          //   avgDeltaDays,
+          //   datesWithDeltas: datesWithDeltas.map((d) => ({
+          //     date: d.date.toISOString(),
+          //     deltaDays: d.deltaDays,
+          //   })),
+          // })
+        }
+      }
+    }
 
     return {
       did: profile.data.did,
@@ -62,8 +143,9 @@ export const load = (async (event) => {
       displayName: profile.data.displayName,
       avatar: profile.data.avatar,
       description: profile.data.description || '',
-      pos: plcRecord?.id,
-      createdAt: plcRecord?.createdAt,
+      pos,
+      createdAt,
+      startedToBeActiveOn: bskyty.startedToBeActiveOn,
     }
 
     // const handleResolver = new HandleResolver({})
