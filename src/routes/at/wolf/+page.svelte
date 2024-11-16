@@ -5,6 +5,7 @@
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
   import { containsWords } from '$lib/remultHelper'
+  import { route } from '$lib/ROUTES'
   import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
@@ -104,15 +105,17 @@
           </tr>
         {:else}
           {#each $paginator.items as pack}
-            <tr class="cursor-pointer hover:bg-base-200">
+            <tr class="hover:bg-base-200">
               <td>
                 <div class="flex items-center gap-3">
                   <Avatar {...pack.creator} />
                   <a
                     class="link link-info flex items-center gap-3"
                     target="_blank"
-                    href="https://bsky.app/starter-pack/{pack.creator.handle}/{parseUri(pack.id)
-                      .rkey}"
+                    href={route(`bsky_starter_pack`, {
+                      creator_handle: pack.creator.handle,
+                      rkey: parseUri(pack.id).rkey,
+                    })}
                   >
                     <div class="font-bold">{pack.name}</div>
                   </a>

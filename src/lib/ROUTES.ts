@@ -58,7 +58,15 @@ const ACTIONS = {
  * LINKS
  */
 const LINKS = {
-  
+  "bsky_profile": (params: { handle: (string | number) }) => {
+    return `https://bsky.app/profile/${params.handle}`
+  },
+  "bsky_hashtag": (params: { hashtag: (string | number) }) => {
+    return `https://bsky.app/hashtag/${params.hashtag}`
+  },
+  "bsky_starter_pack": (params: { creator_handle: (string | number), rkey: (string | number) }) => {
+    return `https://bsky.app/starter-pack/${params.creator_handle}/${params.rkey}`
+  }
 }
 
 type ParamValue = string | number | undefined
@@ -161,6 +169,6 @@ export type KIT_ROUTES = {
   PAGES: { '/at': never, '/at/login': never, '/at/[handle]': 'handle', '/at/[handle]/extra': 'handle', '/at/wolf': never, '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never, 'GET /at/plc/[did]': 'did', 'GET /at/plc/[pos=int]': 'pos', 'GET /at/plc/count': never, 'GET /at/plc/last': never, 'GET /at/plc/sync': never }
   ACTIONS: { 'login /at/login': never }
-  LINKS: Record<string, never>
-  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never, did: never, pos: never }
+  LINKS: { 'bsky_profile': 'handle', 'bsky_hashtag': 'hashtag', 'bsky_starter_pack': 'creator_handle' | 'rkey' }
+  Params: { handle: never, skip_follow: never, link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
 }

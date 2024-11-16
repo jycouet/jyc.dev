@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { route } from '$lib/ROUTES'
+
   import TimelineIcon from './TimelineIcon.svelte'
 
   interface Props {
@@ -18,7 +20,7 @@
       <hr />
       <TimelineIcon></TimelineIcon>
       <div class="mb-10 {i % 2 === 0 ? 'timeline-start md:text-end' : 'timeline-end'} ">
-        <a href="/blog/{item.link_under_blog}">
+        <a href={route(`/blog/[link_under_blog]`, { link_under_blog: item.link_under_blog })}>
           <time class="font-mono italic" title="Yes, I display year-month-day">
             {item.date}
           </time>

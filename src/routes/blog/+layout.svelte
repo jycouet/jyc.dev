@@ -1,5 +1,6 @@
 <script lang="ts">
   import Og from '$lib/components/Og.svelte'
+  import { route } from '$lib/ROUTES'
 
   interface Props {
     children?: import('svelte').Snippet
@@ -13,7 +14,7 @@
 
 <div class="mx-auto flex h-screen w-[800px] flex-col gap-4 p-4">
   <h1 class="text-3xl text-primary">
-    <a href="/" aria-label="Back home">jyc.dev</a>
+    <a href={route(`/blog`)} aria-label="Back home">jyc.dev</a>
   </h1>
 
   <span class="text-sm italic">Some takes about web devs!</span>
@@ -39,8 +40,8 @@
       <p>jyc.dev</p>
     </aside>
 
-    <a href="/thumb-meta" class="link link-primary">thumb-meta</a>
-    <a href="/at" class="link link-primary">Atmosphere - Stats</a>
+    <a href={route('/thumb-meta')} class="link link-primary">thumb-meta</a>
+    <a href={route('/at')} class="link link-primary">Atmosphere - Stats</a>
 
     <nav class="grid-flow-col items-center gap-4 md:place-self-center md:justify-self-end">
       <a href="https://dynamicprocess.io/" target="_blank" aria-label="Youtube"
@@ -169,7 +170,7 @@
         >
       </a>
 
-      <a
+      <!-- <a
         href="https://twitter.com/intent/follow?screen_name=jycouet"
         target="_blank"
         aria-label="Twitter / X"
@@ -179,7 +180,7 @@
             d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"
           /></svg
         >
-      </a>
+      </a> -->
 
       <a href="https://bsky.app/profile/jyc.dev" target="_blank" aria-label="bsky"
         ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"

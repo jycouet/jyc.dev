@@ -10,6 +10,7 @@
   import Heart from '$lib/icons/Heart.svelte'
   import Repost from '$lib/icons/Repost.svelte'
   import Send from '$lib/icons/Send.svelte'
+  import { route } from '$lib/ROUTES.js'
   import { AtController } from '$modules/at/AtController.js'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -242,13 +243,13 @@
     }
 
     if (part.type === 'handle') {
-      return ` <a href="https://bsky.app/profile/${part.content}" 
+      return ` <a href="${route(`bsky_profile`, { handle: part.content })}" 
         class="text-bsky hover:underline" 
         target="_blank">@${part.content}</a> `
     }
 
     if (part.type === 'hashtag') {
-      return ` <a href="https://bsky.app/hashtag/${part.content}" 
+      return ` <a href="${route(`bsky_hashtag`, { hashtag: part.content })}" 
         class="text-bsky hover:underline" 
         target="_blank">#${part.content}</a> `
     }
@@ -284,7 +285,7 @@
 <Og title={`${data.displayName} | Atmosphere - Stats`} {description} />
 
 <div class="flex items-center justify-between">
-  <a href="/at" class="btn btn-ghost">
+  <a href={route(`/at`)} class="btn btn-ghost">
     <ArrowLeft />
     Check another handle
   </a>
@@ -665,7 +666,11 @@
 
 <div class="mt-12 flex justify-center gap-2 text-sm text-gray-500">
   <div>
-    🙏 <a target="_blank" href="https://bsky.app/profile/jyc.dev" class="link link-secondary">
+    🙏 <a
+      target="_blank"
+      href={route(`bsky_profile`, { handle: 'jyc.dev' })}
+      class="link link-secondary"
+    >
       Follow me</a
     > for updates
   </div>

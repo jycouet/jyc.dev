@@ -18,6 +18,17 @@ export default defineConfig({
           },
         },
       },
+      LINKS: {
+        bsky_profile: {
+          href: 'https://bsky.app/profile/[handle]',
+        },
+        bsky_hashtag: {
+          href: 'https://bsky.app/hashtag/[hashtag]',
+        },
+        bsky_starter_pack: {
+          href: 'https://bsky.app/starter-pack/[creator_handle]/[rkey]',
+        },
+      },
     }),
   ],
 })

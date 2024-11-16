@@ -8,6 +8,7 @@
   import Avatar from '$lib/components/Avatar.svelte'
   import Notification from '$lib/components/Notification.svelte'
   import Og from '$lib/components/Og.svelte'
+  import { route } from '$lib/ROUTES'
   import { notifications } from '$lib/stores/notifications'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -93,7 +94,7 @@
   <div class="container mx-auto flex-grow px-4 py-8">
     <div class="mb-8 flex items-center justify-center">
       <h1 class="text-4xl font-bold">
-        <a href="/at">Atmosphere - Stats</a>
+        <a href={route(`/at`)}>Atmosphere - Stats</a>
       </h1>
       <!-- <label class="flex items-center gap-1">
         <input

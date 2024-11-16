@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { route } from '$lib/ROUTES'
+
   export let handle: string
   export let avatar: string
   export let displayName: string
@@ -8,7 +10,7 @@
 <div class="avatar">
   <div class="mask mask-hexagon {size}">
     <a
-      href="https://bsky.app/profile/{handle}"
+      href={route(`bsky_profile`, { handle })}
       class="tooltip"
       data-tip={displayName}
       target="_blank"
