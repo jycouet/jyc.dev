@@ -8,7 +8,10 @@ services:
     buildCommand: npm i -g pnpm@9.0.1; pnpm install --production=false; pnpm build
     startCommand: pnpm start
     numInstances: 1
-    # healthCheckPath: /api/healthz
+    domains:
+      - jyc.dev
+      - skyzoo.blue
+    healthCheckPath: /api/healthz
     envVars:
       - key: NODE_VERSION
         value: 22.11.0

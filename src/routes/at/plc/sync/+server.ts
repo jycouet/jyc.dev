@@ -7,7 +7,7 @@ import { PlcRecord } from '$modules/at/PlcRecord'
 import { dataProvider } from '../../../../server/api'
 import type { RequestHandler } from './$types'
 
-interface PLCOperation {
+interface JSONPLCOperation {
   sig: string
   prev: string | null
   type: 'create' | 'plc_operation'
@@ -17,10 +17,10 @@ interface PLCOperation {
   recoveryKey: string
 }
 
-interface PLCRecord {
+interface JSONPLCRecord {
   pos: number
   did: string
-  operation: PLCOperation
+  operation: JSONPLCOperation
   cid: string
   nullified: boolean
   createdAt: string
@@ -53,7 +53,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     let emptyResponseCount = 0
     const maxEmptyResponses = 1
     const retryDelay = 10_000 // 10 seconds in milliseconds
-    let records: PLCRecord[] = []
+    let records: JSONPLCRecord[] = []
 
     while (emptyResponseCount < maxEmptyResponses) {
       const url = new URL(`https://plc.directory/export`)
@@ -65,7 +65,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
       records = text
         .split('\n')
         .filter((line) => line.trim())
-        .map((line) => JSON.parse(line) as PLCRecord)
+        .map((line) => JSON.parse(line) as JSONPLCRecord)
 
       if (records.length > 0) {
         emptyResponseCount = 0

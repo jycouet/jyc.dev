@@ -3,6 +3,7 @@
 
   import posthog from 'posthog-js'
 
+  import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
   import { onNavigate } from '$app/navigation'
   import { page } from '$app/stores'
 
@@ -13,14 +14,11 @@
   let { children }: Props = $props()
 
   $effect(() => {
-    // if (!dev) {
-    // It's a public key anyway!
-    posthog.init('phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL', {
+    posthog.init(PUBLIC_POSTHOG_KEY, {
       // api_host: "https://eu.posthog.com",
       api_host: `${$page.url.origin}/posthog`,
       ui_host: 'https://eu.posthog.com',
     })
-    // }
   })
 
   onNavigate((navigation) => {

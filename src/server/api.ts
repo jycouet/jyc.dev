@@ -5,6 +5,7 @@ import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 
 import { DATABASE_URL, DID_PLC_ADMIN } from '$env/static/private'
+import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
 import { building } from '$app/environment'
 
 import { AgentController } from '$modules/at/AgentController'
@@ -71,7 +72,7 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     if (!building) {
-      const clientPostHog = new PostHog('phc_tmNtXMnAWyPJc6wq7Jvak0E3qWxsz9eEeedaw2DKVuL', {
+      const clientPostHog = new PostHog(PUBLIC_POSTHOG_KEY, {
         host: 'https://eu.i.posthog.com',
       })
       clientPostHog.capture({
