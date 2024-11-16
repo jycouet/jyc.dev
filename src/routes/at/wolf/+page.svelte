@@ -40,6 +40,8 @@
         paginator.load({
           $or: [
             containsWords(StarterPack, ['name', 'description'], $params.q ?? ''),
+            // REMULT ?
+            // @ts-ignore
             StarterPack.filterByCreator({ str: $params.q ?? '' }),
           ],
         })
@@ -57,8 +59,8 @@
     <input
       type="text"
       bind:value={$params.q}
-      placeholder="Search starter packs..."
-      class="input input-bordered w-full"
+      placeholder="Search by creator, title, description, ..."
+      class="input input-bordered w-full placeholder:text-base-content/40"
     />
     <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center">
       <span class="text-2xl font-semibold text-gray-400">
@@ -71,7 +73,7 @@
     <table class="table w-full">
       <thead>
         <tr>
-          <th>Name</th>
+          <th>Creator & Title</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -102,15 +104,13 @@
           </tr>
         {:else}
           {#each $paginator.items as pack}
-            <tr
-              class="cursor-pointer hover:bg-base-200"
-              onclick={() => (window.location.href = `/at/starter-packs/${pack.id}`)}
-            >
+            <tr class="cursor-pointer hover:bg-base-200">
               <td>
                 <div class="flex items-center gap-3">
                   <Avatar {...pack.creator} />
                   <a
                     class="link link-info flex items-center gap-3"
+                    target="_blank"
                     href="https://bsky.app/starter-pack/{pack.creator.handle}/{parseUri(pack.id)
                       .rkey}"
                   >

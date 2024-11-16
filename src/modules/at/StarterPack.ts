@@ -42,19 +42,23 @@ export class StarterPack {
   items!: ListItem[]
 
   @Fields.number({
-    sqlExpression(entity) {
+    sqlExpression() {
       return sqlRelations(StarterPack).items.$count()
     },
   })
   nbMembers!: number
 
-  static filterByCreator = Filter.createCustom<StarterPack, { str: string }>(async ({ str }) => {
-    return sqlRelationsFilter(StarterPack).creator.some({
-      $or: [
-        { displayName: { $contains: str } },
-        { handle: { $contains: str } },
-        { id: { $contains: str } },
-      ],
-    })
-  })
+  static filterByCreator = Filter.createCustom<StarterPack, { str: string }>(
+    // REMULT ?
+    // @ts-ignore
+    async ({ str }) => {
+      return sqlRelationsFilter(StarterPack).creator.some({
+        $or: [
+          { displayName: { $contains: str } },
+          { handle: { $contains: str } },
+          { id: { $contains: str } },
+        ],
+      })
+    },
+  )
 }

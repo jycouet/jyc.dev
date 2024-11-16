@@ -9,7 +9,7 @@ import type { RequestHandler } from './$types'
 export const GET: RequestHandler = async ({ params }) => {
   const { pos } = params
 
-  const res = await repo(PlcRecord).findFirst({ id: pos })
+  const res = await repo(PlcRecord).findFirst({ id: parseInt(pos, 10) })
 
   return json(res)
 }

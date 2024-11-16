@@ -113,8 +113,8 @@
 
   <footer class="border-t border-gray-800 py-6 text-center text-sm text-gray-600 backdrop-blur-sm">
     <div class="flex items-center justify-center gap-2">
-      <a href="/blog" class="link link-primary">Home</a>
-      <span>•</span>
+      <!-- <a href="/blog" class="link link-primary">Home</a>
+      <span>•</span> -->
       <span>Made by </span>
 
       <Avatar

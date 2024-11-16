@@ -56,7 +56,7 @@ export class BSkyty {
   pos: number | null = null
 
   @Fields.date({ includeInApi: Roles.admin, allowNull: true })
-  createdAt: Date | null = null
+  createdAt?: Date | null = null
 
   @Fields.date({ includeInApi: Roles.admin, allowNull: true })
   startedToBeActiveOn: Date | null = null
