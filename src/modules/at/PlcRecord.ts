@@ -2,8 +2,6 @@ import { Entity, EntityBase, Fields } from 'remult'
 
 import { Roles } from '$modules/auth/Roles'
 
-import type { JSONPLCOperation } from '../../routes/stats/plc/sync/+server'
-
 @Entity<PlcRecord>('plc-record2', {
   allowApiCrud: Roles.admin,
   defaultOrderBy: { createdAt: 'desc' },

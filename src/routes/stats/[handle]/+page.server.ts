@@ -55,14 +55,14 @@ export const load = (async (event) => {
     })
 
     let createdAt = bskyty.createdAt
-    let pos = bskyty.pos
-    if (!createdAt || !pos) {
+    let pos_bsky = bskyty.pos_bsky
+    if (!createdAt || !pos_bsky) {
       const plcRecord = await repo(PlcRecord).findFirst({ did: profile.data.did })
       createdAt = plcRecord?.createdAt ?? null
-      pos = plcRecord?.id ?? null
+      pos_bsky = plcRecord?.pos_bsky ?? null
     }
 
-    if (!bskyty.startedToBeActiveOn || !pos) {
+    if (!bskyty.startedToBeActiveOn || !pos_bsky) {
       const didResolver = new DidResolver({})
       const didDocument = await didResolver.resolve(bskyty.id)
       if (didDocument) {
@@ -81,12 +81,12 @@ export const load = (async (event) => {
             createdAt = sortedDates[0]
           }
 
-          if (!pos && profile.data.did.startsWith('did:web')) {
+          if (!pos_bsky && profile.data.did.startsWith('did:web')) {
             const plcRecordWeb = await repo(PlcRecord).findFirst(
               { createdAt: { $gte: createdAt } },
               { orderBy: { createdAt: 'asc' } },
             )
-            pos = plcRecordWeb?.id ?? null
+            pos_bsky = plcRecordWeb?.pos_bsky ?? null
           }
 
           // Calculate average delta days between posts
@@ -143,7 +143,7 @@ export const load = (async (event) => {
       displayName: profile.data.displayName || profile.data.handle,
       avatar: profile.data.avatar,
       description: profile.data.description || '',
-      pos,
+      pos_bsky,
       createdAt,
       startedToBeActiveOn: bskyty.startedToBeActiveOn,
     }

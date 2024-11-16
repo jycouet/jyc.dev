@@ -46,7 +46,7 @@
       timeStyle: 'medium',
     }).format(new Date())
 
-    pos = data.pos ? new Intl.NumberFormat().format(data.pos) : ''
+    pos = data.pos_bsky ? new Intl.NumberFormat().format(data.pos_bsky) : ''
     createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
     startedToBeActiveOn = data.startedToBeActiveOn
       ? new Intl.DateTimeFormat().format(new Date(data.startedToBeActiveOn))

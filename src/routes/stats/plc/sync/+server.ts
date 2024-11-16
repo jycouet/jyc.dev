@@ -137,11 +137,11 @@ export const GET: RequestHandler = async ({ fetch }) => {
             pos_atproto: nextPosition++,
             pos_bsky: service.includes('bsky.') ? nextPositionBsky++ : null,
             createdAt: new Date(record.createdAt),
-            metadata: {
-              cid: record.cid,
-              nullified: record.nullified,
-              operation: record.operation,
-            },
+            // metadata: {
+            //   cid: record.cid,
+            //   nullified: record.nullified,
+            //   operation: record.operation,
+            // },
           })
           return data
         })
