@@ -50,7 +50,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     },
   )
 
-  const mode = 'local-file-to-db' as 'plc-to-local-file' | 'local-file-to-db'
+  const mode = 'localfile-to-db' as 'plc-to-localfile' | 'localfile-to-db' | 'plc-to-db'
   let cursor = latestRecord ? latestRecord.createdAt.toISOString() : '1986-11-07T00:35:16.390Z'
   let nextPosition = latestRecord ? latestRecord.pos_atproto + 1 : 1
   let nextPositionBsky = latestRecordBSky ? latestRecordBSky.pos_bsky! + 1 : 1
@@ -69,7 +69,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     let records: JSONPLCRecord[] = []
 
     while (emptyResponseCount < maxEmptyResponses) {
-      if (mode === 'plc-to-local-file') {
+      if (mode.includes('plc-to')) {
         const url = new URL(`https://plc.directory/export`)
         url.searchParams.set('count', batchSize.toString())
         url.searchParams.set('after', cursor)
@@ -92,7 +92,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
         )
         await sleep(retryDelay)
         emptyResponseCount++
-      } else if (mode === 'local-file-to-db') {
+      } else if (mode === 'localfile-to-db') {
         const text = read(
           `../backup/jyc.dev/bsky/plc-directory-${cursor.replaceAll(':', '_')}.json`,
         )
@@ -113,56 +113,41 @@ export const GET: RequestHandler = async ({ fetch }) => {
       break
     }
 
-    const savedNextPosition = nextPosition
-    const savedNextPositionBsky = nextPositionBsky
+    // console.dir(records, { depth: null })
+    const createdRecords =
+      mode === 'plc-to-localfile' ? records : records.filter((c) => c.operation.prev === null)
 
-    function toDb(record: JSONPLCRecord) {
-      const service =
-        record.operation.service ||
-        record.operation.services?.atproto_pds?.endpoint ||
-        'no.service.endpoint'
-
-      const data = repo.create({
-        did: record.did,
-        pos_atproto: nextPosition++,
-        pos_bsky: service.includes('bsky.') ? nextPositionBsky++ : null,
-        createdAt: new Date(record.createdAt),
-        metadata: {
-          cid: record.cid,
-          nullified: record.nullified,
-          operation: record.operation,
+    if (mode.includes('to-db')) {
+      const exiting = await repo.find({
+        where: {
+          did: { $in: createdRecords.map((c) => c.did) },
         },
       })
-      return { data, isbsky: service.includes('bsky.') }
+
+      const toInsert = createdRecords
+        .filter((c) => !exiting.find((e) => e.did === c.did))
+        .map((record) => {
+          const service =
+            record.operation.service ||
+            record.operation.services?.atproto_pds?.endpoint ||
+            'no.service.endpoint'
+
+          const data = repo.create({
+            did: record.did,
+            pos_atproto: nextPosition++,
+            pos_bsky: service.includes('bsky.') ? nextPositionBsky++ : null,
+            createdAt: new Date(record.createdAt),
+            metadata: {
+              cid: record.cid,
+              nullified: record.nullified,
+              operation: record.operation,
+            },
+          })
+          return data
+        })
+
+      await bulkInsert(toInsert, dataProvider)
     }
-
-    // console.dir(records, { depth: null })
-    const createdRecords = records
-      .filter((c) => c.operation.prev === null)
-      .map((record) => toDb(record).data)
-
-    // try {
-    //   // Let's do a bulk insert if we can... If fail that mean that did is a duplicate!
-    await bulkInsert(createdRecords, dataProvider)
-    // } catch (error1) {
-    // nextPosition = savedNextPosition
-    // nextPositionBsky = savedNextPositionBsky
-    // for (let index = 0; index < records.length; index++) {
-    //   let isbsky = false
-    //   try {
-    //     if (records[index].operation.prev === null) {
-    //       const _toDb = toDb(records[index])
-    //       isbsky = _toDb.isbsky
-    //       await repo.insert(_toDb.data)
-    //     }
-    //   } catch (error2) {
-    //     nextPosition--
-    //     if (isbsky) {
-    //       nextPositionBsky--
-    //     }
-    //   }
-    // }
-    // }
 
     totalProcessed += records.length
     const loopDuration = Date.now() - loopStartTime
@@ -177,10 +162,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     console.info(`
       Batch Stats:
       - Processed ${records.length} records in ${loopDuration}ms
-      - records created: ${
-        //createdRecords.length
-        records.length
-      }
+      - records created: ${createdRecords.length}
       - Current position: ${nextPosition - 1}
       - Total processed: ${totalProcessed}
       - Overall speed: ${overallRecordsPerSecond.toFixed(2)} records/second
@@ -189,7 +171,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     `)
 
     // Write records to file
-    if (mode === 'plc-to-local-file') {
+    if (mode === 'plc-to-localfile') {
       write(`../backup/jyc.dev/bsky/plc-directory-${cursor.replaceAll(':', '_')}.json`, [
         '[',
         records.map((record) => JSON.stringify(record)).join(',\n'),
@@ -206,14 +188,15 @@ export const GET: RequestHandler = async ({ fetch }) => {
     }
   }
 
-  const totalDuration = (Date.now() - startTime) / 1000 / 60
-  new Log('sync').success(`Sync completed in ${totalDuration.toFixed(2)} minutes`)
+  const totalDurationSeconds = (Date.now() - startTime) / 1000
+  new Log('sync').success(`Sync completed in ${totalDurationSeconds.toFixed(2)} minutes`)
 
   return new Response(
     JSON.stringify({
       totalProcessed,
-      totalDurationMinutes: totalDuration.toFixed(2),
+      totalDurationSeconds,
       finalPosition: nextPosition - 1,
+      last: await repo.findFirst({}),
     }),
     {
       headers: {
@@ -252,7 +235,7 @@ async function bulkInsert<entityType extends EntityBase>(array: entityType[], db
       )
       .join(',')
 
-    sql += ' ON CONFLICT DO NOTHING'
+    // sql += ' ON CONFLICT DO NOTHING'
     // console.log(`sql`, sql)
 
     await c.execute(sql)

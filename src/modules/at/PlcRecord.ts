@@ -28,10 +28,10 @@ export class PlcRecord extends EntityBase {
   @Fields.date()
   createdAt!: Date
 
-  @Fields.json({ includeInApi: Roles.admin })
-  metadata!: {
-    cid: string
-    nullified: boolean
-    operation: JSONPLCOperation
-  }
+  // @Fields.json({ includeInApi: Roles.admin })
+  // metadata!: {
+  //   cid: string
+  //   nullified: boolean
+  //   operation: JSONPLCOperation
+  // }
 }

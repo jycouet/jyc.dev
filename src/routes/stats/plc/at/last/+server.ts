@@ -7,6 +7,6 @@ import { PlcRecord } from '$modules/at/PlcRecord'
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async () => {
-  const res = await repo(PlcRecord).findFirst({ pos_bsky: { $not: null! } })
+  const res = await repo(PlcRecord).findFirst({})
   return json(res)
 }

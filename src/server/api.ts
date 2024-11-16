@@ -1,8 +1,10 @@
 import { PostHog } from 'posthog-node'
 
-import { SqlDatabase } from 'remult'
+import { dbNamesOf, repo, SqlDatabase } from 'remult'
+import type { ClassType } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
+import { Log } from '@kitql/helpers'
 
 import { DATABASE_URL, DID_PLC_ADMIN } from '$env/static/private'
 import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
@@ -133,16 +135,42 @@ export const api = remultSveltekit({
       //   END
       //   $$;
       // `)
-
-      await dataProvider.execute(`
-        DO $$
-        BEGIN
-          IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
-            CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
-          END IF;
-        END
-        $$;
-      `)
+      await upsertIndex(PlcRecord, 'createdAt')
+      await upsertIndex(PlcRecord, 'pos_atproto')
+      await upsertIndex(PlcRecord, 'pos_bsky')
+      new Log('apiInit').success('done')
+      // await dataProvider.execute(`
+      //   DO $$
+      //   BEGIN
+      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
+      //       CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
+      //     END IF;
+      //   END
+      //   $$;
+      // `)
     }
   },
 })
+
+const upsertIndex = async <T extends ClassType<unknown>>(ent: T, index: string) => {
+  const db = await dbNamesOf(ent)
+  const r = repo(ent)
+
+  await dataProvider.execute(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = 'idx_${r.metadata.key}_${index}') THEN
+        CREATE INDEX "idx_${r.metadata.key}_${index}" ON ${db} ("${index}");
+      END IF;
+    END
+    $$;
+  `)
+}
+
+// SELECT
+//   indexname AS index_name,
+//   indexdef AS index_definition
+// FROM
+//   pg_indexes
+// WHERE
+//   tablename = 'plc-record2';
