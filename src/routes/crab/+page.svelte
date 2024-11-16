@@ -138,7 +138,7 @@
     </form>
 
     <div class="md:col-span-4">
-      <a href={route(`/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+      <a href={route(`/crab/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
         <span>Starter Packs Browser</span>
         <span class="relative bottom-0 -mb-6 text-xs opacity-40"
           >To add a starter pack, enter your handle on the left!</span

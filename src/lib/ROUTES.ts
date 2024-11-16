@@ -24,11 +24,11 @@ const PAGES = {
   "/crab/[handle]/extra": (params: { handle: (string | number) }) => {
     return `/crab/${params.handle}/extra`
   },
+  "/crab/wolf": `/crab/wolf`,
   "/thumb-meta": `/thumb-meta`,
   "/thumb-meta/[videoId]": (params: { videoId: (string | number) }) => {
     return `/thumb-meta/${params.videoId}`
-  },
-  "/wolf": `/wolf`
+  }
 }
 
 /**
@@ -166,7 +166,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/crab': never, '/crab/login': never, '/crab/[handle]': 'handle', '/crab/[handle]/extra': 'handle', '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId', '/wolf': never }
+  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/crab': never, '/crab/login': never, '/crab/[handle]': 'handle', '/crab/[handle]/extra': 'handle', '/crab/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never, 'GET /crab/plc/[did]': 'did', 'GET /crab/plc/[pos=int]': 'pos', 'GET /crab/plc/count': never, 'GET /crab/plc/last': never, 'GET /crab/plc/sync': never }
   ACTIONS: { 'login /crab/login': never }
   LINKS: { 'bsky_profile': 'handle', 'bsky_hashtag': 'hashtag', 'bsky_starter_pack': 'creator_handle' | 'rkey' }
