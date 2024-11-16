@@ -11,7 +11,7 @@
     "format": "kitql-lint -f",
     "lint": "kitql-lint",
     "//// ---- PROD ---- ////": "",
-    "build": "vite build",
+    "build": "vite build --mode prod",
     "preview": "vite preview",
     "start": "node build"
   },
