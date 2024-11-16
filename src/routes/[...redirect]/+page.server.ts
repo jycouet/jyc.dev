@@ -9,8 +9,6 @@ export const load = (async ({ params, url }) => {
     const videoId = url.searchParams.get('v')
     redirect(302, route(`/thumb-meta/[videoId]`, { videoId: videoId ?? '' }))
   } else if (params.redirect.includes('bsky.app')) {
-    // thus url should look like: jyc.dev/bsky.app/profile/mikek.me
-    // we should redirect to /at/mikek.me
     const handle = params.redirect.split('/').pop()
     redirect(302, route(`/crab/[handle]`, { handle: handle ?? '' }))
   } else {

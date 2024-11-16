@@ -75,9 +75,9 @@
   let hrefShare = $derived(
     createBSkyIntent([
       `${data.displayName} is ${dataApi?.category?.emoji} ${dataApi?.category?.title} on 🦋`,
-      `📎 https://jyc.dev/at/${data.handle}`,
+      `📎 https://skyzoo.blue/${data.handle}`,
       '',
-      `What about 🫵 ? 🐾 ! ?`,
+      `What about 🫵 ? 🐾 !?`,
     ]),
   )
 

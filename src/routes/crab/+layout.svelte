@@ -25,10 +25,12 @@
 
   let first = $state(false)
   $effect(() => {
-    // if ($page.url.host === 'localhost:5173') {
-    //   window.location.href = 'https://skyzoo.blue'
-    // }
+    if ($page.url.host === 'jyc.dev') {
+      window.location.href = window.location.href.replace('jyc.dev', 'skyzoo.blue')
+    }
+  })
 
+  $effect(() => {
     remult.user = data.user
 
     unSub = remult

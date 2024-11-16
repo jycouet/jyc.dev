@@ -162,6 +162,6 @@
   <p>TIP: If you're viewing a profile on blue sky,</p>
   <p>
     <span class="text-secondary">prefix with</span>
-    "<code class="font-mono text-primary">jyc.dev/</code>" to open it here!
+    "<code class="font-mono text-primary">skyzoo.blue/</code>" to open it here!
   </p>
 </div>
