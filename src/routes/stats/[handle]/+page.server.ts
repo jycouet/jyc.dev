@@ -64,7 +64,7 @@ export const load = (async (event) => {
       pos_bsky = recordPlc?.pos_bsky ?? null
     }
 
-    if (!bskyty.startedToBeActiveOn || !pos_bsky) {
+    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto) {
       const didResolver = new DidResolver({})
       const didDocument = await didResolver.resolve(bskyty.id)
       if (didDocument) {

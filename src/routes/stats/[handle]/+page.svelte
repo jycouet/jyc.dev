@@ -22,7 +22,8 @@
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
 
   let currentISOString = $state('')
-  let pos = $state('')
+  let pos_atproto = $state('')
+  let pos_bsky = $state('')
   let createdAt = $state('')
   let startedToBeActiveOn = $state('')
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
@@ -48,7 +49,8 @@
       timeStyle: 'medium',
     }).format(new Date())
 
-    pos = data.pos_bsky ? new Intl.NumberFormat().format(data.pos_bsky) : ''
+    pos_atproto = data.pos_atproto ? new Intl.NumberFormat().format(data.pos_atproto) : ''
+    pos_bsky = data.pos_bsky ? new Intl.NumberFormat().format(data.pos_bsky) : ''
     createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
     startedToBeActiveOn = data.startedToBeActiveOn
       ? new Intl.DateTimeFormat().format(new Date(data.startedToBeActiveOn))
@@ -357,9 +359,12 @@
               document?.getElementById('modal_info_nerd').showModal()}
           >
             <span class="font-mono text-sm text-primary">@{data.handle}</span>
-            {#if pos}
-              <span class="font-mono text-sm text-secondary" title="User joined in position #{pos}">
-                #{pos}<span class="italic"
+            {#if pos_bsky}
+              <span
+                class="font-mono text-sm text-secondary"
+                title="User joined in position #{pos_bsky}"
+              >
+                #{pos_bsky}<span class="italic"
                   >{#if data.did.startsWith('did:web')}web{/if}</span
                 >
               </span>
@@ -404,13 +409,13 @@
                   />
                   <JsonStyle
                     key="pos_atproto"
-                    value={pos}
-                    comment="Arrived in At Protocol: the position"
+                    value={pos_atproto}
+                    comment="The position of arrival in At Protocol"
                   />
                   <JsonStyle
                     key="pos_bsky"
-                    value={'// work in progress'}
-                    comment="Arrived in bsky: the position"
+                    value={pos_bsky}
+                    comment="Arrived in bsky in position 👇. Welcome!"
                   />
                 </div>
                 <div>&#125;</div>
