@@ -291,7 +291,7 @@
       return 'How to mention... Cool, you are a nerdy .dev too? 🤓'
     }
     if (handle.endsWith('.bsky.social')) {
-      return 'How to mention... Pro tip: you can have your own domain as handle! 🎯'
+      return '<i>Pro tip: you can have your own domain as handle! 🎯</i>'
     }
     if (handle.endsWith('.bsky.team')) {
       return 'How to mention... Hooo hello master! 🫡'
