@@ -132,6 +132,8 @@ export const api = remultSveltekit({
       await upsertIndex(RecordPlc, 'createdAt')
       await upsertIndex(RecordPlc, 'pos_atproto')
       await upsertIndex(RecordPlc, 'pos_bsky')
+      await upsertIndex(StarterPack, 'updatedAt')
+      await upsertIndex(StarterPack, 'creatorDid')
       new Log('apiInit').success('done')
 
       await repo(BSkyty).updateMany({

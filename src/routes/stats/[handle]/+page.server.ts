@@ -222,7 +222,7 @@ const addStarterPack = async (did: string) => {
               listUri: starterPack.value.list,
               name: starterPack.value.name,
               createdAt: starterPack.value.createdAt,
-              updatedAt: starterPack.value.updatedAt,
+              updatedAt: starterPack.value.updatedAt ?? starterPack.value.createdAt,
               description: starterPack.value.description,
             },
           })
