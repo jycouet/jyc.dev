@@ -1,7 +1,7 @@
 import { PostHog } from 'posthog-node'
 
 import { dbNamesOf, repo, SqlDatabase } from 'remult'
-import type { ClassType } from 'remult'
+import type { ClassType, FieldMetadata } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
 import { Log } from '@kitql/helpers'
@@ -25,6 +25,7 @@ import {
 } from '$modules/auth/lucia'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
+import { SqlController } from '$modules/sql/SqlController'
 
 import { Roles } from '../modules/auth/Roles'
 
@@ -51,7 +52,7 @@ export const api = remultSveltekit({
     ListItem,
     RecordPlc,
   ],
-  controllers: [AtController, AgentController],
+  controllers: [AtController, AgentController, SqlController],
   getUser: async (event) => {
     const token = event.cookies.get('s-jyc-dev') ?? null
     if (token === null) {
@@ -74,6 +75,8 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     if (!building) {
+      SqlController.dataProvider = dataProvider
+
       const clientPostHog = new PostHog(PUBLIC_POSTHOG_KEY, {
         host: 'https://eu.i.posthog.com',
       })
@@ -126,15 +129,6 @@ export const api = remultSveltekit({
       //   ALTER TABLE "plc-record" DROP CONSTRAINT IF EXISTS "plc-record_pkey";
       // `)
 
-      // await dataProvider.execute(`
-      //   DO $$
-      //   BEGIN
-      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_did') THEN
-      //       CREATE INDEX idx_plc_record_did ON "plc-record" (did);
-      //     END IF;
-      //   END
-      //   $$;
-      // `)
       await upsertIndex(RecordPlc, 'createdAt')
       await upsertIndex(RecordPlc, 'pos_atproto')
       await upsertIndex(RecordPlc, 'pos_bsky')
@@ -144,28 +138,22 @@ export const api = remultSveltekit({
         where: { id: { $not: '-1' } },
         set: { pos_atproto: null, pos_bsky: null },
       })
-      // await dataProvider.execute(`
-      //   DO $$
-      //   BEGIN
-      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
-      //       CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
-      //     END IF;
-      //   END
-      //   $$;
-      // `)
     }
   },
 })
 
-const upsertIndex = async <T extends ClassType<unknown>>(ent: T, index: string) => {
+const upsertIndex = async <T>(ent: ClassType<T>, field: keyof T) => {
   const db = await dbNamesOf(ent)
   const r = repo(ent)
+  const f = r.fields[field] as FieldMetadata<T, keyof T>
+
+  const indexName = `idx_${r.metadata.key}_${f.dbName}`
 
   await dataProvider.execute(`
     DO $$
     BEGIN
-      IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = 'idx_${r.metadata.key}_${index}') THEN
-        CREATE INDEX "idx_${r.metadata.key}_${index}" ON ${db} ("${index}");
+      IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = '${indexName}') THEN
+        CREATE INDEX "${indexName}" ON ${db} ("${f.dbName}");
       END IF;
     END
     $$;
