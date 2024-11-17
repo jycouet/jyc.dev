@@ -9,7 +9,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
 import { BSkyty } from './BSkyty'
 import { determineCategory } from './determineCategory'
-import { RecordFollow } from './Record'
+import { RecordFollow } from './RecordFollow'
 
 interface ActivityCounts {
   yesterday: number

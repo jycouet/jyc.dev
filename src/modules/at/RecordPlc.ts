@@ -2,12 +2,12 @@ import { Entity, EntityBase, Fields } from 'remult'
 
 import { Roles } from '$modules/auth/Roles'
 
-@Entity<PlcRecord>('plc-record2', {
+@Entity<RecordPlc>('record-plcs', {
   allowApiCrud: Roles.admin,
   defaultOrderBy: { createdAt: 'desc' },
   id: ['did'],
 })
-export class PlcRecord extends EntityBase {
+export class RecordPlc extends EntityBase {
   @Fields.string({ caption: 'DID' })
   did!: string
 

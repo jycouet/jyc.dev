@@ -14,8 +14,8 @@ import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
-import { PlcRecord } from '$modules/at/PlcRecord'
-import { RecordFollow } from '$modules/at/Record'
+import { RecordFollow } from '$modules/at/RecordFollow'
+import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
@@ -49,7 +49,7 @@ export const api = remultSveltekit({
     RecordFollow,
     StarterPack,
     ListItem,
-    PlcRecord,
+    RecordPlc,
   ],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
@@ -135,10 +135,15 @@ export const api = remultSveltekit({
       //   END
       //   $$;
       // `)
-      await upsertIndex(PlcRecord, 'createdAt')
-      await upsertIndex(PlcRecord, 'pos_atproto')
-      await upsertIndex(PlcRecord, 'pos_bsky')
+      await upsertIndex(RecordPlc, 'createdAt')
+      await upsertIndex(RecordPlc, 'pos_atproto')
+      await upsertIndex(RecordPlc, 'pos_bsky')
       new Log('apiInit').success('done')
+
+      await repo(BSkyty).updateMany({
+        where: { id: { $not: '-1' } },
+        set: { pos_atproto: null, pos_bsky: null },
+      })
       // await dataProvider.execute(`
       //   DO $$
       //   BEGIN

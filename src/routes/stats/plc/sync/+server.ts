@@ -5,12 +5,12 @@ import { read, write } from '@kitql/internals'
 
 import { dev } from '$app/environment'
 
-import { PlcRecord } from '$modules/at/PlcRecord'
+import { RecordPlc } from '$modules/at/RecordPlc'
 
 import { dataProvider } from '../../../../server/api'
 import type { RequestHandler } from './$types'
 
-export interface JSONPLCOperation {
+export interface PLCOperation {
   sig: string
   prev: string | null
   type: 'create' | 'plc_operation'
@@ -21,17 +21,17 @@ export interface JSONPLCOperation {
   recoveryKey: string
 }
 
-interface JSONPLCRecord {
+interface Plc {
   pos: number
   did: string
-  operation: JSONPLCOperation
+  operation: PLCOperation
   cid: string
   nullified: boolean
   createdAt: string
 }
 
 export const GET: RequestHandler = async ({ fetch }) => {
-  const repo = remult.repo(PlcRecord)
+  const repo = remult.repo(RecordPlc)
   const TOTAL_EXPECTED_RECORDS = 17_000_000
   const startTime = Date.now()
   let loopStartTime: number
@@ -72,7 +72,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
     let emptyResponseCount = 0
     const maxEmptyResponses = 30
     const retryDelay = 10_000 // 10 seconds in milliseconds
-    let records: JSONPLCRecord[] = []
+    let records: Plc[] = []
 
     while (emptyResponseCount < maxEmptyResponses) {
       if (mode.includes('plc-to')) {
@@ -86,7 +86,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
         records = text
           .split('\n')
           .filter((line) => line.trim())
-          .map((line) => JSON.parse(line) as JSONPLCRecord)
+          .map((line) => JSON.parse(line) as Plc)
 
         if (records.length > 0) {
           emptyResponseCount = 0
@@ -108,7 +108,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
           hasMore = false
           break
         }
-        records = JSON.parse(text) as JSONPLCRecord[]
+        records = JSON.parse(text) as Plc[]
         break
       }
     }
