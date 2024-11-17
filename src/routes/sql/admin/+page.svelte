@@ -37,15 +37,10 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
   pg_size_pretty(pg_database_size(current_database())) as database_size
   `,
     },
-    rowCounts: {
-      label: 'Row Counts',
-      sql: `SELECT 
-  schemaname,
-  relname as table_name,
-  n_live_tup as row_count
-FROM pg_stat_user_tables
-WHERE schemaname = 'public'
-ORDER BY n_live_tup DESC`,
+    tableSize: {
+      label: 'Table Size',
+      sql: `SELECT count(*) FROM "record-plcs"
+  `,
     },
   } as const
 
