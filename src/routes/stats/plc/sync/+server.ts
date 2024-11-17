@@ -1,34 +1,38 @@
 import { remult, SqlDatabase } from 'remult'
 import type { EntityBase } from 'remult'
-import { sleep } from '@kitql/helpers'
+import { Log, sleep } from '@kitql/helpers'
+import { read, write } from '@kitql/internals'
 
-import { PlcRecord } from '$modules/at/PlcRecord'
+import { dev } from '$app/environment'
+
+import { RecordPlc } from '$modules/at/RecordPlc'
 
 import { dataProvider } from '../../../../server/api'
 import type { RequestHandler } from './$types'
 
-interface JSONPLCOperation {
+export interface PLCOperation {
   sig: string
   prev: string | null
   type: 'create' | 'plc_operation'
   handle: string
   service: string
+  services: { atproto_pds: { endpoint: string } }
   signingKey: string
   recoveryKey: string
 }
 
-interface JSONPLCRecord {
+interface Plc {
   pos: number
   did: string
-  operation: JSONPLCOperation
+  operation: PLCOperation
   cid: string
   nullified: boolean
   createdAt: string
 }
 
 export const GET: RequestHandler = async ({ fetch }) => {
-  const repo = remult.repo(PlcRecord)
-  const TOTAL_EXPECTED_RECORDS = 15_000_000
+  const repo = remult.repo(RecordPlc)
+  const TOTAL_EXPECTED_RECORDS = 17_000_000
   const startTime = Date.now()
   let loopStartTime: number
 
@@ -39,44 +43,74 @@ export const GET: RequestHandler = async ({ fetch }) => {
       orderBy: { createdAt: 'desc' },
     },
   )
+  const latestRecordBSky = await repo.findFirst(
+    {
+      pos_bsky: { $not: null },
+    },
+    {
+      orderBy: { createdAt: 'desc' },
+    },
+  )
 
-  let cursor = latestRecord ? latestRecord.createdAt.toISOString() : '2022-11-17T00:35:16.390Z'
-  let nextPosition = latestRecord ? latestRecord.id + 1 : 1
+  type Mode = 'plc-to-localfile' | 'localfile-to-db' | 'plc-to-db'
+  let mode: Mode = 'plc-to-db' as Mode
+  if (!dev) {
+    mode = 'plc-to-db'
+  }
+  let cursor = latestRecord ? latestRecord.createdAt.toISOString() : '1986-11-07T00:35:16.390Z'
+  let nextPosition = latestRecord ? latestRecord.pos_atproto + 1 : 1
+  let nextPositionBsky = latestRecordBSky ? latestRecordBSky.pos_bsky! + 1 : 1
   let totalProcessed = 0
 
   let hasMore = true
   const batchSize = 1000
-
+  let i = 0
   while (hasMore) {
+    i++
     loopStartTime = Date.now()
 
     let emptyResponseCount = 0
-    const maxEmptyResponses = 1
+    const maxEmptyResponses = 30
     const retryDelay = 10_000 // 10 seconds in milliseconds
-    let records: JSONPLCRecord[] = []
+    let records: Plc[] = []
 
     while (emptyResponseCount < maxEmptyResponses) {
-      const url = new URL(`https://plc.directory/export`)
-      url.searchParams.set('count', batchSize.toString())
-      url.searchParams.set('after', cursor)
-      const res = await fetch(url.toString())
+      if (mode.includes('plc-to')) {
+        const url = new URL(`https://plc.directory/export`)
+        url.searchParams.set('count', batchSize.toString())
+        url.searchParams.set('after', cursor)
+        const res = await fetch(url.toString())
 
-      const text = await res.text()
-      records = text
-        .split('\n')
-        .filter((line) => line.trim())
-        .map((line) => JSON.parse(line) as JSONPLCRecord)
+        const text = await res.text()
 
-      if (records.length > 0) {
-        emptyResponseCount = 0
+        records = text
+          .split('\n')
+          .filter((line) => line.trim())
+          .map((line) => JSON.parse(line) as Plc)
+
+        if (records.length > 0) {
+          emptyResponseCount = 0
+          break
+        }
+
+        console.info(
+          `Empty response #${emptyResponseCount + 1}, waiting ${retryDelay / 1000} seconds before retry...`,
+        )
+        await sleep(retryDelay)
+        emptyResponseCount++
+      } else if (mode === 'localfile-to-db') {
+        const text = read(
+          `../backup/jyc.dev/bsky/plc-directory-${cursor.replaceAll(':', '_')}.json`,
+        )
+
+        if (text === null) {
+          console.info(`No records found in file ${cursor.replaceAll(':', '_')}.json`)
+          hasMore = false
+          break
+        }
+        records = JSON.parse(text) as Plc[]
         break
       }
-
-      console.info(
-        `Empty response #${emptyResponseCount + 1}, waiting ${retryDelay / 1000} seconds before retry...`,
-      )
-      await sleep(retryDelay)
-      emptyResponseCount++
     }
 
     if (emptyResponseCount === maxEmptyResponses) {
@@ -85,33 +119,41 @@ export const GET: RequestHandler = async ({ fetch }) => {
       break
     }
 
-    // Insert records into the repository with incrementing positions
-    // await repo.insert(
-    //   records.map((record) => {
-    //     return {
-    //       id: nextPosition++,
-    //       did: record.did,
-    //       cid: record.cid,
-    //       nullified: record.nullified,
-    //       createdAt: new Date(record.createdAt),
-    //       operation: record.operation,
-    //     }
-    //   }),
-    // )
-    const createdRecords = records
-      .filter((c) => c.operation.prev === null)
-      .map((record) => {
-        return repo.create({
-          id: nextPosition++,
-          did: record.did,
-          // cid: record.cid,
-          // nullified: record.nullified,
-          createdAt: new Date(record.createdAt),
-          // operation: record.operation,
-        })
+    // console.dir(records, { depth: null })
+    const createdRecords =
+      mode === 'plc-to-localfile' ? records : records.filter((c) => c.operation.prev === null)
+
+    if (mode.includes('to-db')) {
+      const exiting = await repo.find({
+        where: {
+          did: { $in: createdRecords.map((c) => c.did) },
+        },
       })
 
-    await bulkInsert(createdRecords, dataProvider)
+      const toInsert = createdRecords
+        .filter((c) => !exiting.find((e) => e.did === c.did))
+        .map((record) => {
+          const service =
+            record.operation.service ||
+            record.operation.services?.atproto_pds?.endpoint ||
+            'no.service.endpoint'
+
+          const data = repo.create({
+            did: record.did,
+            pos_atproto: nextPosition++,
+            pos_bsky: service.includes('bsky.') ? nextPositionBsky++ : null,
+            createdAt: new Date(record.createdAt),
+            // metadata: {
+            //   cid: record.cid,
+            //   nullified: record.nullified,
+            //   operation: record.operation,
+            // },
+          })
+          return data
+        })
+
+      await bulkInsert(toInsert, dataProvider)
+    }
 
     totalProcessed += records.length
     const loopDuration = Date.now() - loopStartTime
@@ -134,8 +176,16 @@ export const GET: RequestHandler = async ({ fetch }) => {
       - Total time elapsed: ${(totalElapsedSeconds / 60).toFixed(2)} minutes
     `)
 
-    cursor = records[records.length - 1].createdAt
-    // await new Promise((resolve) => setTimeout(resolve, 100))
+    // Write records to file
+    if (mode === 'plc-to-localfile') {
+      write(`../backup/jyc.dev/bsky/plc-directory-${cursor.replaceAll(':', '_')}.json`, [
+        '[',
+        records.map((record) => JSON.stringify(record)).join(',\n'),
+        ']',
+      ])
+    }
+
+    cursor = records[records.length - 1]?.createdAt
 
     // Let's go out
     if (records.length < 100) {
@@ -144,13 +194,15 @@ export const GET: RequestHandler = async ({ fetch }) => {
     }
   }
 
-  const totalDuration = (Date.now() - startTime) / 1000 / 60
+  const totalDurationSeconds = (Date.now() - startTime) / 1000
+  new Log('sync').success(`Sync completed in ${totalDurationSeconds.toFixed(2)} minutes`)
 
   return new Response(
     JSON.stringify({
       totalProcessed,
-      totalDurationMinutes: totalDuration.toFixed(2),
+      totalDurationSeconds,
       finalPosition: nextPosition - 1,
+      last: await repo.findFirst({}),
     }),
     {
       headers: {
@@ -188,6 +240,8 @@ async function bulkInsert<entityType extends EntityBase>(array: entityType[], db
           ')',
       )
       .join(',')
+
+    // sql += ' ON CONFLICT DO NOTHING'
     // console.log(`sql`, sql)
 
     await c.execute(sql)

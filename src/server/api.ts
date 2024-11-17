@@ -1,8 +1,10 @@
 import { PostHog } from 'posthog-node'
 
-import { SqlDatabase } from 'remult'
+import { dbNamesOf, repo, SqlDatabase } from 'remult'
+import type { ClassType } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
+import { Log } from '@kitql/helpers'
 
 import { DATABASE_URL, DID_PLC_ADMIN } from '$env/static/private'
 import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
@@ -12,8 +14,8 @@ import { AgentController } from '$modules/at/AgentController'
 import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
-import { PlcRecord } from '$modules/at/PlcRecord'
-import { RecordFollow } from '$modules/at/Record'
+import { RecordFollow } from '$modules/at/RecordFollow'
+import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
@@ -47,7 +49,7 @@ export const api = remultSveltekit({
     RecordFollow,
     StarterPack,
     ListItem,
-    PlcRecord,
+    RecordPlc,
   ],
   controllers: [AtController, AgentController],
   getUser: async (event) => {
@@ -133,16 +135,47 @@ export const api = remultSveltekit({
       //   END
       //   $$;
       // `)
+      await upsertIndex(RecordPlc, 'createdAt')
+      await upsertIndex(RecordPlc, 'pos_atproto')
+      await upsertIndex(RecordPlc, 'pos_bsky')
+      new Log('apiInit').success('done')
 
-      await dataProvider.execute(`
-        DO $$
-        BEGIN
-          IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
-            CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
-          END IF;
-        END
-        $$;
-      `)
+      await repo(BSkyty).updateMany({
+        where: { id: { $not: '-1' } },
+        set: { pos_atproto: null, pos_bsky: null },
+      })
+      // await dataProvider.execute(`
+      //   DO $$
+      //   BEGIN
+      //     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'plc-record' AND indexname = 'idx_plc_record_createdAt') THEN
+      //       CREATE INDEX "idx_plc_record_createdAt" ON "plc-record" ("createdAt");
+      //     END IF;
+      //   END
+      //   $$;
+      // `)
     }
   },
 })
+
+const upsertIndex = async <T extends ClassType<unknown>>(ent: T, index: string) => {
+  const db = await dbNamesOf(ent)
+  const r = repo(ent)
+
+  await dataProvider.execute(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = 'idx_${r.metadata.key}_${index}') THEN
+        CREATE INDEX "idx_${r.metadata.key}_${index}" ON ${db} ("${index}");
+      END IF;
+    END
+    $$;
+  `)
+}
+
+// SELECT
+//   indexname AS index_name,
+//   indexdef AS index_definition
+// FROM
+//   pg_indexes
+// WHERE
+//   tablename = 'plc-record2';

@@ -9,7 +9,7 @@ import type { RequestHandler } from './$types'
 export const GET: RequestHandler = async ({ params }) => {
   const { pos } = params
 
-  const res = await repo(RecordPlc).findFirst({ pos_bsky: parseInt(pos, 10) })
+  const res = await repo(RecordPlc).findFirst({ pos_atproto: parseInt(pos, 10) })
 
   if (res === undefined) {
     return new Response('Not found', { status: 404 })

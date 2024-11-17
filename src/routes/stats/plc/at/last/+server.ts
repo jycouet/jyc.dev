@@ -6,10 +6,7 @@ import { RecordPlc } from '$modules/at/RecordPlc'
 
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = async ({ params }) => {
-  const { did } = params
-
-  const res = await repo(RecordPlc).findFirst({ did })
-
+export const GET: RequestHandler = async () => {
+  const res = await repo(RecordPlc).findFirst({})
   return json(res)
 }

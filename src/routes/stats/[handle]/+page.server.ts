@@ -8,7 +8,7 @@ import { Log } from '@kitql/helpers'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
-import { PlcRecord } from '$modules/at/PlcRecord'
+import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 
 import type { PageServerLoad } from './$types'
@@ -55,14 +55,16 @@ export const load = (async (event) => {
     })
 
     let createdAt = bskyty.createdAt
-    let pos = bskyty.pos
-    if (!createdAt || !pos) {
-      const plcRecord = await repo(PlcRecord).findFirst({ did: profile.data.did })
-      createdAt = plcRecord?.createdAt ?? null
-      pos = plcRecord?.id ?? null
+    let pos_atproto = bskyty.pos_atproto
+    let pos_bsky = bskyty.pos_bsky
+    if (!createdAt || !pos_atproto) {
+      const recordPlc = await repo(RecordPlc).findFirst({ did: profile.data.did })
+      createdAt = recordPlc?.createdAt ?? null
+      pos_atproto = recordPlc?.pos_atproto ?? null
+      pos_bsky = recordPlc?.pos_bsky ?? null
     }
 
-    if (!bskyty.startedToBeActiveOn || !pos) {
+    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto) {
       const didResolver = new DidResolver({})
       const didDocument = await didResolver.resolve(bskyty.id)
       if (didDocument) {
@@ -76,17 +78,18 @@ export const load = (async (event) => {
           const sortedDates = firstPosts.records.map(
             (r: { value: { createdAt: string } }) => new Date(r.value.createdAt),
           ) as Date[]
-          // sortedDates.sort((a, b) => a.getTime() - b.getTime()) // Ensure chronological order
+
           if (!createdAt) {
             createdAt = sortedDates[0]
           }
 
-          if (!pos && profile.data.did.startsWith('did:web')) {
-            const plcRecordWeb = await repo(PlcRecord).findFirst(
+          if (!pos_atproto && profile.data.did.startsWith('did:web')) {
+            const recordPlcWeb = await repo(RecordPlc).findFirst(
               { createdAt: { $gte: createdAt } },
               { orderBy: { createdAt: 'asc' } },
             )
-            pos = plcRecordWeb?.id ?? null
+            pos_atproto = recordPlcWeb?.pos_atproto ?? null
+            pos_bsky = recordPlcWeb?.pos_bsky ?? null
           }
 
           // Calculate average delta days between posts
@@ -123,6 +126,8 @@ export const load = (async (event) => {
           bskyty = await repo(BSkyty).update(bskyty.id, {
             createdAt,
             startedToBeActiveOn,
+            pos_atproto,
+            pos_bsky,
           })
 
           // console.log({
@@ -143,7 +148,8 @@ export const load = (async (event) => {
       displayName: profile.data.displayName || profile.data.handle,
       avatar: profile.data.avatar,
       description: profile.data.description || '',
-      pos,
+      pos_atproto,
+      pos_bsky,
       createdAt,
       startedToBeActiveOn: bskyty.startedToBeActiveOn,
     }
