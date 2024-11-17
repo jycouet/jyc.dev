@@ -13,6 +13,8 @@
   import { route } from '$lib/ROUTES.js'
   import { AtController } from '$modules/at/AtController.js'
 
+  import JsonStyle from './JsonStyle.svelte'
+
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
 
   let { data } = $props()
@@ -280,6 +282,32 @@
       }
     }
   }
+
+  // Add this function near the other helper functions
+  function getHandleComment(handle: string): string {
+    if (handle.endsWith('.dev')) {
+      return 'How to mention... Cool, you are a nerdy .dev too? 🤓'
+    }
+    if (handle.endsWith('.bsky.social')) {
+      return 'How to mention... Pro tip: you can have your own domain as handle! 🎯'
+    }
+    if (handle.endsWith('.bsky.team')) {
+      return 'How to mention... Hooo hello master! 🫡'
+    }
+    if (handle.endsWith('.me')) {
+      return 'How to mention... All about ME, ME, ME! 🎭'
+    }
+    if (handle.endsWith('.io')) {
+      return 'How to mention... IO? Tech vibes detected! 💻'
+    }
+    if (handle.endsWith('.eth')) {
+      return 'How to mention... Web3 enthusiast spotted! ⛓️'
+    }
+    if (handle.endsWith('.com')) {
+      return 'How to mention... classy company handle! 💼'
+    }
+    return 'How to mention... Nice handle! 👋'
+  }
 </script>
 
 <Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
@@ -322,7 +350,12 @@
               </div>
             </div>
           </a>
-          <div class="flex flex-col items-center gap-0">
+          <button
+            class="flex flex-col items-center gap-0"
+            onclick={() =>
+              // @ts-ignore
+              document?.getElementById('modal_info_nerd').showModal()}
+          >
             <span class="font-mono text-sm text-primary">@{data.handle}</span>
             {#if pos}
               <span class="font-mono text-sm text-secondary" title="User joined in position #{pos}">
@@ -350,7 +383,43 @@
             {:else}
               <span class="h-4 text-base-content/50">&nbsp;</span>
             {/if}
-          </div>
+          </button>
+          <dialog id="modal_info_nerd" class="modal">
+            <div class="modal-box">
+              <h3 class="text-lg font-bold">Nerdy user info</h3>
+              <div class="py-4 font-mono">
+                <div>&#123;</div>
+                <div class="flex flex-col gap-1">
+                  <JsonStyle
+                    key="handle"
+                    value={'@' + data.handle}
+                    comment={getHandleComment(data.handle)}
+                  />
+                  <JsonStyle key="did" value={data.did} comment="Kinda unique id" />
+                  <JsonStyle key="createdAt" value={createdAt} comment="When joined ?" />
+                  <JsonStyle
+                    key="startedToBeActiveOn"
+                    value={startedToBeActiveOn}
+                    comment="Started to be active here (custom algo 🤯)"
+                  />
+                  <JsonStyle
+                    key="pos_atproto"
+                    value={pos}
+                    comment="Arrived in At Protocol: the position"
+                  />
+                  <JsonStyle
+                    key="pos_bsky"
+                    value={'// work in progress'}
+                    comment="Arrived in bsky: the position"
+                  />
+                </div>
+                <div>&#125;</div>
+              </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+              <button>close</button>
+            </form>
+          </dialog>
         </div>
       </div>
     </div>
