@@ -386,7 +386,7 @@
           </button>
           <dialog id="modal_info_nerd" class="modal">
             <div class="modal-box">
-              <h3 class="text-lg font-bold">Nerdy info about the user</h3>
+              <h3 class="text-lg font-bold">Nerdy user info</h3>
               <div class="py-4 font-mono">
                 <div>&#123;</div>
                 <div class="flex flex-col gap-1">
