@@ -38,8 +38,7 @@ export const dataProvider = await createPostgresDataProvider({
 
 export const api = remultSveltekit({
   logApiEndPoints: false,
-  // ensureSchema: !building,
-  ensureSchema: false,
+  ensureSchema: !building,
   admin: Roles.admin,
   dataProvider,
   entities: [

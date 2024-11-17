@@ -57,6 +57,7 @@ export const load = (async (event) => {
     let createdAt = bskyty.createdAt
     let pos_atproto = bskyty.pos_atproto
     let pos_bsky = bskyty.pos_bsky
+    let mushroom = bskyty.mushroom
     if (!createdAt || !pos_atproto) {
       const recordPlc = await repo(RecordPlc).findFirst({ did: profile.data.did })
       createdAt = recordPlc?.createdAt ?? null
@@ -64,9 +65,17 @@ export const load = (async (event) => {
       pos_bsky = recordPlc?.pos_bsky ?? null
     }
 
-    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto) {
+    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto || !bskyty.mushroom) {
       const didResolver = new DidResolver({})
       const didDocument = await didResolver.resolve(bskyty.id)
+
+      // Extract and log the mushroom name from the PDS endpoint
+      const pdsEndpoint = didDocument?.service?.find(
+        (s) => s.id === '#atproto_pds',
+      )?.serviceEndpoint
+      if (pdsEndpoint && typeof pdsEndpoint === 'string') {
+        mushroom = new URL(pdsEndpoint).hostname.split('.')[0]
+      }
       if (didDocument) {
         const pds = getPds(didDocument)
         if (pds) {
@@ -128,6 +137,7 @@ export const load = (async (event) => {
             startedToBeActiveOn,
             pos_atproto,
             pos_bsky,
+            mushroom,
           })
 
           // console.log({
@@ -152,6 +162,7 @@ export const load = (async (event) => {
       pos_bsky,
       createdAt,
       startedToBeActiveOn: bskyty.startedToBeActiveOn,
+      mushroom,
     }
 
     // const handleResolver = new HandleResolver({})

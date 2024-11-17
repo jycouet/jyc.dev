@@ -415,8 +415,15 @@
                   <JsonStyle
                     key="pos_bsky"
                     value={pos_bsky}
-                    comment="Arrived in bsky in position 👇. Welcome!"
+                    comment="Arrived in bsky in position... Welcome!"
                   />
+                  {#if data.mushroom}
+                    <JsonStyle
+                      key="mushroom"
+                      value={data.mushroom}
+                      comment="Server name or mushroom name (<a class='link link-info' href='https://bsky.app/profile/jay.bsky.team/post/3lb6fa7sjzc2p' target='_blank'>source</a>)"
+                    />
+                  {/if}
                 </div>
                 <div>&#125;</div>
               </div>

@@ -63,4 +63,7 @@ export class BSkyty {
 
   @Fields.date({ includeInApi: Roles.admin, allowNull: true })
   startedToBeActiveOn: Date | null = null
+
+  @Fields.string({ includeInApi: Roles.admin, allowNull: true })
+  mushroom?: string | null = null
 }
