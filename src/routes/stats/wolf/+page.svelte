@@ -33,7 +33,7 @@
   // }
   let debounceTimer: ReturnType<typeof setTimeout>
   $effect(() => {
-    if ($params.q === '') {
+    if (!$params.q) {
       paginator.load({})
     } else {
       clearTimeout(debounceTimer)

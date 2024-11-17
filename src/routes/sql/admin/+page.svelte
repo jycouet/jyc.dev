@@ -7,6 +7,7 @@
 
   let sqlInput = $state(`SELECT * 
 FROM "bskyties" 
+ORDER BY "firstTimeHere" DESC
 LIMIT 10`)
   let result: any = $state('')
   let error = $state('')
@@ -54,7 +55,7 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
       error = ''
       result = { ...(await SqlController.exec(sqlInput)) }
     } catch (e) {
-      error = e instanceof Error ? e.message : 'An error occurred'
+      error = JSON.stringify(e, null, 2)
     }
   }
 
@@ -88,9 +89,7 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
   </form>
 
   {#if error}
-    <div class="alert alert-error mt-4">
-      {error}
-    </div>
+    <pre class="alert alert-error mt-4">{error}</pre>
   {/if}
 
   {#if result}

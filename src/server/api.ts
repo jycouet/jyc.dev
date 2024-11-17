@@ -38,7 +38,8 @@ export const dataProvider = await createPostgresDataProvider({
 
 export const api = remultSveltekit({
   logApiEndPoints: false,
-  ensureSchema: !building,
+  // ensureSchema: !building,
+  ensureSchema: false,
   admin: Roles.admin,
   dataProvider,
   entities: [
@@ -86,8 +87,8 @@ export const api = remultSveltekit({
       })
       clientPostHog.flush()
 
+      // await upsertIndex(RecordPlc, 'did')
       // await upsertIndex(RecordPlc, 'createdAt')
-      // await upsertIndex(RecordPlc, 'pos_atproto')
       // await upsertIndex(RecordPlc, 'pos_bsky')
       // await upsertIndex(StarterPack, 'updatedAt')
       // await upsertIndex(StarterPack, 'creatorDid')
@@ -108,6 +109,8 @@ const upsertIndex = async <T>(ent: ClassType<T>, field: keyof T) => {
   const f = r.fields[field] as FieldMetadata<T, keyof T>
 
   const indexName = `idx_${r.metadata.key}_${f.dbName}`
+
+  // console.log(`sql`, `CREATE INDEX "${indexName}" ON ${db} ("${f.dbName}")`)
 
   await dataProvider.execute(`
     DO $$
