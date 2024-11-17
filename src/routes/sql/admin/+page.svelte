@@ -11,6 +11,48 @@ LIMIT 10`)
   let result: any = $state('')
   let error = $state('')
 
+  const queries = {
+    indexes: {
+      label: 'Indexes',
+      sql: `SELECT *
+FROM pg_indexes
+WHERE schemaname = 'public'
+ORDER BY tablename, indexname`,
+    },
+    tables: {
+      label: 'Table Sizes',
+      sql: `SELECT 
+  table_name,
+  pg_size_pretty(pg_total_relation_size(quote_ident(table_name))) as total_size,
+  pg_size_pretty(pg_table_size(quote_ident(table_name))) as data_size,
+  pg_size_pretty(pg_indexes_size(quote_ident(table_name))) as index_size
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
+    },
+    dbSize: {
+      label: 'Database Size',
+      sql: `SELECT 
+  current_database() as database_name,		
+  pg_size_pretty(pg_database_size(current_database())) as database_size
+  `,
+    },
+    rowCounts: {
+      label: 'Row Counts',
+      sql: `SELECT 
+  schemaname,
+  relname as table_name,
+  n_live_tup as row_count
+FROM pg_stat_user_tables
+WHERE schemaname = 'public'
+ORDER BY n_live_tup DESC`,
+    },
+  } as const
+
+  function setPresetQuery(queryId: keyof typeof queries) {
+    sqlInput = queries[queryId].sql
+  }
+
   async function handleSubmit(e: Event) {
     e.preventDefault()
     try {
@@ -29,6 +71,14 @@ LIMIT 10`)
 
 <div class="mx-auto max-w-4xl p-4">
   <h1 class="mb-4 text-2xl font-bold">SQL Admin Console</h1>
+
+  <div class="mb-4 flex flex-wrap gap-2">
+    {#each Object.entries(queries) as [id, query]}
+      <button class="btn btn-outline btn-sm" onclick={() => setPresetQuery(id)}>
+        {query.label}
+      </button>
+    {/each}
+  </div>
 
   <form onsubmit={handleSubmit} class="space-y-4">
     <div class="form-control">

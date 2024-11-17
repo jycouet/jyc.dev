@@ -86,60 +86,18 @@ export const api = remultSveltekit({
       })
       clientPostHog.flush()
 
-      // await dataProvider.execute(`
-      //   DO $$
-      //   BEGIN
-      //     IF EXISTS (
-      //       SELECT 1 FROM information_schema.columns
-      //       WHERE table_name = 'log-handles-follows'
-      //       AND column_name = 'handle'
-      //     ) THEN
-      //       ALTER TABLE "log-handles-follows" DROP COLUMN handle;
-      //     END IF;
-      //     IF EXISTS (
-      //       SELECT 1 FROM information_schema.columns
-      //       WHERE table_name = 'log-handles-follows'
-      //       AND column_name = 'displayName'
-      //     ) THEN
-      //       ALTER TABLE "log-handles-follows" DROP COLUMN "displayName";
-      //     END IF;
-      //   END $$;
-      // `)
-      // await dataProvider.execute(`
-      //   DROP TABLE IF EXISTS "log-handles";
-      // `)
-      // console.log(`res`, res)// const allStats = await repo(LogHandleStats).find({
-      //   orderBy: {
-      //     updatedAt: 'asc',
-      //   },
-      // })
-      // for (const stat of allStats) {
-      //   await repo(BSkyty).upsert({
-      //     where: { id: stat.did },
-      //     set: {
-      //       handle: stat.handle,
-      //       displayName: stat.displayName,
-      //       firstTimeHere: stat.updatedAt,
-      //       avatar: stat.avatar,
-      //     },
-      //   })
-      // }
+      // await upsertIndex(RecordPlc, 'createdAt')
+      // await upsertIndex(RecordPlc, 'pos_atproto')
+      // await upsertIndex(RecordPlc, 'pos_bsky')
+      // await upsertIndex(StarterPack, 'updatedAt')
+      // await upsertIndex(StarterPack, 'creatorDid')
 
-      // await dataProvider.execute(`
-      //   ALTER TABLE "plc-record" DROP CONSTRAINT IF EXISTS "plc-record_pkey";
-      // `)
-
-      await upsertIndex(RecordPlc, 'createdAt')
-      await upsertIndex(RecordPlc, 'pos_atproto')
-      await upsertIndex(RecordPlc, 'pos_bsky')
-      await upsertIndex(StarterPack, 'updatedAt')
-      await upsertIndex(StarterPack, 'creatorDid')
       new Log('apiInit').success('done')
 
-      await repo(BSkyty).updateMany({
-        where: { id: { $not: '-1' } },
-        set: { pos_atproto: null, pos_bsky: null },
-      })
+      // await repo(BSkyty).updateMany({
+      //   where: { id: { $not: '-1' } },
+      //   set: { pos_atproto: null, pos_bsky: null },
+      // })
     }
   },
 })
