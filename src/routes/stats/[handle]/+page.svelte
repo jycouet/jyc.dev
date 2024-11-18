@@ -353,7 +353,7 @@
             </div>
           </a>
           <button
-            class="flex flex-col items-center gap-0"
+            class="flex flex-col items-center gap-0 rounded-lg p-1 transition-colors hover:scale-110 hover:bg-base-content/30 active:bg-base-content/20"
             onclick={() =>
               // @ts-ignore
               document?.getElementById('modal_info_nerd').showModal()}

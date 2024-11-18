@@ -89,6 +89,12 @@
         'https://cdn.bsky.app/img/avatar/plain/did:plc:2gkh62xvzokhlf6li4ol3b3d/bafkreifgzl4e5jqlakd77ajvnilsb5tufsv24h2sxfwmitkzxrh3sk6mhq@jpeg',
       displayName: 'patak',
     },
+    {
+      handle: 'robertlin.bsky.social',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:5wlpm2j3d6can6quf5hotdcc/bafkreiefb45p47kfokpk45bt3tncrpi7fzkzkb66vq6vh5zryou2nmjaqe@jpeg',
+      displayName: 'Robert Lin',
+    },
   ]
 </script>
 
