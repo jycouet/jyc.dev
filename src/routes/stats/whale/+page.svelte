@@ -710,6 +710,8 @@
     { $count: 542989, onDay: '2024-11-13' },
     { $count: 989752, onDay: '2024-11-14' },
     { $count: 962888, onDay: '2024-11-15' },
+    { $count: 872611, onDay: '2024-11-16' },
+    { $count: 768569, onDay: '2024-11-17' },
   ])
 
   let loadingChart = $state(true)
@@ -757,7 +759,7 @@
     {#if lastValue}
       <span
         transition:fade
-        class="font-mono text-3xl font-extrabold text-base-content/70 text-secondary"
+        class="font-mono text-3xl font-extrabold text-base-content/70 text-info"
       >
         {lastValue.pos_bsky!.toLocaleString()}
       </span>
@@ -796,12 +798,8 @@
               return new Intl.DateTimeFormat(undefined, {}).format(new Date(d))
             }}
           />
-          <LinearGradient class="from-secondary/50 to-secondary/0" vertical let:url>
-            <Area
-              line={{ class: 'stroke-2 stroke-secondary' }}
-              fill={url}
-              tweened={{ duration: 200 }}
-            />
+          <LinearGradient class="from-info/50 to-info/0" vertical let:url>
+            <Area line={{ class: 'stroke-2 stroke-info' }} fill={url} tweened={{ duration: 200 }} />
           </LinearGradient>
         </Svg>
       </Chart>
@@ -810,7 +808,7 @@
     <div class="h-[80px]">
       <Chart data={stats} x="onDay" y="count" padding={{ left: 16 }}>
         <Svg>
-          <Area line={{ class: 'stroke-2 stroke-secondary' }} class="fill-secondary/20" />
+          <Area line={{ class: 'stroke-2 stroke-info' }} class="fill-info/20" />
           <Brush
             on:change={(e) => {
               // @ts-expect-error

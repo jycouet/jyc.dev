@@ -401,18 +401,23 @@ export class AtController {
   @BackendMethod({ allowed: true })
   static async getGlobalStats() {
     try {
-      const staticStats = []
       // Get data from the last 30 days
-      const startDynamic = new Date('2024-11-16T00:00:00.000Z')
-
+      const startDynamic = new Date('2024-11-18T00:00:00.000Z')
+      // SqlDatabase.LogToConsole = 'oneLiner'
       // Get all stats records grouped by day
-      const dailyStats = await repo(RecordPlcStats).groupBy({
-        group: ['onDay'],
-        where: {
-          pos_bsky: { '!=': null },
-          createdAt: { $gte: startDynamic }, // rmv this to get the static stats ;)
-        },
-      })
+      const dailyStats = (
+        await repo(RecordPlcStats).groupBy({
+          group: ['onDay'],
+          where: {
+            pos_bsky: { '!=': null },
+            createdAt: { $gte: startDynamic }, // rmv this to get the static stats ;)
+          },
+          orderBy: { onDay: 'asc' },
+        })
+      ).map((stat) => ({
+        ...stat,
+        onDay: new Date(stat.onDay).toISOString().split('T')[0],
+      }))
 
       // console.dir(dailyStats, { maxArrayLength: 1000 })
       const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
