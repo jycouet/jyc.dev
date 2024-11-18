@@ -741,16 +741,18 @@
 
   $effect(() => {
     AtController.getGlobalStats()
-      .then((data) => {
-        if (data && data.dailyStats) {
-          for (const stat of data.dailyStats) {
-            staticStats.push(stat)
-          }
-          if (data.lastValue) {
-            lastValue = data.lastValue
-          }
-          if (data.lastProfile) {
-            lastProfile = data.lastProfile
+      .then((res) => {
+        if (res) {
+          if (res.data && res.data.dailyStats) {
+            for (const stat of res.data.dailyStats) {
+              staticStats.push(stat)
+            }
+            if (res.data.lastValue) {
+              lastValue = res.data.lastValue
+            }
+            if (res.data.lastProfile) {
+              lastProfile = res.data.lastProfile
+            }
           }
         }
       })

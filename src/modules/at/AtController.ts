@@ -3,6 +3,7 @@ import { DidResolver, getPds } from '@atproto/identity'
 
 import { BackendMethod, repo } from 'remult'
 
+import { Cache } from '$lib/utils/cache'
 import { getRecord, listRecords, listRecordsAll, parseUri } from '$modules/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
@@ -33,18 +34,7 @@ interface GlobalStatsData {
   }
 }
 
-interface GlobalStatsCache<T> {
-  timestamp: number
-  isLoading: boolean
-  data: T | null
-}
-
-const CACHE_DURATION = 4 * 60 * 1000 // in milliseconds
-const globalStatsCache: GlobalStatsCache<GlobalStatsData> = {
-  timestamp: 0,
-  isLoading: false,
-  data: null,
-}
+const globalStatsCache = new Cache<GlobalStatsData>(4 * 60 * 1000) // 4 minutes
 
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
   const yesterday = new Date()
@@ -424,72 +414,39 @@ export class AtController {
   @BackendMethod({ allowed: true })
   static async getGlobalStats() {
     try {
-      const now = Date.now()
+      return await globalStatsCache.getOrFetch(async () => {
+        const startDynamic = new Date('2024-11-18T00:00:00.000Z')
+        const dailyStats = (
+          await repo(RecordPlcStats).groupBy({
+            group: ['onDay'],
+            where: {
+              pos_bsky: { '!=': null },
+              createdAt: { $gte: startDynamic },
+            },
+            orderBy: { onDay: 'asc' },
+          })
+        ).map((stat) => ({
+          ...stat,
+          onDay: new Date(stat.onDay).toISOString().split('T')[0],
+        }))
 
-      // If data is fresh, return it immediately
-      if (globalStatsCache.data && now - globalStatsCache.timestamp < CACHE_DURATION) {
+        const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
+        const agent = new Agent(new URL('https://public.api.bsky.app'))
+        const profile = await agent.getProfile({ actor: lastValue!.did })
+        console.log(`profile`, profile)
+        console.log(`lastValue`, lastValue)
+
         return {
-          ...globalStatsCache.data,
-          isLoading: false,
-          isCached: true,
-        }
-      }
-
-      // If already fetching new data, return cached data with loading state
-      if (globalStatsCache.isLoading) {
-        return {
-          ...globalStatsCache.data,
-          isLoading: true,
-          isCached: true,
-        }
-      }
-
-      // Set loading state
-      globalStatsCache.isLoading = true
-
-      // Fetch new data
-      const startDynamic = new Date('2024-11-18T00:00:00.000Z')
-      const dailyStats = (
-        await repo(RecordPlcStats).groupBy({
-          group: ['onDay'],
-          where: {
-            pos_bsky: { '!=': null },
-            createdAt: { $gte: startDynamic },
+          dailyStats,
+          lastValue,
+          lastProfile: {
+            handle: profile.data.handle,
+            displayName: profile.data.displayName ?? profile.data.handle,
+            avatar: profile.data.avatar ?? '',
           },
-          orderBy: { onDay: 'asc' },
-        })
-      ).map((stat) => ({
-        ...stat,
-        onDay: new Date(stat.onDay).toISOString().split('T')[0],
-      }))
-
-      const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
-      const agent = new Agent(new URL('https://public.api.bsky.app'))
-      const profile = await agent.getProfile({ actor: lastValue!.did })
-
-      const result = {
-        dailyStats,
-        lastValue,
-        lastProfile: {
-          handle: profile.data.handle,
-          displayName: profile.data.displayName ?? profile.data.handle,
-          avatar: profile.data.avatar ?? '',
-        },
-      }
-
-      // Update cache
-      globalStatsCache.data = result
-      globalStatsCache.timestamp = now
-      globalStatsCache.isLoading = false
-
-      return {
-        ...result,
-        isLoading: false,
-        isCached: false,
-      }
+        }
+      })
     } catch (error) {
-      // Reset loading state on error
-      globalStatsCache.isLoading = false
       console.error('Error fetching global stats:', error)
       return null
     }
