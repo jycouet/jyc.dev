@@ -3,7 +3,7 @@ import { DidResolver, getPds } from '@atproto/identity'
 
 import { BackendMethod, repo } from 'remult'
 
-import { listRecordsAll, parseUri } from '$modules/at/helper'
+import { getRecord, listRecords, listRecordsAll, parseUri } from '$modules/at/helper'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -438,9 +438,17 @@ export class AtController {
       // console.dir(dailyStats, { maxArrayLength: 1000 })
       const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
 
+      const agent = new Agent(new URL('https://public.api.bsky.app'))
+      const profile = await agent.getProfile({ actor: lastValue!.did })
+
       const result = {
         dailyStats,
         lastValue,
+        lastProfile: {
+          handle: profile.data.handle,
+          displayName: profile.data.displayName,
+          avatar: profile.data.avatar,
+        },
       }
 
       // Update cache

@@ -3,6 +3,7 @@
   import { State } from 'svelte-ux'
   import { fade } from 'svelte/transition'
 
+  import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { AtController } from '$modules/at/AtController'
@@ -728,6 +729,8 @@
     }),
   )
   let lastValue: RecordPlcStats | undefined = $state(undefined)
+  let lastProfile: { handle: string; avatar: string; displayName: string } | undefined =
+    $state(undefined)
 
   let last7Days = $derived(
     stats.slice(-7).map((day) => ({
@@ -744,6 +747,7 @@
             staticStats.push(stat)
           }
           lastValue = data.lastValue
+          lastProfile = data.lastProfile
         }
       })
       .finally(() => {
@@ -876,8 +880,11 @@
           target="_blank"
           class="btn btn-info text-xl"
         >
-          👋 Say hi to the last one who arrived 🦋</a
-        >
+          👋 Say hi to
+          {#if lastProfile}
+            <Avatar {...lastProfile} size="w-9" />
+          {/if} who arrived last 🦋
+        </a>
       </div>
     {/if}
   </div>
