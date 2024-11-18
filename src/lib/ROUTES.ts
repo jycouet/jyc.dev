@@ -25,6 +25,7 @@ const PAGES = {
   "/stats/[handle]/extra": (params: { handle: (string | number) }) => {
     return `/stats/${params.handle}/extra`
   },
+  "/stats/whale": `/stats/whale`,
   "/stats/wolf": `/stats/wolf`,
   "/thumb-meta": `/thumb-meta`,
   "/thumb-meta/[videoId]": (params: { videoId: (string | number) }) => {
@@ -167,7 +168,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
+  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/whale': never, '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never, 'GET /stats/plc/[did]': 'did', 'GET /stats/plc/[pos=int]': 'pos', 'GET /stats/plc/at/last': never, 'GET /stats/plc/last': never, 'GET /stats/plc/sync': never }
   ACTIONS: { 'login /stats/login': never }
   LINKS: { 'bsky_profile': 'handle', 'bsky_hashtag': 'hashtag', 'bsky_starter_pack': 'creator_handle' | 'rkey' }

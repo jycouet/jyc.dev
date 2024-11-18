@@ -100,9 +100,9 @@
 
 <Og title="Sky Zoo" {description} />
 
-<div class="flex flex-col gap-8">
-  <div class="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
-    <form onsubmit={handleSubmit} class="flex flex-col gap-4 md:col-span-8">
+<div class="flex flex-col gap-28">
+  <div class="grid grid-cols-1 items-end gap-8">
+    <form onsubmit={handleSubmit} class="flex flex-col gap-4">
       <div class="form-control flex gap-4">
         <div class="flex items-end gap-4">
           <div class="flex-1">
@@ -136,22 +136,14 @@
         </button>
       </div>
     </form>
-
-    <div class="md:col-span-4">
-      <a href={route(`/stats/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
-        <span>Starter Packs Browser</span>
-        <span class="relative bottom-0 -mb-6 text-xs opacity-40"
-          >To add a starter pack, enter your handle on the left!</span
-        >
-      </a>
-    </div>
   </div>
 
-  <div class="mt-10 h-[300px]">
+  <div class=" h-[300px]">
     <BarChart
       data={stats}
       x="emoji"
       y="$count"
+      padding={{ right: 30 }}
       props={{
         bars: { tweened: true },
         xAxis: { tickLabelProps: { class: 'text-xl md:text-3xl', dy: 30 }, tickLength: 0 },
@@ -161,11 +153,27 @@
     />
   </div>
 
-  <div class="mt-16 text-center text-sm text-base-content/70">
+  <div class="text-center text-sm text-base-content/70">
     <p>TIP: If you're viewing a profile on blue sky,</p>
     <p>
       <span class="text-secondary">prefix with</span>
       "<code class="font-mono text-primary">skyzoo.blue/</code>" to open it here!
     </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+    <a href={route(`/stats/wolf`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+      <span class="italic">Wolf 🐺</span>
+      <span>Starter Packs Browser</span>
+      <span class="relative bottom-0 text-xs opacity-40"
+        >To add a starter pack, enter your handle on the top!</span
+      >
+    </a>
+
+    <a href={route(`/stats/whale`)} class="btn btn-secondary flex h-28 w-full flex-col text-lg">
+      <span class="italic">Whale 🐋</span>
+      <span>Global Statistics</span>
+      <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
+    </a>
   </div>
 </div>
