@@ -10,6 +10,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
 import { BSkyty } from './BSkyty'
 import { determineCategory } from './determineCategory'
 import { RecordFollow } from './RecordFollow'
+import { RecordPlcStats } from './RecordPlc'
 
 interface ActivityCounts {
   yesterday: number
@@ -395,5 +396,34 @@ export class AtController {
       console.error(`error`, error)
     }
     return null
+  }
+
+  @BackendMethod({ allowed: true })
+  static async getGlobalStats() {
+    try {
+      const staticStats = []
+      // Get data from the last 30 days
+      const startDynamic = new Date('2024-11-16T00:00:00.000Z')
+
+      // Get all stats records grouped by day
+      const dailyStats = await repo(RecordPlcStats).groupBy({
+        group: ['onDay'],
+        where: {
+          pos_bsky: { '!=': null },
+          createdAt: { $gte: startDynamic },
+        }, // rmv this to get the static stats ;)
+      })
+
+      console.dir(dailyStats, { maxArrayLength: 1000 })
+      const lastValue = await repo(RecordPlcStats).findFirst()
+
+      return {
+        dailyStats,
+        lastValue,
+      }
+    } catch (error) {
+      console.error('Error fetching global stats:', error)
+      return null
+    }
   }
 }

@@ -33,3 +33,12 @@ export class RecordPlc extends EntityBase {
   //   operation: JSONPLCOperation
   // }
 }
+
+export class RecordPlcStats extends RecordPlc {
+  @Fields.string<RecordPlcStats>({
+    sqlExpression: () => {
+      return `TO_CHAR("createdAt", 'YYYY-MM-DD')`
+    },
+  })
+  onDay!: string
+}

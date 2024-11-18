@@ -15,7 +15,7 @@ import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/RecordFollow'
-import { RecordPlc } from '$modules/at/RecordPlc'
+import { RecordPlc, RecordPlcStats } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
 import {
@@ -51,6 +51,7 @@ export const api = remultSveltekit({
     StarterPack,
     ListItem,
     RecordPlc,
+    RecordPlcStats,
   ],
   controllers: [AtController, AgentController, SqlController],
   getUser: async (event) => {
