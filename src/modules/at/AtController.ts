@@ -23,6 +23,17 @@ interface PunchCardEntry {
   count: number
 }
 
+interface CacheEntry {
+  data: any
+  timestamp: number
+}
+
+const CACHE_DURATION = 7 * 60 * 1000 // 7 minute in milliseconds
+const globalStatsCache: CacheEntry = {
+  data: null,
+  timestamp: 0,
+}
+
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -401,10 +412,15 @@ export class AtController {
   @BackendMethod({ allowed: true })
   static async getGlobalStats() {
     try {
-      // Get data from the last 30 days
+      // Check if we have valid cached data
+      const now = Date.now()
+
+      if (globalStatsCache.data && now - globalStatsCache.timestamp < CACHE_DURATION) {
+        return globalStatsCache.data
+      }
+
+      // If no valid cache, fetch new data
       const startDynamic = new Date('2024-11-18T00:00:00.000Z')
-      // SqlDatabase.LogToConsole = 'oneLiner'
-      // Get all stats records grouped by day
       const dailyStats = (
         await repo(RecordPlcStats).groupBy({
           group: ['onDay'],
@@ -422,10 +438,16 @@ export class AtController {
       // console.dir(dailyStats, { maxArrayLength: 1000 })
       const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
 
-      return {
+      const result = {
         dailyStats,
         lastValue,
       }
+
+      // Update cache
+      globalStatsCache.data = result
+      globalStatsCache.timestamp = now
+
+      return result
     } catch (error) {
       console.error('Error fetching global stats:', error)
       return null

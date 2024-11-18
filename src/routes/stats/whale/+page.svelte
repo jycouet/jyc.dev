@@ -4,6 +4,7 @@
   import { fade } from 'svelte/transition'
 
   import Og from '$lib/components/Og.svelte'
+  import { route } from '$lib/ROUTES'
   import { AtController } from '$modules/at/AtController'
   import type { RecordPlcStats } from '$modules/at/RecordPlc'
 
@@ -868,6 +869,16 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="mt-20 flex justify-center">
+        <a
+          href={route('bsky_profile', { handle: lastValue!.did })}
+          target="_blank"
+          class="btn btn-info text-xl"
+        >
+          👋 Say hi to the last one who arrived 🦋</a
+        >
+      </div>
     {/if}
   </div>
 </div>
