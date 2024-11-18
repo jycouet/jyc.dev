@@ -35,6 +35,9 @@ export class BSkyty {
   @Fields.date({ includeInApi: Roles.admin })
   firstTimeHere = new Date()
 
+  @Fields.updatedAt({ includeInApi: Roles.admin })
+  updatedAt = new Date()
+
   @Relations.toMany<BSkyty, LogHandleStats>(() => LogHandleStats, {
     field: 'did',
   })

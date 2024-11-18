@@ -17,7 +17,7 @@ const log = new Log('at/[handle]/+page.server.ts')
 
 export const load = (async (event) => {
   // Remove @ if user included it
-  const cleanHandle = event.params.handle.replace('@', '').toLowerCase()
+  let cleanHandle = event.params.handle.replace('@', '').toLowerCase()
 
   try {
     const agent = new Agent(new URL('https://public.api.bsky.app'))
@@ -26,6 +26,7 @@ export const load = (async (event) => {
     for (let i = 0; i < 3; i++) {
       try {
         profile = await agent.getProfile({ actor: cleanHandle })
+        cleanHandle = profile.data.handle
         break
       } catch (error) {
         if (i >= 2) throw error
@@ -39,9 +40,6 @@ export const load = (async (event) => {
 
     profile = profile!
 
-    // Don't await this
-    addStarterPack(profile.data.did)
-
     let bskyty = await repo(BSkyty).upsert({
       where: { id: profile.data.did },
       set: {
@@ -53,6 +51,9 @@ export const load = (async (event) => {
         postsCount: profile.data.postsCount,
       },
     })
+
+    // Don't await this
+    addStarterPack(profile.data.did)
 
     let createdAt = bskyty.createdAt
     let pos_atproto = bskyty.pos_atproto
