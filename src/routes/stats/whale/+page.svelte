@@ -752,7 +752,17 @@
 <Og title="Sky Zoo - Whale Stats" {description} />
 
 <div class="flex flex-col gap-8">
-  <h2 class="text-2xl font-bold">Global Statistics 🐋</h2>
+  <h2 class="flex items-end justify-between gap-2 text-2xl font-bold">
+    <span> 🐋</span>
+    {#if lastValue}
+      <span
+        transition:fade
+        class="font-mono text-3xl font-extrabold text-base-content/70 text-secondary"
+      >
+        {lastValue.pos_bsky!.toLocaleString()}
+      </span>
+    {/if}
+  </h2>
   <State initial={[new Date('2024-08-01T00:00:00.000Z'), null]} let:value={xDomain} let:set>
     <div class="h-[300px]">
       <Chart
@@ -786,8 +796,12 @@
               return new Intl.DateTimeFormat(undefined, {}).format(new Date(d))
             }}
           />
-          <LinearGradient class="from-info/50 to-info/0" vertical let:url>
-            <Area line={{ class: 'stroke-2 stroke-info' }} fill={url} tweened={{ duration: 200 }} />
+          <LinearGradient class="from-secondary/50 to-secondary/0" vertical let:url>
+            <Area
+              line={{ class: 'stroke-2 stroke-secondary' }}
+              fill={url}
+              tweened={{ duration: 200 }}
+            />
           </LinearGradient>
         </Svg>
       </Chart>
@@ -796,7 +810,7 @@
     <div class="h-[80px]">
       <Chart data={stats} x="onDay" y="count" padding={{ left: 16 }}>
         <Svg>
-          <Area line={{ class: 'stroke-2 stroke-info' }} class="fill-info/20" />
+          <Area line={{ class: 'stroke-2 stroke-secondary' }} class="fill-secondary/20" />
           <Brush
             on:change={(e) => {
               // @ts-expect-error
@@ -814,7 +828,7 @@
   <hr />
 
   <h2 class="flex items-end justify-between gap-2 text-2xl font-bold">
-    <span> New Users in the last 7 days 🐋 </span>
+    <div>🐋<span class="ml-2 text-sm font-normal text-base-content/70">last 7 days</span></div>
     {#if lastValue}
       <span transition:fade class="text-sm font-normal text-base-content/70">
         Data updated at {new Intl.DateTimeFormat(undefined, {

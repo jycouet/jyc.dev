@@ -410,12 +410,12 @@ export class AtController {
         group: ['onDay'],
         where: {
           pos_bsky: { '!=': null },
-          createdAt: { $gte: startDynamic },
-        }, // rmv this to get the static stats ;)
+          createdAt: { $gte: startDynamic }, // rmv this to get the static stats ;)
+        },
       })
 
-      console.dir(dailyStats, { maxArrayLength: 1000 })
-      const lastValue = await repo(RecordPlcStats).findFirst()
+      // console.dir(dailyStats, { maxArrayLength: 1000 })
+      const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
 
       return {
         dailyStats,
