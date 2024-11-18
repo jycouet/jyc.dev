@@ -23,15 +23,27 @@ interface PunchCardEntry {
   count: number
 }
 
-interface CacheEntry {
-  data: any
-  timestamp: number
+interface GlobalStatsData {
+  dailyStats: any[]
+  lastValue: any
+  lastProfile: {
+    handle: string
+    displayName: string
+    avatar: string
+  }
 }
 
-const CACHE_DURATION = 7 * 60 * 1000 // 7 minute in milliseconds
-const globalStatsCache: CacheEntry = {
-  data: null,
+interface GlobalStatsCache<T> {
+  timestamp: number
+  isLoading: boolean
+  data: T | null
+}
+
+const CACHE_DURATION = 4 * 60 * 1000 // in milliseconds
+const globalStatsCache: GlobalStatsCache<GlobalStatsData> = {
   timestamp: 0,
+  isLoading: false,
+  data: null,
 }
 
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
@@ -412,21 +424,37 @@ export class AtController {
   @BackendMethod({ allowed: true })
   static async getGlobalStats() {
     try {
-      // Check if we have valid cached data
       const now = Date.now()
 
+      // If data is fresh, return it immediately
       if (globalStatsCache.data && now - globalStatsCache.timestamp < CACHE_DURATION) {
-        return globalStatsCache.data
+        return {
+          ...globalStatsCache.data,
+          isLoading: false,
+          isCached: true,
+        }
       }
 
-      // If no valid cache, fetch new data
+      // If already fetching new data, return cached data with loading state
+      if (globalStatsCache.isLoading) {
+        return {
+          ...globalStatsCache.data,
+          isLoading: true,
+          isCached: true,
+        }
+      }
+
+      // Set loading state
+      globalStatsCache.isLoading = true
+
+      // Fetch new data
       const startDynamic = new Date('2024-11-18T00:00:00.000Z')
       const dailyStats = (
         await repo(RecordPlcStats).groupBy({
           group: ['onDay'],
           where: {
             pos_bsky: { '!=': null },
-            createdAt: { $gte: startDynamic }, // rmv this to get the static stats ;)
+            createdAt: { $gte: startDynamic },
           },
           orderBy: { onDay: 'asc' },
         })
@@ -435,9 +463,7 @@ export class AtController {
         onDay: new Date(stat.onDay).toISOString().split('T')[0],
       }))
 
-      // console.dir(dailyStats, { maxArrayLength: 1000 })
       const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
-
       const agent = new Agent(new URL('https://public.api.bsky.app'))
       const profile = await agent.getProfile({ actor: lastValue!.did })
 
@@ -446,17 +472,24 @@ export class AtController {
         lastValue,
         lastProfile: {
           handle: profile.data.handle,
-          displayName: profile.data.displayName,
-          avatar: profile.data.avatar,
+          displayName: profile.data.displayName ?? profile.data.handle,
+          avatar: profile.data.avatar ?? '',
         },
       }
 
       // Update cache
       globalStatsCache.data = result
       globalStatsCache.timestamp = now
+      globalStatsCache.isLoading = false
 
-      return result
+      return {
+        ...result,
+        isLoading: false,
+        isCached: false,
+      }
     } catch (error) {
+      // Reset loading state on error
+      globalStatsCache.isLoading = false
       console.error('Error fetching global stats:', error)
       return null
     }

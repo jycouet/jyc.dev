@@ -742,12 +742,16 @@
   $effect(() => {
     AtController.getGlobalStats()
       .then((data) => {
-        if (data) {
+        if (data && data.dailyStats) {
           for (const stat of data.dailyStats) {
             staticStats.push(stat)
           }
-          lastValue = data.lastValue
-          lastProfile = data.lastProfile
+          if (data.lastValue) {
+            lastValue = data.lastValue
+          }
+          if (data.lastProfile) {
+            lastProfile = data.lastProfile
+          }
         }
       })
       .finally(() => {
@@ -873,19 +877,23 @@
           </tr>
         </tbody>
       </table>
-
-      <div class="mt-20 flex justify-center">
-        <a
-          href={route('bsky_profile', { handle: lastValue!.did })}
-          target="_blank"
-          class="btn btn-info text-xl"
-        >
-          👋 Say hi to
-          {#if lastProfile}
-            <Avatar {...lastProfile} size="w-9" />
-          {/if} who arrived last 🦋
-        </a>
-      </div>
     {/if}
   </div>
+
+  {#if lastValue}
+    <div class="flex justify-center">
+      <a
+        href={route('bsky_profile', { handle: lastValue!.did })}
+        target="_blank"
+        class="btn btn-info text-xl"
+      >
+        👋 Say hi to
+        {#if lastProfile && lastProfile.avatar}
+          <Avatar {...lastProfile} size="w-9" />
+        {:else}
+          {lastProfile?.displayName || lastProfile!.handle}
+        {/if} who arrived last 🦋
+      </a>
+    </div>
+  {/if}
 </div>

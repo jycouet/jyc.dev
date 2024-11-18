@@ -1,10 +1,24 @@
 <script lang="ts">
   import { route } from '$lib/ROUTES'
 
-  export let handle: string
-  export let avatar: string
-  export let displayName: string
-  export let size: 'w-9' | 'w-6' | 'w-6 md:w-9' = 'w-9'
+  interface Props {
+    handle: string
+    avatar: string
+    displayName: string
+    size?: 'w-9' | 'w-6' | 'w-6 md:w-9'
+  }
+
+  let { handle, displayName, avatar, size = 'w-9' }: Props = $props()
+
+  // Get initials from display name
+  let initials = $derived(
+    (displayName ?? handle)
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase(),
+  )
 </script>
 
 <div class="avatar">
