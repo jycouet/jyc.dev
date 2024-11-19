@@ -24,6 +24,7 @@ import {
   setSessionTokenCookie,
   validateSessionToken,
 } from '$modules/auth/lucia'
+import { KeyValue } from '$modules/global/Entities'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 import { SqlController } from '$modules/sql/SqlController'
@@ -55,6 +56,7 @@ export const api = remultSveltekit({
     ListItem,
     RecordPlc,
     RecordPlcStats,
+    KeyValue,
   ],
   controllers: [AtController, AgentController, SqlController],
   getUser: async (event) => {
@@ -78,7 +80,10 @@ export const api = remultSveltekit({
     return user ? { ...user, roles } : undefined
   },
   initApi: async () => {
+    // await calcLatestGlobalStats()
+
     if (!building) {
+      // @ts-ignore
       SqlController.dataProvider = dataProvider
 
       const clientPostHog = new PostHog(PUBLIC_POSTHOG_KEY, {
@@ -115,15 +120,19 @@ const upsertIndex = async <T>(ent: ClassType<T>, field: keyof T) => {
 
   // console.log(`sql`, `CREATE INDEX "${indexName}" ON ${db} ("${f.dbName}")`)
 
-  await dataProvider.execute(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = '${indexName}') THEN
-        CREATE INDEX "${indexName}" ON ${db} ("${f.dbName}");
-      END IF;
-    END
-    $$;
-  `)
+  try {
+    // TODO replace json with sqlLite to have this working?
+    // @ts-ignore
+    await dataProvider.execute(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = '${r.metadata.key}' AND indexname = '${indexName}') THEN
+          CREATE INDEX "${indexName}" ON ${db} ("${f.dbName}");
+        END IF;
+      END
+      $$;
+    `)
+  } catch (error) {}
 }
 
 // SELECT

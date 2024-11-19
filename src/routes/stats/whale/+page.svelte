@@ -7,10 +7,12 @@
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
-  import { AtController } from '$modules/at/AtController'
-  import type { RecordPlcStats } from '$modules/at/RecordPlc'
+  import { type LatestGlobalStats } from '$modules/at/AtController'
+  
 
-  const description = 'Global statistics on Bluesky usage'
+const description = 'Global statistics on Bluesky usage'
+
+  const { data }: { data: LatestGlobalStats | null } = $props()
 
   const staticStats = $state([
     { $count: 6, onDay: '2022-11-17' },
@@ -717,9 +719,10 @@
     { $count: 768569, onDay: '2024-11-17' },
   ])
 
-  let loadingChart = $state(true)
-  let stats = $derived(
-    staticStats.map((stat, index, array) => {
+  // let loadingChart = $state(true)
+  let stats = $derived.by(() => {
+    const arrFull = [...staticStats, ...(data?.dailyStats ?? [])]
+    const arr = arrFull.map((stat, index, array) => {
       const cumulativeSum = array.slice(0, index + 1).reduce((sum, curr) => sum + curr.$count, 0)
 
       return {
@@ -727,11 +730,12 @@
         rawCount: stat.$count,
         count: cumulativeSum,
       }
-    }),
-  )
-  let lastValue: RecordPlcStats | undefined = $state(undefined)
-  let lastProfile: { handle: string; avatar: string; displayName: string } | undefined =
-    $state(undefined)
+    })
+
+    return arr
+  })
+  let lastValue = $state(data?.lastValue)
+  let lastProfile = $state(data?.lastProfile)
 
   let last7Days = $derived(
     stats.slice(-7).map((day) => ({
@@ -742,27 +746,27 @@
 
   let brushRange = $state<Array<Date | null>>([null, null])
 
-  $effect(() => {
-    AtController.getGlobalStats()
-      .then((res) => {
-        if (res) {
-          if (res.data && res.data.dailyStats) {
-            for (const stat of res.data.dailyStats) {
-              staticStats.push(stat)
-            }
-            if (res.data.lastValue) {
-              lastValue = res.data.lastValue
-            }
-            if (res.data.lastProfile) {
-              lastProfile = res.data.lastProfile
-            }
-          }
-        }
-      })
-      .finally(() => {
-        loadingChart = false
-      })
-  })
+  // $effect(() => {
+  //   AtController.getLatestGlobalStats()
+  //     .then((res) => {
+  //       if (res) {
+  //         if (res && res.dailyStats) {
+  //           for (const stat of res.dailyStats) {
+  //             staticStats.push(stat)
+  //           }
+  //           if (res.lastValue) {
+  //             lastValue = res.lastValue
+  //           }
+  //           if (res.lastProfile) {
+  //             lastProfile = res.lastProfile
+  //           }
+  //         }
+  //       }
+  //     })
+  //     .finally(() => {
+  //       loadingChart = false
+  //     })
+  // })
 
   const format = (d: Date, period: PeriodType) => {
     return new Intl.DateTimeFormat(undefined, {}).format(d)
@@ -875,7 +879,7 @@
     {/if}
   </h2>
   <div class="overflow-x-auto">
-    {#if !loadingChart}
+    {#if data?.dailyStats}
       <table class="table">
         <thead>
           <tr>

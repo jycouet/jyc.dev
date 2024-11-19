@@ -15,8 +15,7 @@
   <div>
     <span class="text-gray-600">"</span><span class="text-gray-400">{key}</span><span
       class="text-gray-600">"</span
-    >: <span class="text-gray-600">"</span><span class="text-secondary">{value}</span><span
-      class="text-gray-600">"</span
-    >
+    >: <span class="text-gray-600">"</span><span class="font-mono text-secondary">{value}</span
+    ><span class="text-gray-600">"</span>
   </div>
 </div>

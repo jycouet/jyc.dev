@@ -1,10 +1,10 @@
-import { Agent } from '@atproto/api'
 import { DidResolver, getPds } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
 import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
+import { getProfile } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
@@ -20,25 +20,11 @@ export const load = (async (event) => {
   let cleanHandle = event.params.handle.replace('@', '').toLowerCase()
 
   try {
-    const agent = new Agent(new URL('https://public.api.bsky.app'))
-
-    let profile
-    for (let i = 0; i < 3; i++) {
-      try {
-        profile = await agent.getProfile({ actor: cleanHandle })
-        cleanHandle = profile.data.handle
-        break
-      } catch (error) {
-        if (i >= 2) throw error
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-      }
+    const profile = await getProfile(cleanHandle)
+    if (!profile) {
+      throw new Error('Profile not found')
     }
-    // const toto = await agent.getFollows({ actor: cleanHandle })
-    // console.log(`toto`, toto.data.follows[0])
-
-    // console.dir(profile, { depth: null })
-
-    profile = profile!
+    cleanHandle = profile.data.handle
 
     let bskyty = await repo(BSkyty).upsert({
       where: { id: profile.data.did },
@@ -164,6 +150,9 @@ export const load = (async (event) => {
       createdAt,
       startedToBeActiveOn: bskyty.startedToBeActiveOn,
       mushroom,
+      followersCount: profile.data.followersCount,
+      followsCount: profile.data.followsCount,
+      postsCount: profile.data.postsCount,
     }
 
     // const handleResolver = new HandleResolver({})

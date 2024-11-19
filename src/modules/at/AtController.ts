@@ -1,13 +1,13 @@
-import { Agent } from '@atproto/api'
 import { DidResolver, getPds } from '@atproto/identity'
 
 import { BackendMethod, repo } from 'remult'
 
-import { Cache } from '$lib/utils/cache'
 import { listRecordsAll, parseUri } from '$modules/at/helper'
+import { GlobalKey, KeyValue } from '$modules/global/Entities'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
+import { getProfile } from './agentHelper'
 import { BSkyty } from './BSkyty'
 import { determineCategory } from './determineCategory'
 import { RecordFollow } from './RecordFollow'
@@ -33,8 +33,6 @@ interface GlobalStatsData {
     avatar: string
   }
 }
-
-const globalStatsCache = new Cache<GlobalStatsData>(4 * 60 * 1000) // 4 minutes
 
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
   const yesterday = new Date()
@@ -345,8 +343,10 @@ export class AtController {
             // Reverse array so it goes from oldest to newest
             // followsPeriods.reverse()
 
-            const agent = new Agent(new URL('https://public.api.bsky.app'))
-            const profile = await agent.getProfile({ actor: did })
+            const profile = await getProfile(did)
+            if (!profile) {
+              throw new Error('Profile not found')
+            }
 
             const nbFollow = profile.data.followsCount ?? 0
 
@@ -410,45 +410,61 @@ export class AtController {
     }
     return null
   }
+}
 
-  @BackendMethod({ allowed: true })
-  static async getGlobalStats() {
-    try {
-      return await globalStatsCache.getOrFetch(async () => {
-        const startDynamic = new Date('2024-11-18T00:00:00.000Z')
-        const dailyStats = (
-          await repo(RecordPlcStats).groupBy({
-            group: ['onDay'],
-            where: {
-              pos_bsky: { '!=': null },
-              createdAt: { $gte: startDynamic },
-            },
-            orderBy: { onDay: 'asc' },
-          })
-        ).map((stat) => ({
-          ...stat,
-          onDay: new Date(stat.onDay).toISOString().split('T')[0],
-        }))
+export type LatestGlobalStats = {
+  dailyStats: {
+    onDay: string
+    $count: number
+  }[]
+  lastValue: RecordPlcStats | undefined
+  lastProfile: {
+    handle: string
+    displayName: string
+    avatar: string
+  }
+}
 
-        const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
-        const agent = new Agent(new URL('https://public.api.bsky.app'))
-        const profile = await agent.getProfile({ actor: lastValue!.did })
-        // console.log(`profile`, profile)
-        // console.log(`lastValue`, lastValue)
-
-        return {
-          dailyStats,
-          lastValue,
-          lastProfile: {
-            handle: profile.data.handle,
-            displayName: profile.data.displayName ?? profile.data.handle,
-            avatar: profile.data.avatar ?? '',
-          },
-        }
+export const calcLatestGlobalStats = async () => {
+  try {
+    const startDynamic = new Date('2024-11-18T00:00:00.000Z')
+    const dailyStats = (
+      await repo(RecordPlcStats).groupBy({
+        group: ['onDay'],
+        where: {
+          pos_bsky: { '!=': null },
+          createdAt: { $gte: startDynamic },
+        },
+        orderBy: { onDay: 'asc' },
       })
-    } catch (error) {
-      console.error('Error fetching global stats:', error)
-      return null
+    ).map((stat) => ({
+      ...stat,
+      onDay: new Date(stat.onDay).toISOString().split('T')[0],
+    }))
+
+    const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
+
+    const profile = await getProfile(lastValue!.did)
+    if (!profile) {
+      throw new Error('Profile not found')
     }
+
+    const toRet: LatestGlobalStats = {
+      dailyStats,
+      lastValue,
+      lastProfile: {
+        handle: profile.data.handle,
+        displayName: profile.data.displayName ?? profile.data.handle,
+        avatar: profile.data.avatar ?? '',
+      },
+    }
+
+    await repo(KeyValue).upsert({
+      where: { key: GlobalKey.LATEST_GLOBAL_STATS },
+      set: { value: toRet },
+    })
+  } catch (error) {
+    console.error('Error fetching global stats:', error)
+    return null
   }
 }

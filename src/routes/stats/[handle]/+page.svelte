@@ -288,27 +288,27 @@
   // Add this function near the other helper functions
   function getHandleComment(handle: string): string {
     if (handle.endsWith('.dev')) {
-      return 'How to mention... Cool, you are a nerdy .dev too? 🤓'
+      return 'Cool, you are a nerdy .dev too? 🤓'
     }
     if (handle.endsWith('.bsky.social')) {
       return '<i>Pro tip: you can have your own domain as handle! 🎯</i>'
     }
     if (handle.endsWith('.bsky.team')) {
-      return 'How to mention... Hooo hello master! 🫡'
+      return 'Hooo hello master! 🫡'
     }
     if (handle.endsWith('.me')) {
-      return 'How to mention... All about ME, ME, ME! 🎭'
+      return 'All about ME, ME, ME! 🎭'
     }
     if (handle.endsWith('.io')) {
-      return 'How to mention... IO? Tech vibes detected! 💻'
+      return 'IO? Tech vibes detected! 💻'
     }
     if (handle.endsWith('.eth')) {
-      return 'How to mention... Web3 enthusiast spotted! ⛓️'
+      return 'Web3 enthusiast spotted! ⛓️'
     }
     if (handle.endsWith('.com')) {
-      return 'How to mention... classy company handle! 💼'
+      return 'Classy company handle! 💼'
     }
-    return 'How to mention... Nice handle! 👋'
+    return 'Nice handle! 👋'
   }
 </script>
 
@@ -400,7 +400,14 @@
                     value={'@' + data.handle}
                     comment={getHandleComment(data.handle)}
                   />
-                  <JsonStyle key="did" value={data.did} comment="Kinda unique id" />
+                  <JsonStyle key="did" value={data.did} comment="" />
+                  <JsonStyle
+                    key="exact_numbers"
+                    value={`${(data.followersCount ?? 0).toLocaleString()} / ${(
+                      data.followsCount ?? 0
+                    ).toLocaleString()} / ${data.postsCount?.toLocaleString()}`}
+                    comment="Exact numbers: followers / follows / posts"
+                  />
                   <JsonStyle key="createdAt" value={createdAt} comment="When joined ?" />
                   <JsonStyle
                     key="startedToBeActiveOn"
@@ -410,7 +417,7 @@
                   <JsonStyle
                     key="pos_atproto"
                     value={pos_atproto}
-                    comment="The position of arrival in At Protocol"
+                    comment="The position of arrival in At Protocol (<a class='link link-info' href='https://whtwnd.com/jyc.dev/entries/Exploring%20Bluesky%20Numbers' target='_blank'>info</a>)"
                   />
                   <JsonStyle
                     key="pos_bsky"

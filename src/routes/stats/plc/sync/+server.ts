@@ -5,6 +5,7 @@ import { read, write } from '@kitql/internals'
 
 import { dev } from '$app/environment'
 
+import { calcLatestGlobalStats } from '$modules/at/AtController'
 import { RecordPlc } from '$modules/at/RecordPlc'
 
 import { dataProvider } from '../../../../server/api'
@@ -152,6 +153,8 @@ export const GET: RequestHandler = async ({ fetch }) => {
           return data
         })
 
+      // TODO replace json with sqlLite to have this working?
+      // @ts-ignore
       await bulkInsert(toInsert, dataProvider)
     }
 
@@ -196,6 +199,8 @@ export const GET: RequestHandler = async ({ fetch }) => {
 
   const totalDurationSeconds = (Date.now() - startTime) / 1000
   new Log('sync').success(`Sync completed in ${totalDurationSeconds.toFixed(2)} minutes`)
+
+  await calcLatestGlobalStats()
 
   return new Response(
     JSON.stringify({

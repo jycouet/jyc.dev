@@ -70,7 +70,7 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
 
   <div class="mb-4 flex flex-wrap gap-2">
     {#each Object.entries(queries) as [id, query]}
-      <button class="btn btn-outline btn-sm" onclick={() => setPresetQuery(id)}>
+      <button class="btn btn-outline btn-sm" onclick={() => setPresetQuery(id as any)}>
         {query.label}
       </button>
     {/each}
