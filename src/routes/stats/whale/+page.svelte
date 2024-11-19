@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Area, AreaChart, Axis, Brush, Chart, LinearGradient, Svg } from 'layerchart'
-  import { State } from 'svelte-ux'
+  import { format, PeriodType } from '@layerstack/utils'
+  import { extent } from 'd3-array'
+  import { Area, AreaChart, Brush, LinearGradient, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
   import Avatar from '$lib/components/Avatar.svelte'
@@ -739,6 +740,8 @@
     })),
   )
 
+  let brushRange = $state<Array<Date | null | undefined>>(extent<Date>(stats.map((d) => d.onDay)))
+
   $effect(() => {
     AtController.getGlobalStats()
       .then((res) => {
@@ -776,60 +779,72 @@
       </span>
     {/if}
   </h2>
-  <State initial={[new Date('2024-08-01T00:00:00.000Z'), null]} let:value={xDomain} let:set>
-    <div class="h-[300px]">
-      <Chart
-        data={stats.filter(
-          (d) =>
-            // @ts-expect-error
-            (xDomain[0] == null || d.onDay >= xDomain[0]) &&
-            // @ts-expect-error
-            (xDomain[1] == null || d.onDay <= xDomain[1]),
-        )}
-        x="onDay"
-        y="count"
-        yDomain={[0, null]}
-        padding={{ left: 16, bottom: 24 }}
-      >
-        <!-- xScale={scaleTime()} -->
-        <Svg>
-          <Axis
-            placement="left"
-            grid
-            rule
-            tweened={{ duration: 200 }}
-            format={(d) => {
-              return (d / 1000000).toFixed(0)
-            }}
-          />
-          <Axis
-            placement="bottom"
-            rule
-            format={(d) => {
-              return new Intl.DateTimeFormat(undefined, {}).format(new Date(d))
-            }}
-          />
-          <LinearGradient class="from-info/50 to-info/0" vertical let:url>
-            <Area line={{ class: 'stroke-2 stroke-info' }} fill={url} tweened={{ duration: 200 }} />
-          </LinearGradient>
-        </Svg>
-      </Chart>
-    </div>
+  <div class="h-[300px]">
+    <AreaChart
+      data={stats.filter(
+        (d) =>
+          (brushRange[0] == null || d.onDay >= brushRange[0]) &&
+          (brushRange[1] == null || d.onDay <= brushRange[1]),
+      )}
+      x="onDay"
+      series={[{ key: 'count', color: 'oklch(var(--in))' }]}
+      props={{
+        xAxis: {
+          format: PeriodType.Day,
+          ticks: 6,
+        },
+        yAxis: {
+          tweened: { duration: 200 },
+          format: 'metric',
+        },
+      }}
+    >
+      <svelte:fragment slot="marks">
+        <LinearGradient class="from-info/50 to-info/0" vertical let:url>
+          <Area line={{ class: 'stroke-2 stroke-info' }} fill={url} tweened={{ duration: 200 }} />
+        </LinearGradient>
+      </svelte:fragment>
 
-    <div class="h-[80px]">
-      <Chart data={stats} x="onDay" y="count" padding={{ left: 16 }}>
-        <Svg>
-          <Area line={{ class: 'stroke-2 stroke-info' }} class="fill-info/20" />
-          <Brush
-            on:change={(e) => {
-              // @ts-expect-error
-              set(e.detail.xDomain)
-            }}
-          />
-        </Svg>
-      </Chart>
-    </div>
-  </State>
+      <svelte:fragment slot="tooltip">
+        <Tooltip.Root let:data>
+          <Tooltip.Header>{format(data.onDay, PeriodType.Day)}</Tooltip.Header>
+          <Tooltip.List>
+            <Tooltip.Item label="day" format="integer" value={data.rawCount} valueAlign="right" />
+            <Tooltip.Item label="total" format="integer" value={data.count} valueAlign="right" />
+          </Tooltip.List>
+        </Tooltip.Root>
+      </svelte:fragment>
+    </AreaChart>
+  </div>
+
+  <div class="h-[80px]">
+    <AreaChart
+      data={stats}
+      x="onDay"
+      y="rawCount"
+      padding={{ left: 16 }}
+      axis={false}
+      props={{
+        area: {
+          class: 'fill-info/20',
+          line: { class: 'stroke-2 stroke-info' },
+        },
+      }}
+      tooltip={false}
+    >
+      <svelte:fragment slot="aboveMarks">
+        <!-- TODO: Not sure why `xDomain={brushRange}` is not working -->
+        <Brush
+          _xDomain={brushRange}
+          on:change={(e) => {
+            // @ts-expect-error
+            brushRange = e.detail.xDomain
+          }}
+        />
+      </svelte:fragment>
+    </AreaChart>
+  </div>
+
   <div class="text-center text-sm text-base-content/70">
     <p>Shows the growth of Bluesky users over time</p>
   </div>
