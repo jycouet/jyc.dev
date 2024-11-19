@@ -735,6 +735,7 @@
   })
   let lastValue = $state(data?.lastValue)
   let lastProfile = $state(data?.lastProfile)
+  let lastHourSpeedPerSecond = $state(data?.lastHourSpeedPerSecond)
 
   let last7Days = $derived(
     stats.slice(-7).map((day) => ({
@@ -782,14 +783,23 @@
 <div class="flex flex-col gap-8">
   <h2 class="flex items-end justify-between gap-2 text-2xl font-bold">
     <span> 🐋</span>
-    {#if lastValue}
-      <span
-        transition:fade
-        class="font-mono text-3xl font-extrabold text-base-content/70 text-info"
-      >
-        {lastValue.pos_bsky!.toLocaleString()}
-      </span>
-    {/if}
+    <div class="flex items-center gap-4">
+      {#if lastHourSpeedPerSecond}
+        <div class="badge badge-info" title="Last hour speed">
+          <span class="opacity-70">+</span>
+          <span>{lastHourSpeedPerSecond?.toLocaleString()}</span>
+          <span class="text-xs opacity-70">/sec</span>
+        </div>
+      {/if}
+      {#if lastValue}
+        <span
+          transition:fade
+          class="font-mono text-3xl font-extrabold text-base-content/70 text-info"
+        >
+          {lastValue.pos_bsky!.toLocaleString()}
+        </span>
+      {/if}
+    </div>
   </h2>
   <div class="h-[300px]">
     <AreaChart

@@ -423,6 +423,7 @@ export type LatestGlobalStats = {
     displayName: string
     avatar: string
   }
+  lastHourSpeedPerSecond: number
 }
 
 export const calcLatestGlobalStats = async () => {
@@ -444,6 +445,11 @@ export const calcLatestGlobalStats = async () => {
 
     const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
 
+    const lastHour = await repo(RecordPlcStats).count({
+      createdAt: { $gte: new Date(lastValue!.createdAt.getTime() - 60 * 60 * 1000) },
+      pos_bsky: { '!=': null },
+    })
+
     const profile = await getProfile(lastValue!.did)
     if (!profile) {
       throw new Error('Profile not found')
@@ -457,6 +463,7 @@ export const calcLatestGlobalStats = async () => {
         displayName: profile.data.displayName ?? profile.data.handle,
         avatar: profile.data.avatar ?? '',
       },
+      lastHourSpeedPerSecond: lastHour / (60 * 60),
     }
 
     await repo(KeyValue).upsert({
