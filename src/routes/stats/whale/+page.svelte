@@ -8,9 +8,8 @@
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { type LatestGlobalStats } from '$modules/at/AtController'
-  
 
-const description = 'Global statistics on Bluesky usage'
+  const description = 'Global statistics on Bluesky usage'
 
   const { data }: { data: LatestGlobalStats | null } = $props()
 
@@ -771,6 +770,11 @@ const description = 'Global statistics on Bluesky usage'
   const format = (d: Date, period: PeriodType) => {
     return new Intl.DateTimeFormat(undefined, {}).format(d)
   }
+
+  // Add this function at the top of the script section
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text)
+  }
 </script>
 
 <Og title="Sky Zoo - Whale Stats" {description} />
@@ -929,13 +933,44 @@ const description = 'Global statistics on Bluesky usage'
         target="_blank"
         class="btn btn-info text-xl"
       >
-        👋 Say hi to
+        Say 👋 to
         {#if lastProfile && lastProfile.avatar}
           <Avatar {...lastProfile} size="w-9" />
         {:else}
-          {lastProfile?.displayName || lastProfile!.handle}
-        {/if} who arrived last 🦋
+          {lastProfile?.displayName || lastProfile?.handle}
+        {/if} who is position #{lastValue.pos_bsky!.toLocaleString()} on 🦋
       </a>
+    </div>
+    <div class="mt-4 flex flex-col items-center gap-2">
+      <div class="">Here's a welcome post example:</div>
+      <div class="mockup-code relative w-full max-w-2xl bg-base-200">
+        {#if lastProfile}
+          {@const welcomeMessage = ` welcome to Bluesky! 🎉
+
+From skyzoo.blue, I saw that you just landed
+You are #${lastValue!.pos_bsky!.toLocaleString()} on 🦋
+
+Feel free to ask me any questions or just say hi 👋
+`}
+          <button
+            aria-label="Copy welcome message"
+            class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+            onclick={() => copyToClipboard(welcomeMessage)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <pre><code>{welcomeMessage}</code></pre>
+        {/if}
+      </div>
     </div>
   {/if}
 </div>
