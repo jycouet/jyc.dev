@@ -1,3 +1,7 @@
-# jyc.dev
+# jyc.dev & skyzoo.blue
 
-## TODO... update the readme ?!
+Thank you for passing by !
+
+```ts
+// Todo, right the readme!
+```
