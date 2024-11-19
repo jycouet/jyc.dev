@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { format, PeriodType } from '@layerstack/utils'
+  // import { format, PeriodType } from '@layerstack/utils'
+  import { PeriodType } from '@layerstack/utils'
   import { Area, AreaChart, Brush, LinearGradient, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
@@ -739,7 +740,7 @@
     })),
   )
 
-  let brushRange = $state<Array<Date | null>>([])
+  let brushRange = $state<Array<Date | null>>([null, null])
 
   $effect(() => {
     AtController.getGlobalStats()
@@ -762,6 +763,10 @@
         loadingChart = false
       })
   })
+
+  const format = (d: Date, period: PeriodType) => {
+    return new Intl.DateTimeFormat(undefined, {}).format(d)
+  }
 </script>
 
 <Og title="Sky Zoo - Whale Stats" {description} />
@@ -808,8 +813,18 @@
         <Tooltip.Root let:data>
           <Tooltip.Header>{format(data.onDay, PeriodType.Day)}</Tooltip.Header>
           <Tooltip.List>
-            <Tooltip.Item label="day" format="integer" value={data.rawCount} valueAlign="right" />
-            <Tooltip.Item label="total" format="integer" value={data.count} valueAlign="right" />
+            <Tooltip.Item
+              label="Day"
+              format="integer"
+              value={data.rawCount.toLocaleString()}
+              valueAlign="right"
+            />
+            <Tooltip.Item
+              label="Total"
+              format="integer"
+              value={data.count.toLocaleString()}
+              valueAlign="right"
+            />
           </Tooltip.List>
         </Tooltip.Root>
       </svelte:fragment>
@@ -846,7 +861,7 @@
     <p>Shows the growth of Bluesky users over time</p>
   </div>
 
-  <hr />
+  <hr class="border-base-content/20" />
 
   <h2 class="flex items-end justify-between gap-2 text-2xl font-bold">
     <div>🐋<span class="ml-2 text-sm font-normal text-base-content/70">last 7 days</span></div>
@@ -874,7 +889,15 @@
         <tbody>
           <tr>
             {#each last7Days as day, i}
-              <td class="text-center">+{day.newUsers.toLocaleString()}</td>
+              <td class="text-center">
+                {#if i === last7Days.length - 1}
+                  <span class="text-info">
+                    +{day.newUsers.toLocaleString()}
+                  </span>
+                {:else}
+                  +{day.newUsers.toLocaleString()}
+                {/if}
+              </td>
             {/each}
           </tr>
           <tr>
@@ -882,6 +905,7 @@
               <td class="text-center">
                 {#if i === last7Days.length - 1}
                   ...
+                  <!-- I should do this when I will not be lazy -->
                 {:else}
                   +{(day.newUsers / 24 / 60 / 60).toFixed(1).toLocaleString()}
                   <span class="text-xs text-base-content/50">/sec</span>
@@ -895,7 +919,7 @@
   </div>
 
   {#if lastValue}
-    <div class="flex justify-center">
+    <div class="mt-10 flex justify-center">
       <a
         href={route('bsky_profile', { handle: lastValue!.did })}
         target="_blank"
