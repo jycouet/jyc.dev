@@ -23,6 +23,7 @@
     "@kitql/handles": "0.2.1-next.0",
     "@kitql/helpers": "0.8.10",
     "@kitql/internals": "0.9.5",
+    "@layerstack/utils": "^0.0.5",
     "@oslojs/crypto": "1.0.1",
     "@oslojs/encoding": "1.1.0",
     "@sveltejs/adapter-node": "5.0.1",
@@ -47,6 +48,7 @@
     "svelte": "5.1.9",
     "svelte-check": "4.0.5",
     "svelte-markdown": "0.4.1",
+    "svelte-ux": "^0.75.4",
     "sveltekit-search-params": "^3.0.0",
     "tailwindcss": "3.4.3",
     "tslib": "2.6.2",
@@ -54,8 +56,5 @@
     "vite": "5.4.10",
     "vite-plugin-kit-routes": "^0.6.11",
     "vitest": "^2.1.4"
-  },
-  "dependencies": {
-    "@layerstack/utils": "^0.0.5"
   }
 }
