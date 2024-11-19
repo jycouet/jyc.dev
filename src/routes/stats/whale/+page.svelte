@@ -1,6 +1,5 @@
 <script lang="ts">
   import { format, PeriodType } from '@layerstack/utils'
-  import { extent } from 'd3-array'
   import { Area, AreaChart, Brush, LinearGradient, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
@@ -740,7 +739,7 @@
     })),
   )
 
-  let brushRange = $state<Array<Date | null | undefined>>(extent<Date>(stats.map((d) => d.onDay)))
+  let brushRange = $state<Array<Date | null>>([])
 
   $effect(() => {
     AtController.getGlobalStats()
@@ -833,9 +832,7 @@
       tooltip={false}
     >
       <svelte:fragment slot="aboveMarks">
-        <!-- TODO: Not sure why `xDomain={brushRange}` is not working -->
         <Brush
-          _xDomain={brushRange}
           on:change={(e) => {
             // @ts-expect-error
             brushRange = e.detail.xDomain

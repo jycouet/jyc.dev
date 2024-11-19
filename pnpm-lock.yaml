@@ -11,9 +11,6 @@ importers:
       '@layerstack/utils':
         specifier: ^0.0.5
         version: 0.0.5
-      d3-array:
-        specifier: ^3.2.4
-        version: 3.2.4
     devDependencies:
       '@atproto/api':
         specifier: 0.13.15
@@ -54,9 +51,6 @@ importers:
       '@tailwindcss/typography':
         specifier: 0.5.12
         version: 0.5.12(tailwindcss@3.4.3)
-      '@types/d3-array':
-        specifier: ^3.2.1
-        version: 3.2.1
       '@vitest/ui':
         specifier: 2.1.4
         version: 2.1.4(vitest@2.1.4)
@@ -848,9 +842,6 @@ packages:
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
-
-  '@types/d3-array@3.2.1':
-    resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
 
   '@types/eslint@9.6.1':
     resolution: {integrity: sha512-FXx2pKgId/WyYo2jXw63kk7/+TY7u7AziEJxJAnSFzHlqTAS3Ync6SvgYAN/k4/PQpnnVuzoMuVnByKK2qp0ag==}
@@ -3792,8 +3783,6 @@ snapshots:
       - supports-color
 
   '@types/cookie@0.6.0': {}
-
-  '@types/d3-array@3.2.1': {}
 
   '@types/eslint@9.6.1':
     dependencies:
