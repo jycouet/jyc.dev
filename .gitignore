@@ -9,3 +9,5 @@ node_modules
 !.env.prod
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+/db

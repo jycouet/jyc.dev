@@ -1,9 +1,10 @@
 import { PostHog } from 'posthog-node'
 
-import { dbNamesOf, repo, SqlDatabase } from 'remult'
+import { dbNamesOf, JsonDataProvider, repo, SqlDatabase } from 'remult'
 import type { ClassType, FieldMetadata } from 'remult'
 import { createPostgresDataProvider } from 'remult/postgres'
 import { remultSveltekit } from 'remult/remult-sveltekit'
+import { JsonEntityFileStorage } from 'remult/server'
 import { Log } from '@kitql/helpers'
 
 import { DATABASE_URL, DID_PLC_ADMIN } from '$env/static/private'
@@ -32,9 +33,11 @@ import { Roles } from '../modules/auth/Roles'
 SqlDatabase.LogToConsole = false
 // SqlDatabase.LogToConsole = 'oneLiner'
 
-export const dataProvider = await createPostgresDataProvider({
-  connectionString: DATABASE_URL,
-})
+export const dataProvider = DATABASE_URL
+  ? await createPostgresDataProvider({
+      connectionString: DATABASE_URL,
+    })
+  : new JsonDataProvider(new JsonEntityFileStorage('./db'))
 
 export const api = remultSveltekit({
   logApiEndPoints: false,
