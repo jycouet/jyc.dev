@@ -8,6 +8,7 @@
   import kofi from '$lib/assets/kofi_symbol.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Notification from '$lib/components/Notification.svelte'
+  import ArrowLeft from '$lib/icons/ArrowLeft.svelte'
   import { route } from '$lib/ROUTES'
   import { notifications } from '$lib/stores/notifications'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
@@ -101,8 +102,13 @@
 
 <div class="flex min-h-screen flex-col">
   <div class="container mx-auto flex-grow px-4 py-8">
-    <div class="mb-8 flex items-center justify-center">
-      <h1 class="text-4xl font-bold">
+    <div class="mx-auto mb-8 flex h-14 max-w-3xl text-center">
+      {#if $page.url.pathname !== '/stats'}
+        <a href={route(`/stats`)} class="btn btn-ghost btn-sm absolute mt-2 w-14">
+          <ArrowLeft />
+        </a>
+      {/if}
+      <h1 class="w-full text-4xl font-bold">
         <a href={route(`/stats`)}>Sky Zoo</a>
       </h1>
       <!-- <label class="flex items-center gap-1">
