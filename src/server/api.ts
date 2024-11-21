@@ -105,25 +105,24 @@ export const api = remultSveltekit({
       // await upsertIndex(StarterPack, 'updatedAt')
       // await upsertIndex(StarterPack, 'creatorDid')
 
-      await execute(`ALTER TABLE "record-follows" DROP COLUMN "rkey";`)
-      await execute(`ALTER TABLE "record-follows" DROP CONSTRAINT "record-follows_pkey";`)
-      await execute(`UPDATE "record-follows" SET "uri" = "id"`)
-      await execute(`UPDATE "record-follows" SET "createdAt" = "on"`)
-      await execute(`ALTER TABLE "record-follows" DROP COLUMN "id";`)
-      await execute(`ALTER TABLE "record-follows" DROP COLUMN "on";`)
-      await upsertIndex(RecordFollow, 'did')
-      await upsertIndex(RecordFollow, 'didFollow')
-      await upsertIndex(RecordFollow, 'createdAt')
-      await upsertIndex(RecordFollower, 'did')
-      await upsertIndex(RecordFollower, 'didFollow')
-      await upsertIndex(RecordFollower, 'createdAt')
-
-      log.success('done')
+      await execute(`ALTER TABLE "bskyties" DROP COLUMN "rePostsCount";`)
+      // await execute(`ALTER TABLE "record-follows" DROP CONSTRAINT "record-follows_pkey";`)
+      // await execute(`UPDATE "record-follows" SET "uri" = "id"`)
+      // await execute(`UPDATE "record-follows" SET "createdAt" = "on"`)
+      // await execute(`ALTER TABLE "record-follows" DROP COLUMN "id";`)
+      // await execute(`ALTER TABLE "record-follows" DROP COLUMN "on";`)
+      // await upsertIndex(RecordFollow, 'did')
+      // await upsertIndex(RecordFollow, 'didFollow')
+      // await upsertIndex(RecordFollow, 'createdAt')
+      // await upsertIndex(RecordFollower, 'did')
+      // await upsertIndex(RecordFollower, 'didFollow')
+      // await upsertIndex(RecordFollower, 'createdAt')
 
       // await repo(BSkyty).updateMany({
       //   where: { id: { $not: '-1' } },
       //   set: { pos_atproto: null, pos_bsky: null },
       // })
+      log.success('done')
     }
   },
 })

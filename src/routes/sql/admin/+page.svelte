@@ -115,7 +115,7 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
             {#each result.r.rows as row}
               <tr>
                 {#each Object.values(row) as cell}
-                  <td class="max-w-xs truncate">
+                  <td class="max-w-xs">
                     {cell ?? 'null'}
                   </td>
                 {/each}

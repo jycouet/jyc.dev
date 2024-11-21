@@ -55,9 +55,6 @@ export class BSkyty {
   @Fields.number({ includeInApi: Roles.admin })
   postsCount = 0
 
-  @Fields.number({ includeInApi: Roles.admin })
-  rePostsCount = 0
-
   @Fields.number({ dbName: 'pos', allowNull: true })
   pos_atproto!: number | null
 
