@@ -8,6 +8,7 @@ export async function retries<T>(
   options?: {
     maxAttempts?: number
     baseDelay?: number
+    msgError?: string
   },
 ): Promise<T> {
   const maxAttempts = options?.maxAttempts ?? 6 // delayMs 6&10 => 1270
@@ -18,7 +19,10 @@ export async function retries<T>(
       const result = await fn()
       return result
     } catch (error) {
-      if (i >= maxAttempts - 1) throw error
+      if (i >= maxAttempts - 1) {
+        new Log(`retries`).error(options?.msgError ?? 'Error')
+        throw error
+      }
       const delayMs = baseDelay * 2 ** i
       new Log(`retries`).info(`Retrying in ${delayMs}ms...`)
       await sleep(delayMs)
@@ -218,18 +222,27 @@ export const didToPds = async (did?: string) => {
   }
 
   const didResolver = new DidResolver({})
-  const didDocument = await didResolver.resolve(did)
 
-  if (didDocument) {
-    const pds = getPds(didDocument)
-    // console.log(`pds`, pds);
-    // const repo = await describeRepo( pds!, did);
-    // console.log(`repo`, repo);
+  return await retries(
+    async () => {
+      const didDocument = await didResolver.resolve(did)
 
-    if (pds) {
-      return pds
-    }
-  }
+      if (didDocument) {
+        const pds = getPds(didDocument)
+        // console.log(`pds`, pds);
+        // const repo = await describeRepo( pds!, did);
+        // console.log(`repo`, repo);
 
-  return null
+        if (pds) {
+          return pds
+        }
+      }
+
+      return null
+    },
+    {
+      maxAttempts: 10,
+      msgError: `didToPds(${did})`,
+    },
+  )
 }

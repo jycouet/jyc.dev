@@ -8,15 +8,12 @@ import { Roles } from '$modules/auth/Roles'
 
 import { getProfile } from './agentHelper'
 import { didToPds, listRecordsAll, parseUri } from './helper'
+import { RecordFollow } from './RecordFollow'
 import { RecordFollower } from './RecordFollower'
 
 export class AgentController {
   @BackendMethod({ allowed: Roles.admin })
   static async getHandleFollowers(tzOffset: number) {
-    return {
-      nbFollowers: 0,
-      followersPeriods: [],
-    }
     const agent = new Agent(new URL('https://public.api.bsky.app'))
 
     // Get the user's handle from the session
@@ -44,13 +41,18 @@ export class AgentController {
     const nbFollowers = profile.data.followersCount
 
     const didFollow = profile.data.did
-    const weAlreadyHaveTheInfo = await repo(RecordFollower).find({ where: { didFollow } })
-    console.log(`weAlreadyHaveTheInfo`, weAlreadyHaveTheInfo.length)
+    const weAlreadyHaveTheInfo = await repo(RecordFollow).find({ where: { didFollow } })
+    const weAlreadyHaveTheInfo2 = await repo(RecordFollower).find({ where: { didFollow } })
+    log.info(`weAlreadyHaveTheInfo`, weAlreadyHaveTheInfo.length, weAlreadyHaveTheInfo2.length)
     const followsToCheck = allFollowers.filter(
-      (f) => !weAlreadyHaveTheInfo.some((wai) => wai.did === f.did),
+      (f) =>
+        !weAlreadyHaveTheInfo.some((wai) => wai.did === f.did) &&
+        !weAlreadyHaveTheInfo2.some((wai) => wai.did === f.did),
     )
+    log.info(`followsToCheck`, followsToCheck.length)
+
     const results = await sidequest(followsToCheck, didFollow)
-    console.log(`results`, results.length)
+    log.info(`results`, results.length)
 
     // Get current timestamp adjusted for timezone
     const now = new Date()
@@ -69,6 +71,22 @@ const getFollows = async (did: string, didFollow: string) => {
   if (alreadyInDb) {
     console.log(`alreadyInDb`, alreadyInDb.createdAt)
     return alreadyInDb.createdAt
+  }
+
+  const alreadyInDb2 = await repo(RecordFollow).findFirst({ did, didFollow })
+  if (alreadyInDb2) {
+    console.log(`alreadyInDb2 GREAT`, alreadyInDb2.createdAt)
+    await repo(RecordFollower).upsert({
+      where: {
+        did,
+        didFollow,
+      },
+      set: {
+        createdAt: alreadyInDb2.createdAt,
+        uri: alreadyInDb2.uri,
+      },
+    })
+    return alreadyInDb2.createdAt
   }
 
   const pds = await didToPds(did)
@@ -124,29 +142,36 @@ const sidequest = async (followers: ProfileView[], didFollow: string) => {
   // const followers = allFollowers //.slice(0, 20)
   // // console.log(`followers`, followers)
 
-  // Process followers in batches of 10
-  const batchSize = 200
   const results = []
 
-  for (let i = 0; i < followers.length; i++) {
-    const follower = followers[i]
-    console.log(`i`, i, follower.did)
-    const ret = await getFollows(follower.did, didFollow)
-    results.push(ret)
+  // for (let i = 0; i < followers.length; i++) {
+  //   const follower = followers[i]
+  //   console.log(`i`, i, follower.did)
+  //   const ret = await getFollows(follower.did, didFollow)
+  //   results.push(ret)
+  // }
+
+  // Process followers in batches of 10
+  const batchSize = 80
+  for (let i = 0; i < followers.length; i += batchSize) {
+    console.log(`batch POS`, i)
+
+    const batch = followers.slice(i, i + batchSize)
+
+    const batchResults = await Promise.allSettled(
+      batch.map(async (follower) => {
+        try {
+          return await getFollows(follower.did, didFollow)
+        } catch (error) {
+          console.error(`Error getting follows for ${follower.did}:`, error)
+          return undefined
+        }
+      }),
+    ).then((results) => results.map((r) => (r.status === 'fulfilled' ? r.value : undefined)))
+    console.log(`i DONE`, i)
+    results.push(...batchResults)
   }
-  //   for (let i = 0; i < followers.length; i += batchSize) {
-  //     console.log(`i`, i)
 
-  //     const batch = followers.filter((f) => f.handle !== 'social.panache.so').slice(i, i + batchSize)
-  //     console.log(`batch?`, batch?.length)
-
-  //     const batchResults = await Promise.all(
-  //       batch.map(async (follower) => await getFollows(follower.did, didFollow)),
-  //     )
-  //     console.log(`i DONE`, i)
-  //     results.push(...batchResults)
-  //   }
-
-  //   // console.log(`ret`, results)
+  // console.log(`ret`, results)
   return results
 }

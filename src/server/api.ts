@@ -105,7 +105,7 @@ export const api = remultSveltekit({
       // await upsertIndex(StarterPack, 'updatedAt')
       // await upsertIndex(StarterPack, 'creatorDid')
 
-      await execute(`ALTER TABLE "bskyties" DROP COLUMN "rePostsCount";`)
+      // await execute(`ALTER TABLE "bskyties" DROP COLUMN "rePostsCount";`)
       // await execute(`ALTER TABLE "record-follows" DROP CONSTRAINT "record-follows_pkey";`)
       // await execute(`UPDATE "record-follows" SET "uri" = "id"`)
       // await execute(`UPDATE "record-follows" SET "createdAt" = "on"`)
@@ -122,6 +122,7 @@ export const api = remultSveltekit({
       //   where: { id: { $not: '-1' } },
       //   set: { pos_atproto: null, pos_bsky: null },
       // })
+      await repo(RecordFollower).deleteMany({ where: { did: { $ne: '1' } } })
       log.success('done')
     }
   },

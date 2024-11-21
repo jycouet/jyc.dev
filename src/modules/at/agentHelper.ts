@@ -6,10 +6,7 @@ export const getProfile = async (cleanHandle_or_did: string) => {
   const agent = new Agent(new URL('https://public.api.bsky.app'))
 
   return await retries(async () => {
-    try {
-      const profile = await agent.getProfile({ actor: cleanHandle_or_did })
-      return profile
-    } catch (error) {}
+    return await agent.getProfile({ actor: cleanHandle_or_did })
   })
 }
 
