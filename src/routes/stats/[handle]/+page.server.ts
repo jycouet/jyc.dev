@@ -154,45 +154,6 @@ export const load = (async (event) => {
       followsCount: profile.data.followsCount,
       postsCount: profile.data.postsCount,
     }
-
-    // const handleResolver = new HandleResolver({})
-    // let did = undefined
-    // if ((cleanHandle ?? '').startsWith('did:plc:')) {
-    //   did = cleanHandle
-    // } else {
-    //   did = await handleResolver.resolve(cleanHandle)
-    // }
-
-    // if (did) {
-    //   const didResolver = new DidResolver({})
-    //   const didDocument = await didResolver.resolve(did)
-
-    //   if (didDocument) {
-    //     const pds = getPds(didDocument)
-    //     // console.log(`pds`, pds);
-    //     // const repo = await describeRepo(event.fetch, pds!, did);
-    //     // console.log(`repo`, repo);
-
-    //     if (pds) {
-    //       log.info(cleanHandle)
-    //       const profile = await listRecords(pds, did, 'app.bsky.actor.profile', { limit: 1 })
-    //       const profileData = profile.records[0]?.value
-
-    //       const handle = cleanHandle
-    //       const displayName = profileData?.displayName || handle
-
-    //       return {
-    //         did,
-    //         handle,
-    //         displayName,
-    //         avatar: profileData?.avatar?.ref?.$link
-    //           ? `https://cdn.bsky.app/img/avatar/plain/${did}/${profileData.avatar.ref.$link}@jpeg`
-    //           : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-    //         description: profileData?.description || '',
-    //       }
-    //     }
-    //   }
-    // }
   } catch (error) {
     const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']
     if (error instanceof Error && notValidError.includes(error.message)) {

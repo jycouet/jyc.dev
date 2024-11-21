@@ -16,7 +16,7 @@
     { pushHistory: false },
   )
 
-  let pageSize = 20
+  let pageSize = 10
 
   const paginator = paginatorStore(StarterPack, {
     pageSize,
@@ -37,6 +37,7 @@
       paginator.load({})
     } else {
       clearTimeout(debounceTimer)
+      console.log('debounce')
       debounceTimer = setTimeout(() => {
         paginator.load({
           $or: [
@@ -80,7 +81,7 @@
       </thead>
       <tbody>
         {#if $paginator.loading.init}
-          {#each Array(20) as _}
+          {#each Array(pageSize) as _}
             <tr>
               <td>
                 <div class="flex items-center gap-3">
@@ -100,12 +101,18 @@
             </tr>
           {/each}
         {:else if $paginator.items.length === 0}
-          <tr>
+          <tr
+            class="{$paginator.loading.nextPage || $paginator.loading.filter ? 'opacity-50' : ''} "
+          >
             <td colspan="2" class="text-center">No starter packs found</td>
           </tr>
         {:else}
           {#each $paginator.items as pack}
-            <tr class="hover:bg-base-200">
+            <tr
+              class="{$paginator.loading.nextPage || $paginator.loading.filter
+                ? 'opacity-50'
+                : ''} hover:bg-base-200"
+            >
               <td>
                 <div class="flex items-center gap-3">
                   <Avatar {...pack.creator} />
@@ -154,7 +161,7 @@
     {#if $paginator.items.length > 0 && pageSize < ($paginator?.aggregates?.$count ?? 0)}
       <div class="col-span-full mt-8 flex justify-center">
         <button
-          disabled={!$paginator.hasNextPage}
+          disabled={!$paginator.hasNextPage || $paginator.loading.nextPage}
           class="btn btn-primary px-8 text-lg"
           onclick={paginator.loadMore}
         >

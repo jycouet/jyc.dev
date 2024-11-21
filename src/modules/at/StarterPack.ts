@@ -48,6 +48,23 @@ export class StarterPack {
   })
   nbMembers!: number
 
+  // @Fields.number({
+  //   sqlExpression() {
+  //     return sqlRelations(StarterPack).creator.followersCount
+  //   },
+  // })
+  // creatorFollowersCount!: number
+
+  // @Fields.number({
+  //   sqlExpression() {
+  //     // Higher followers count and lower members count = higher index
+  //     return (await sqlRelations(StarterPack).creator.followersCount) /
+  //       ((await sqlRelations(StarterPack).items.$count()) )
+
+  //   },
+  // })
+  // popularityIndex!: number
+
   static filterByCreator = Filter.createCustom<StarterPack, { str: string }>(
     // REMULT ?
     // @ts-ignore

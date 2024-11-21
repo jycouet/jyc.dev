@@ -1,3 +1,4 @@
+import { DidResolver, getPds } from '@atproto/identity'
 import { AtUri } from '@atproto/syntax'
 
 export const describeRepo = async (pds: string, repo: string) => {
@@ -66,6 +67,7 @@ export const listRecordsAll = async (
   collection: string,
   options?: {
     while?: (record: any) => boolean
+    takeTheBreakingWhile?: boolean
     reverse?: boolean
   },
 ) => {
@@ -93,6 +95,9 @@ export const listRecordsAll = async (
           if (options.while(record)) {
             allRecords.push(record)
           } else {
+            if (options.takeTheBreakingWhile) {
+              allRecords.push(record)
+            }
             theEnd = true
             break
           }
@@ -171,4 +176,29 @@ export const parseUri = (uri: string) => {
     collection: segments[1],
     rkey: segments[2],
   }
+}
+
+export const didToPds = async (did?: string) => {
+  if (!did) {
+    return null
+  }
+
+  const didResolver = new DidResolver({})
+  const didDocument = await didResolver.resolve(did)
+
+  if (didDocument) {
+    const pds = getPds(didDocument)
+    // console.log(`pds`, pds);
+    // const repo = await describeRepo( pds!, did);
+    // console.log(`repo`, repo);
+
+    const four_weeks_ago = new Date()
+    four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+
+    if (pds) {
+      return pds
+    }
+  }
+
+  return null
 }

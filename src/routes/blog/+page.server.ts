@@ -1,8 +1,7 @@
-import { DidResolver, getPds, HandleResolver } from '@atproto/identity'
 import { AtUri } from '@atproto/syntax'
 
 import { getMdInfo, getMdsInfo } from '$lib/mdInfos'
-import { listRecords } from '$modules/at/helper'
+import { didToPds, listRecords } from '$modules/at/helper'
 
 export const load = async (event) => {
   const mds = getMdsInfo().map((file) => {
@@ -16,43 +15,32 @@ export const load = async (event) => {
 
   const mds2 = []
   // https://atproto-browser.vercel.app/at/jyc.dev
-  const handleResolver = new HandleResolver({})
-  const did = await handleResolver.resolve('jyc.dev')
-  // const did = "did:plc:dacfxuonkf2qtqft22sc23tu";
-  if (did) {
-    const didResolver = new DidResolver({})
-    const didDocument = await didResolver.resolve(did)
-    // console.log("result3", didDocument);
-    if (didDocument) {
-      // const handle = getHandle(didDocument);
-      // console.log(`handle`, handle);
+  // const handleResolver = new HandleResolver({})
+  // const did = await handleResolver.resolve('jyc.dev')
+  const did = 'did:plc:dacfxuonkf2qtqft22sc23tu'
 
-      const pds = getPds(didDocument)
-      // console.log(`pds`, pds);
+  const pds = await didToPds(did)
+  if (pds) {
+    // const repo = pds ? await describeRepo(pds, did) : null;
+    // console.log(`repo`, repo);
 
-      if (pds) {
-        // const repo = pds ? await describeRepo(pds, did) : null;
-        // console.log(`repo`, repo);
+    const records = await listRecords(pds, did, 'com.whtwnd.blog.entry')
+    // console.log(`records`, records.records);
 
-        const records = await listRecords(pds, did, 'com.whtwnd.blog.entry')
-        // console.log(`records`, records.records);
-
-        for (const record of records.records) {
-          // const recordData = await getRecord(
-          //   pds,
-          //   did,
-          //   "com.whtwnd.blog.entry",
-          //   record.uri
-          // );
-          // console.log(`recordData`, recordData);
-          const uriObj = new AtUri(record.uri)
-          mds2.push({
-            link_under_blog: `${pds.replace('https://', '')}/${did}${uriObj.pathname}`,
-            date: record.value.createdAt.split('T')[0],
-            title: record.value.title,
-          })
-        }
-      }
+    for (const record of records.records) {
+      // const recordData = await getRecord(
+      //   pds,
+      //   did,
+      //   "com.whtwnd.blog.entry",
+      //   record.uri
+      // );
+      // console.log(`recordData`, recordData);
+      const uriObj = new AtUri(record.uri)
+      mds2.push({
+        link_under_blog: `${pds.replace('https://', '')}/${did}${uriObj.pathname}`,
+        date: record.value.createdAt.split('T')[0],
+        title: record.value.title,
+      })
     }
   }
 

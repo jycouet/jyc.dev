@@ -1,8 +1,6 @@
-import { DidResolver, getPds } from '@atproto/identity'
-
 import { BackendMethod, repo } from 'remult'
 
-import { listRecordsAll, parseUri } from '$modules/at/helper'
+import { didToPds, listRecordsAll, parseUri } from '$modules/at/helper'
 import { GlobalKey, KeyValue } from '$modules/global/Entities'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
@@ -22,16 +20,6 @@ interface PunchCardEntry {
   weekday: number
   hour: number
   count: number
-}
-
-interface GlobalStatsData {
-  dailyStats: any[]
-  lastValue: any
-  lastProfile: {
-    handle: string
-    displayName: string
-    avatar: string
-  }
 }
 
 function getActivityCounts(records: { records: any[] }): ActivityCounts {
@@ -93,189 +81,176 @@ export class AtController {
     const startTime = performance.now()
 
     try {
-      if (did) {
-        const didResolver = new DidResolver({})
-        const didDocument = await didResolver.resolve(did)
+      const four_weeks_ago = new Date()
+      four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+      const pds = await didToPds(did)
+      if (pds) {
+        const [likes, posts, reposts] = await Promise.all([
+          listRecordsAll(pds, did, 'app.bsky.feed.like', {
+            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+          }),
+          listRecordsAll(pds, did, 'app.bsky.feed.post', {
+            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+          }),
+          listRecordsAll(pds, did, 'app.bsky.feed.repost', {
+            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+          }),
+        ])
 
-        if (didDocument) {
-          const pds = getPds(didDocument)
-          // console.log(`pds`, pds);
-          // const repo = await describeRepo( pds!, did);
-          // console.log(`repo`, repo);
+        const nbRequests = likes.nbRequest + posts.nbRequest + reposts.nbRequest
 
-          const four_weeks_ago = new Date()
-          four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+        // **********
+        // PUNCH CARD - START
+        // **********
+        const punchCard = [
+          {
+            kind: 'like',
+            data: generatePunchCardData(likes.records, tzOffset),
+          },
+          {
+            kind: 'post',
+            data: generatePunchCardData(posts.records, tzOffset),
+          },
+          {
+            kind: 'repost',
+            data: generatePunchCardData(reposts.records, tzOffset),
+          },
+        ]
 
-          if (pds) {
-            const [likes, posts, reposts] = await Promise.all([
-              listRecordsAll(pds, did, 'app.bsky.feed.like', {
-                while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
-              }),
-              listRecordsAll(pds, did, 'app.bsky.feed.post', {
-                while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
-              }),
-              listRecordsAll(pds, did, 'app.bsky.feed.repost', {
-                while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
-              }),
-            ])
+        // **********
+        // PUNCH CARD - END
+        // **********
 
-            const nbRequests = likes.nbRequest + posts.nbRequest + reposts.nbRequest
+        // **********
+        // PERSONNALYTY - START
+        // **********
+        // Calculate the ratio of starting a post vs replying to a convo
+        // Your convo score
+        // convo score in general
+        const postStarted = posts.records.filter((p) => !p.value.reply).map((c) => c.cid)
+        const nbPostStared = postStarted.length
+        const nbPostRepliesToAStartedOne = posts.records.filter(
+          (p) => p.value.reply?.root.cid && postStarted.includes(p.value.reply?.root.cid),
+        ).length
+        const nbPostRepliesToOthers =
+          posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
 
-            // **********
-            // PUNCH CARD - START
-            // **********
-            const punchCard = [
-              {
-                kind: 'like',
-                data: generatePunchCardData(likes.records, tzOffset),
-              },
-              {
-                kind: 'post',
-                data: generatePunchCardData(posts.records, tzOffset),
-              },
-              {
-                kind: 'repost',
-                data: generatePunchCardData(reposts.records, tzOffset),
-              },
-            ]
+        const kindOfPost = [
+          { key: '🐣 Your new posts', value: nbPostStared },
+          { key: '🦜 Replies in posts you started', value: nbPostRepliesToAStartedOne },
+          { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
+        ]
 
-            // **********
-            // PUNCH CARD - END
-            // **********
+        let imageWithAlt = 0
+        let kindOfEmbed = posts.records.reduce(
+          (acc, post) => {
+            let embedType = (post.value.embed?.$type || 'Text only')
+              .replaceAll('app.bsky.embed.', '')
+              .replaceAll('recordWithMedia', 'Link to other post')
+              .replaceAll('record', 'Link to other post')
+              .replaceAll('external', 'Link to outside')
+              .replaceAll('images', 'Image')
 
-            // **********
-            // PERSONNALYTY - START
-            // **********
-            // Calculate the ratio of starting a post vs replying to a convo
-            // Your convo score
-            // convo score in general
-            const postStarted = posts.records.filter((p) => !p.value.reply).map((c) => c.cid)
-            const nbPostStared = postStarted.length
-            const nbPostRepliesToAStartedOne = posts.records.filter(
-              (p) => p.value.reply?.root.cid && postStarted.includes(p.value.reply?.root.cid),
-            ).length
-            const nbPostRepliesToOthers =
-              posts.records.length - postStarted.length - nbPostRepliesToAStartedOne
+            embedType = embedType.charAt(0).toUpperCase() + embedType.slice(1)
 
-            const kindOfPost = [
-              { key: '🐣 Your new posts', value: nbPostStared },
-              { key: '🦜 Replies in posts you started', value: nbPostRepliesToAStartedOne },
-              { key: '🐒 Replies to the community', value: nbPostRepliesToOthers },
-            ]
+            // https://atproto-browser.vercel.app/at/did:plc:dacfxuonkf2qtqft22sc23tu/app.bsky.feed.post/3lahlaoiohs2j
+            // GIF is considered as external. Maybe I should consider it as GIF?
 
-            let imageWithAlt = 0
-            let kindOfEmbed = posts.records.reduce(
-              (acc, post) => {
-                let embedType = (post.value.embed?.$type || 'Text only')
-                  .replaceAll('app.bsky.embed.', '')
-                  .replaceAll('recordWithMedia', 'Link to other post')
-                  .replaceAll('record', 'Link to other post')
-                  .replaceAll('external', 'Link to outside')
-                  .replaceAll('images', 'Image')
+            let inc = 1
+            if (embedType === 'Image') {
+              const hasAlt = post.value.embed.images.filter((img: { alt: string }) => {
+                return img.alt?.trim().length > 0
+              }).length
 
-                embedType = embedType.charAt(0).toUpperCase() + embedType.slice(1)
+              imageWithAlt += hasAlt
+              inc = post.value.embed.images.length
+            }
 
-                // https://atproto-browser.vercel.app/at/did:plc:dacfxuonkf2qtqft22sc23tu/app.bsky.feed.post/3lahlaoiohs2j
-                // GIF is considered as external. Maybe I should consider it as GIF?
+            const existingType = acc.find((t) => t.kind === embedType)
+            if (existingType) {
+              existingType.count = existingType.count + inc
+            } else {
+              acc.push({ kind: embedType, count: inc })
+            }
+            return acc
+          },
+          [] as Array<{ kind: string; count: number }>,
+        )
 
-                let inc = 1
-                if (embedType === 'Image') {
-                  const hasAlt = post.value.embed.images.filter((img: { alt: string }) => {
-                    return img.alt?.trim().length > 0
-                  }).length
+        let altPercentage = 0
+        kindOfEmbed = kindOfEmbed.map((embed) => {
+          if (embed.kind === 'Image') {
+            altPercentage = embed.count > 0 ? Math.round((imageWithAlt / embed.count) * 100) : 50
 
-                  imageWithAlt += hasAlt
-                  inc = post.value.embed.images.length
-                }
-
-                const existingType = acc.find((t) => t.kind === embedType)
-                if (existingType) {
-                  existingType.count = existingType.count + inc
-                } else {
-                  acc.push({ kind: embedType, count: inc })
-                }
-                return acc
-              },
-              [] as Array<{ kind: string; count: number }>,
-            )
-
-            let altPercentage = 0
-            kindOfEmbed = kindOfEmbed.map((embed) => {
-              if (embed.kind === 'Image') {
-                altPercentage =
-                  embed.count > 0 ? Math.round((imageWithAlt / embed.count) * 100) : 50
-
-                const kind =
-                  altPercentage === 0
-                    ? 'Image (Would be better with alt! 🙏)'
-                    : altPercentage < 25
-                      ? `Image (Good start, keep going! 🌱 ${altPercentage}% alted)`
-                      : altPercentage < 75
-                        ? `Image (Great, you are getting it! ✨ ${altPercentage}% alted)`
-                        : altPercentage < 100
-                          ? `Image (Almost perfect! 🎉 ${altPercentage}% alted)`
-                          : `Image (You rock! 🎸 ${altPercentage}% alted)`
-
-                return {
-                  ...embed,
-                  kind,
-                }
-              }
-              return embed
-            })
-
-            // **********
-            // PERSONNALYTY - END
-            // **********
-
-            const category = determineCategory({
-              nbPostStared,
-              nbPostRepliesToAStartedOne,
-              nbPostRepliesToOthers,
-              kindOfEmbed,
-              altPercentage,
-            })
-
-            const totalLikes = likes.records.length
-            const totalPosts = posts.records.length
-            const totalReposts = reposts.records.length
-
-            const execTime = Math.round(performance.now() - startTime)
-            await repo(LogHandleStats).insert({
-              did,
-              handle,
-              displayName,
-              avatar,
-              tzOffset,
-              execTime,
-              nbRequests,
-              emoji: category.emoji,
-              metadata: {
-                altPercentage,
-                totalLikes,
-                totalPosts,
-                totalReposts,
-                posts: { nbPostStared, nbPostRepliesToAStartedOne, nbPostRepliesToOthers },
-                kindOfEmbed,
-              },
-            })
+            const kind =
+              altPercentage === 0
+                ? 'Image (Would be better with alt! 🙏)'
+                : altPercentage < 25
+                  ? `Image (Good start, keep going! 🌱 ${altPercentage}% alted)`
+                  : altPercentage < 75
+                    ? `Image (Great, you are getting it! ✨ ${altPercentage}% alted)`
+                    : altPercentage < 100
+                      ? `Image (Almost perfect! 🎉 ${altPercentage}% alted)`
+                      : `Image (You rock! 🎸 ${altPercentage}% alted)`
 
             return {
-              likes: getActivityCounts(likes),
-              posts: getActivityCounts(posts),
-              reposts: getActivityCounts(reposts),
-              punchCard,
-
-              totalLikes,
-              totalPosts,
-              totalReposts,
-
-              kindOfPost,
-              kindOfEmbed,
-              altPercentage,
-              category,
+              ...embed,
+              kind,
             }
           }
+          return embed
+        })
+
+        // **********
+        // PERSONNALYTY - END
+        // **********
+
+        const category = determineCategory({
+          nbPostStared,
+          nbPostRepliesToAStartedOne,
+          nbPostRepliesToOthers,
+          kindOfEmbed,
+          altPercentage,
+        })
+
+        const totalLikes = likes.records.length
+        const totalPosts = posts.records.length
+        const totalReposts = reposts.records.length
+
+        const execTime = Math.round(performance.now() - startTime)
+        await repo(LogHandleStats).insert({
+          did,
+          handle,
+          displayName,
+          avatar,
+          tzOffset,
+          execTime,
+          nbRequests,
+          emoji: category.emoji,
+          metadata: {
+            altPercentage,
+            totalLikes,
+            totalPosts,
+            totalReposts,
+            posts: { nbPostStared, nbPostRepliesToAStartedOne, nbPostRepliesToOthers },
+            kindOfEmbed,
+          },
+        })
+
+        return {
+          likes: getActivityCounts(likes),
+          posts: getActivityCounts(posts),
+          reposts: getActivityCounts(reposts),
+          punchCard,
+
+          totalLikes,
+          totalPosts,
+          totalReposts,
+
+          kindOfPost,
+          kindOfEmbed,
+          altPercentage,
+          category,
         }
       }
     } catch (error) {
@@ -290,119 +265,111 @@ export class AtController {
     const startTime = performance.now()
 
     try {
-      if (did) {
-        const didResolver = new DidResolver({})
-        const didDocument = await didResolver.resolve(did)
+      const pds = await didToPds(did)
+      if (pds) {
+        const bSkyty = await repo(BSkyty).findFirst({
+          id: did,
+        })
+        const one_weeks_ago = new Date()
+        one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
 
-        if (didDocument) {
-          const pds = getPds(didDocument)
+        const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
+          while: (r) =>
+            new Date(r.value.createdAt) > one_weeks_ago &&
+            r.value.subject !== bSkyty?.lastFollowDid,
+        })
+        const nbRequests = follows.nbRequest
 
-          if (pds) {
-            const bSkyty = await repo(BSkyty).findFirst({
-              id: did,
-            })
-            const one_weeks_ago = new Date()
-            one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
+        for (const follow of follows.records) {
+          const uriMeta = parseUri(follow.uri)
+          await repo(RecordFollow).upsert({
+            where: { id: follow.uri },
+            set: {
+              did: uriMeta.did,
+              rkey: uriMeta.rkey,
+              on: follow.value.createdAt,
+              didFollow: follow.value.subject,
+            },
+          })
+        }
 
-            const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
-              while: (r) =>
-                new Date(r.value.createdAt) > one_weeks_ago &&
-                r.value.subject !== bSkyty?.lastFollowDid,
-            })
-            const nbRequests = follows.nbRequest
+        if (follows.records.length > 0) {
+          await repo(BSkyty).upsert({
+            where: { id: did },
+            set: {
+              lastFollowDid: follows.records[0].value.subject,
+            },
+          })
+        }
 
-            for (const follow of follows.records) {
-              const uriMeta = parseUri(follow.uri)
-              await repo(RecordFollow).upsert({
-                where: { id: follow.uri },
-                set: {
-                  did: uriMeta.did,
-                  rkey: uriMeta.rkey,
-                  on: follow.value.createdAt,
-                  didFollow: follow.value.subject,
-                },
-              })
-            }
+        // **********
+        // FOLLOW CHART - START
+        // **********
 
-            if (follows.records.length > 0) {
-              await repo(BSkyty).upsert({
-                where: { id: did },
-                set: {
-                  lastFollowDid: follows.records[0].value.subject,
-                },
-              })
-            }
+        // const nbFollow = follows.records.length
+        // const followsPeriods = chunkRecords(follows.records)
 
-            // **********
-            // FOLLOW CHART - START
-            // **********
+        // Reverse array so it goes from oldest to newest
+        // followsPeriods.reverse()
 
-            // const nbFollow = follows.records.length
-            // const followsPeriods = chunkRecords(follows.records)
+        const profile = await getProfile(did)
+        if (!profile) {
+          throw new Error('Profile not found')
+        }
 
-            // Reverse array so it goes from oldest to newest
-            // followsPeriods.reverse()
+        const nbFollow = profile.data.followsCount ?? 0
 
-            const profile = await getProfile(did)
-            if (!profile) {
-              throw new Error('Profile not found')
-            }
+        // Start from current hour
+        const now = new Date()
+        const startDate = new Date(now)
+        startDate.setDate(startDate.getDate() - 7) // Go back 7 days
 
-            const nbFollow = profile.data.followsCount ?? 0
+        const followsPeriods = await repo(RecordFollow).groupBy({
+          group: ['onDay'],
+          where: { did, on: { $gte: startDate } },
+          orderBy: { onDay: 'desc' },
+        })
 
-            // Start from current hour
-            const now = new Date()
-            const startDate = new Date(now)
-            startDate.setDate(startDate.getDate() - 7) // Go back 7 days
+        // Create array starting from now and walking back 7 days
+        const followsPeriodsToRet: Array<{ timestamp: Date; count: number }> = []
+        let nbFollowNow = nbFollow
 
-            const followsPeriods = await repo(RecordFollow).groupBy({
-              group: ['onDay'],
-              where: { did, on: { $gte: startDate } },
-              orderBy: { onDay: 'desc' },
-            })
+        // Walk through each hour from now back to startDate
+        for (let date = new Date(now); date >= startDate; date.setHours(date.getHours() - 1)) {
+          const hourStr =
+            date.toISOString().split('T')[0] + '-' + date.getHours().toString().padStart(2, '0')
 
-            // Create array starting from now and walking back 7 days
-            const followsPeriodsToRet: Array<{ timestamp: Date; count: number }> = []
-            let nbFollowNow = nbFollow
+          const periodData = followsPeriods.find((p) => p.onDay === hourStr)
 
-            // Walk through each hour from now back to startDate
-            for (let date = new Date(now); date >= startDate; date.setHours(date.getHours() - 1)) {
-              const hourStr =
-                date.toISOString().split('T')[0] + '-' + date.getHours().toString().padStart(2, '0')
+          followsPeriodsToRet.unshift({
+            timestamp: new Date(date),
+            count: nbFollowNow,
+          })
 
-              const periodData = followsPeriods.find((p) => p.onDay === hourStr)
-
-              followsPeriodsToRet.unshift({
-                timestamp: new Date(date),
-                count: nbFollowNow,
-              })
-
-              // Subtract the follows that happened in this hour
-              if (periodData) {
-                nbFollowNow -= periodData.$count
-              }
-            }
-
-            // **********
-            // FOLLOW CHART - END
-            // **********
-
-            const execTime = Math.round(performance.now() - startTime)
-
-            await repo(LogHandleFollow).insert({
-              did,
-              tzOffset,
-              execTime,
-              nbRequests,
-              nbFollow,
-            })
-
-            return {
-              // followsPeriods,
-              followsPeriods: followsPeriodsToRet,
-              followsTotal: nbFollow,
-            }
+          // Subtract the follows that happened in this hour
+          if (periodData) {
+            nbFollowNow -= periodData.$count
           }
+        }
+
+        // **********
+        // FOLLOW CHART - END
+        // **********
+
+        const execTime = Math.round(performance.now() - startTime)
+
+        await repo(LogHandleFollow).insert({
+          did,
+          tzOffset,
+          execTime,
+          nbRequests,
+          nbFollow,
+        })
+
+        return {
+          // followsPeriods,
+          followsPeriods: followsPeriodsToRet,
+          followsTotal: nbFollow,
         }
       }
     } catch (error) {
