@@ -122,7 +122,7 @@ export const api = remultSveltekit({
       //   where: { id: { $not: '-1' } },
       //   set: { pos_atproto: null, pos_bsky: null },
       // })
-      await repo(RecordFollower).deleteMany({ where: { did: { $ne: '1' } } })
+      // await repo(RecordFollower).deleteMany({ where: { did: { $ne: '1' } } })
       log.success('done')
     }
   },

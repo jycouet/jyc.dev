@@ -41,8 +41,8 @@ export class AgentController {
     const nbFollowers = profile.data.followersCount
 
     const didFollow = profile.data.did
-    const weAlreadyHaveTheInfo = await repo(RecordFollow).find({ where: { didFollow } })
     const weAlreadyHaveTheInfo2 = await repo(RecordFollower).find({ where: { didFollow } })
+    const weAlreadyHaveTheInfo = await repo(RecordFollow).find({ where: { didFollow } })
     log.info(`weAlreadyHaveTheInfo`, weAlreadyHaveTheInfo.length, weAlreadyHaveTheInfo2.length)
     const followsToCheck = allFollowers.filter(
       (f) =>
@@ -54,13 +54,42 @@ export class AgentController {
     const results = await sidequest(followsToCheck, didFollow)
     log.info(`results`, results.length)
 
-    // Get current timestamp adjusted for timezone
+    // CHART
     const now = new Date()
-    now.setMinutes(now.getMinutes() - tzOffset)
+    const startDate = new Date(now)
+    startDate.setDate(startDate.getDate() - 21) // Go back 7 days
+
+    const followsPeriods = await repo(RecordFollower).groupBy({
+      group: ['onDay'],
+      where: { didFollow: profile.data.did },
+      orderBy: { onDay: 'desc' },
+    })
+
+    // Create array starting from now and walking back 7 days
+    const followsPeriodsToRet: Array<{ timestamp: Date; count: number }> = []
+    let nbFollowNow = profile.data.followersCount ?? 0
+
+    // Walk through each hour from now back to startDate
+    for (let date = new Date(now); date >= startDate; date.setHours(date.getHours() - 1)) {
+      const hourStr =
+        date.toISOString().split('T')[0] + '-' + date.getHours().toString().padStart(2, '0')
+
+      const periodData = followsPeriods.find((p) => p.onDay === hourStr)
+
+      followsPeriodsToRet.unshift({
+        timestamp: new Date(date),
+        count: nbFollowNow,
+      })
+
+      // Subtract the follows that happened in this hour
+      if (periodData) {
+        nbFollowNow -= periodData.$count
+      }
+    }
 
     return {
       nbFollowers,
-      followersPeriods: [],
+      followersPeriods: followsPeriodsToRet,
     }
   }
 }
@@ -138,40 +167,42 @@ const getFollows = async (did: string, didFollow: string) => {
 }
 
 const sidequest = async (followers: ProfileView[], didFollow: string) => {
-  // // console.log(`allFollowers`, allFollowers.slice(0, 3))
-  // const followers = allFollowers //.slice(0, 20)
-  // // console.log(`followers`, followers)
+  const results: any[] = []
+  const concurrentLimit = 30
+  let currentIndex = 0
 
-  const results = []
+  // Create a queue of promises that maintains concurrent operations
+  const queue = new Set<Promise<void>>()
 
-  // for (let i = 0; i < followers.length; i++) {
-  //   const follower = followers[i]
-  //   console.log(`i`, i, follower.did)
-  //   const ret = await getFollows(follower.did, didFollow)
-  //   results.push(ret)
-  // }
+  while (currentIndex < followers.length || queue.size > 0) {
+    // Fill queue up to limit
+    while (queue.size < concurrentLimit && currentIndex < followers.length) {
+      const follower = followers[currentIndex]
+      const index = currentIndex
 
-  // Process followers in batches of 10
-  const batchSize = 80
-  for (let i = 0; i < followers.length; i += batchSize) {
-    console.log(`batch POS`, i)
-
-    const batch = followers.slice(i, i + batchSize)
-
-    const batchResults = await Promise.allSettled(
-      batch.map(async (follower) => {
+      const promise = (async () => {
         try {
-          return await getFollows(follower.did, didFollow)
+          const result = await getFollows(follower.did, didFollow)
+          console.log(`Finished ${index + 1}/${followers.length}`)
+          results.push(result)
         } catch (error) {
           console.error(`Error getting follows for ${follower.did}:`, error)
-          return undefined
+          results.push(undefined)
+        } finally {
+          // @ts-ignore
+          queue.delete(promise)
         }
-      }),
-    ).then((results) => results.map((r) => (r.status === 'fulfilled' ? r.value : undefined)))
-    console.log(`i DONE`, i)
-    results.push(...batchResults)
+      })()
+
+      queue.add(promise)
+      currentIndex++
+    }
+
+    // Wait for at least one promise to complete before next iteration
+    if (queue.size > 0) {
+      await Promise.race(queue)
+    }
   }
 
-  // console.log(`ret`, results)
   return results
 }
