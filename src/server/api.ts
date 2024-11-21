@@ -16,6 +16,7 @@ import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/RecordFollow'
+import { RecordFollower } from '$modules/at/RecordFollower'
 import { RecordPlc, RecordPlcStats } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 import { AppUser, AppUserSession } from '$modules/auth/Entities'
@@ -52,6 +53,7 @@ export const api = remultSveltekit({
     AppUserSession,
     BSkyty,
     RecordFollow,
+    RecordFollower,
     StarterPack,
     ListItem,
     RecordPlc,
@@ -81,8 +83,10 @@ export const api = remultSveltekit({
   },
   initApi: async () => {
     // await calcLatestGlobalStats()
-
+    // SqlDatabase.LogToConsole = 'oneLiner'
     if (!building) {
+      const log = new Log('apiInit')
+      log.info('start')
       // @ts-ignore
       SqlController.dataProvider = dataProvider
 
@@ -101,7 +105,20 @@ export const api = remultSveltekit({
       // await upsertIndex(StarterPack, 'updatedAt')
       // await upsertIndex(StarterPack, 'creatorDid')
 
-      new Log('apiInit').success('done')
+      await execute(`ALTER TABLE "record-follows" DROP COLUMN "rkey";`)
+      await execute(`ALTER TABLE "record-follows" DROP CONSTRAINT "record-follows_pkey";`)
+      await execute(`UPDATE "record-follows" SET "uri" = "id"`)
+      await execute(`UPDATE "record-follows" SET "createdAt" = "on"`)
+      await execute(`ALTER TABLE "record-follows" DROP COLUMN "id";`)
+      await execute(`ALTER TABLE "record-follows" DROP COLUMN "on";`)
+      await upsertIndex(RecordFollow, 'did')
+      await upsertIndex(RecordFollow, 'didFollow')
+      await upsertIndex(RecordFollow, 'createdAt')
+      await upsertIndex(RecordFollower, 'did')
+      await upsertIndex(RecordFollower, 'didFollow')
+      await upsertIndex(RecordFollower, 'createdAt')
+
+      log.success('done')
 
       // await repo(BSkyty).updateMany({
       //   where: { id: { $not: '-1' } },
@@ -110,6 +127,13 @@ export const api = remultSveltekit({
     }
   },
 })
+
+const execute = async (sql: string) => {
+  try {
+    // @ts-ignore
+    await dataProvider.execute(sql)
+  } catch (error) {}
+}
 
 const upsertIndex = async <T>(ent: ClassType<T>, field: keyof T) => {
   const db = await dbNamesOf(ent)

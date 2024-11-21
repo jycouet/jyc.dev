@@ -447,7 +447,7 @@
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
+        Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
       </h3>
       {#if dataApi}
         <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
@@ -563,7 +563,7 @@
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
         <span>Your punchs</span>
-        <span class="text-xs text-base-content/50"> (Rolling 28 days)</span>
+        <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
       </h3>
       <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
         <button onclick={() => toggleSelection('like')}>

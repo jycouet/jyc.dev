@@ -2,11 +2,11 @@ import { Entity, Fields } from 'remult'
 
 import { Roles } from '$modules/auth/Roles'
 
-@Entity<RecordFollow>('record-follows', {
+@Entity<RecordFollower>('record-followers', {
   allowApiCrud: Roles.admin,
   id: ['did', 'didFollow'],
 })
-export class RecordFollow {
+export class RecordFollower {
   @Fields.string()
   did = ''
 
@@ -16,7 +16,7 @@ export class RecordFollow {
   @Fields.date({ allowNull: true })
   createdAt!: Date | null
 
-  @Fields.string<RecordFollow>({
+  @Fields.string<RecordFollower>({
     sqlExpression: () => {
       return `TO_CHAR("createdAt", 'YYYY-MM-DD-HH24')`
     },

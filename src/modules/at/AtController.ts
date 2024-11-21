@@ -81,19 +81,19 @@ export class AtController {
     const startTime = performance.now()
 
     try {
-      const four_weeks_ago = new Date()
-      four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
+      const three_weeks_ago = new Date()
+      three_weeks_ago.setDate(three_weeks_ago.getDate() - 7 * 3)
       const pds = await didToPds(did)
       if (pds) {
         const [likes, posts, reposts] = await Promise.all([
           listRecordsAll(pds, did, 'app.bsky.feed.like', {
-            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            while: (record) => new Date(record.value.createdAt) > three_weeks_ago,
           }),
           listRecordsAll(pds, did, 'app.bsky.feed.post', {
-            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            while: (record) => new Date(record.value.createdAt) > three_weeks_ago,
           }),
           listRecordsAll(pds, did, 'app.bsky.feed.repost', {
-            while: (record) => new Date(record.value.createdAt) > four_weeks_ago,
+            while: (record) => new Date(record.value.createdAt) > three_weeks_ago,
           }),
         ])
 
@@ -267,40 +267,46 @@ export class AtController {
     try {
       const pds = await didToPds(did)
       if (pds) {
-        const bSkyty = await repo(BSkyty).findFirst({
-          id: did,
-        })
+        // const bSkyty = await repo(BSkyty).findFirst({
+        //   id: did,
+        // })
+        const lastFollowDid = await repo(RecordFollow).findFirst(
+          { did },
+          { orderBy: { createdAt: 'desc' } },
+        )
+
         const one_weeks_ago = new Date()
         one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
 
         const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
           while: (r) =>
             new Date(r.value.createdAt) > one_weeks_ago &&
-            r.value.subject !== bSkyty?.lastFollowDid,
+            r.value.subject !== lastFollowDid?.didFollow,
         })
         const nbRequests = follows.nbRequest
 
         for (const follow of follows.records) {
           const uriMeta = parseUri(follow.uri)
           await repo(RecordFollow).upsert({
-            where: { id: follow.uri },
-            set: {
+            where: {
               did: uriMeta.did,
-              rkey: uriMeta.rkey,
-              on: follow.value.createdAt,
               didFollow: follow.value.subject,
+            },
+            set: {
+              createdAt: new Date(follow.value.createdAt),
+              uri: follow.uri,
             },
           })
         }
 
-        if (follows.records.length > 0) {
-          await repo(BSkyty).upsert({
-            where: { id: did },
-            set: {
-              lastFollowDid: follows.records[0].value.subject,
-            },
-          })
-        }
+        // if (follows.records.length > 0) {
+        //   await repo(BSkyty).upsert({
+        //     where: { id: did },
+        //     set: {
+        //       lastFollowDid: follows.records[0].value.subject,
+        //     },
+        //   })
+        // }
 
         // **********
         // FOLLOW CHART - START
@@ -326,7 +332,7 @@ export class AtController {
 
         const followsPeriods = await repo(RecordFollow).groupBy({
           group: ['onDay'],
-          where: { did, on: { $gte: startDate } },
+          where: { did, createdAt: { $gte: startDate } },
           orderBy: { onDay: 'desc' },
         })
 

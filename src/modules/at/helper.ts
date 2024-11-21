@@ -1,6 +1,33 @@
 import { DidResolver, getPds } from '@atproto/identity'
 import { AtUri } from '@atproto/syntax'
 
+import { Log, sleep } from '@kitql/helpers'
+
+export async function retries<T>(
+  fn: () => Promise<T>,
+  options?: {
+    maxAttempts?: number
+    baseDelay?: number
+  },
+): Promise<T> {
+  const maxAttempts = options?.maxAttempts ?? 6 // delayMs 6&10 => 1270
+  const baseDelay = options?.baseDelay ?? 10
+
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const result = await fn()
+      return result
+    } catch (error) {
+      if (i >= maxAttempts - 1) throw error
+      const delayMs = baseDelay * 2 ** i
+      new Log(`retries`).info(`Retrying in ${delayMs}ms...`)
+      await sleep(delayMs)
+    }
+  }
+
+  throw new Error('Unreachable code')
+}
+
 export const describeRepo = async (pds: string, repo: string) => {
   const describeRepoUrl = new URL(`${pds}/xrpc/com.atproto.repo.describeRepo`)
   describeRepoUrl.searchParams.set('repo', repo)
@@ -40,25 +67,33 @@ export const listRecords = async (
     listRecordsUrl.searchParams.set('reverse', 'true')
   }
   const url = listRecordsUrl.toString()
-  // log.info(`fetch`, url)
-  const res = await fetch(url)
-  if (!res.ok) {
-    throw new Error(`Failed to list records: ${res.statusText}`)
-  }
-  return await res.json()
+
+  return retries(async () => {
+    try {
+      const res = await fetch(url)
+      if (!res.ok) {
+        throw new Error(`${repo} | ${collection} | Failed to list records: ${res.statusText}`)
+      }
+      return res.json()
+    } catch (error) {
+      throw new Error(`${repo} | ${collection} | Failed to list records: ${error}`)
+    }
+  })
 }
 
 export const getRecord = async (pds: string, repo: string, collection: string, rkey: string) => {
-  // const uriObj = new AtUri(uri);
   const getRecordUrl = new URL(`${pds}/xrpc/com.atproto.repo.getRecord`)
   getRecordUrl.searchParams.set('repo', repo)
   getRecordUrl.searchParams.set('collection', collection)
   getRecordUrl.searchParams.set('rkey', rkey)
-  const res = await fetch(getRecordUrl.toString())
-  if (!res.ok) {
-    throw new Error(`Failed to get record: ${res.statusText}`)
-  }
-  return await res.json()
+
+  return retries(async () => {
+    const res = await fetch(getRecordUrl.toString())
+    if (!res.ok) {
+      throw new Error(`Failed to get record: ${res.statusText}`)
+    }
+    return res.json()
+  })
 }
 
 export const listRecordsAll = async (
@@ -78,7 +113,6 @@ export const listRecordsAll = async (
   }> = []
 
   let cursor: string | undefined = undefined
-
   let nbRequest = 0
   while (true) {
     const response = await listRecords(pds, repo, collection, {
@@ -191,9 +225,6 @@ export const didToPds = async (did?: string) => {
     // console.log(`pds`, pds);
     // const repo = await describeRepo( pds!, did);
     // console.log(`repo`, repo);
-
-    const four_weeks_ago = new Date()
-    four_weeks_ago.setDate(four_weeks_ago.getDate() - 7 * 4)
 
     if (pds) {
       return pds
