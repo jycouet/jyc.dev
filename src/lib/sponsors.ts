@@ -29,4 +29,10 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:5wlpm2j3d6can6quf5hotdcc/bafkreiefb45p47kfokpk45bt3tncrpi7fzkzkb66vq6vh5zryou2nmjaqe@jpeg',
     displayName: 'Robert Lin',
   },
+  {
+    handle: 'eomasters.org',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:b7du2x5ynpuiatjib4qfanmc/bafkreiaoni5mdwyxf5aesy2wcvikptsps7equilo5rp7yukbtgj5h6aqza@jpeg',
+    displayName: 'EOMasters',
+  },
 ]
