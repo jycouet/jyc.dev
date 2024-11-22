@@ -14,17 +14,19 @@ export async function retries<T>(
   const maxAttempts = options?.maxAttempts ?? 6 // delayMs 6&10 => 1270
   const baseDelay = options?.baseDelay ?? 10
 
+  const log = new Log(`retries`)
+
   for (let i = 0; i < maxAttempts; i++) {
     try {
       const result = await fn()
       return result
     } catch (error) {
       if (i >= maxAttempts - 1) {
-        new Log(`retries`).error(options?.msgError ?? 'Error')
+        log.error(options?.msgError ?? 'Error')
         throw error
       }
       const delayMs = baseDelay * 2 ** i
-      new Log(`retries`).info(`Retrying in ${delayMs}ms...`)
+      log.info(`Retrying in ${delayMs}ms...`)
       await sleep(delayMs)
     }
   }
