@@ -3,6 +3,8 @@
 
   import { remult, type UserInfo } from 'remult'
 
+  import { page } from '$app/stores'
+
   import { AgentController } from '$modules/at/AgentController'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -15,9 +17,11 @@
     remult.initUser().then((user) => {
       userInfo = user
     })
-    AgentController.getHandleFollowers(new Date().getTimezoneOffset()).then((res) => {
-      dataApiFollowers = res
-    })
+    AgentController.getHandleFollowers(new Date().getTimezoneOffset(), $page.params.handle).then(
+      (res) => {
+        dataApiFollowers = res
+      },
+    )
   })
 
   let followersPeriods = $derived(
@@ -98,6 +102,12 @@
       </svelte:fragment>
     </AreaChart>
   </div>
+</div>
+
+<div class="mt-2 text-center text-sm text-base-content/50">
+  {#if dataApiFollowers?.msg}
+    {dataApiFollowers.msg}
+  {/if}
 </div>
 
 <!-- Original button for testing -->

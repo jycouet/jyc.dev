@@ -4,6 +4,7 @@ import type { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/
 import { BackendMethod, repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
+import { sponsors } from '$lib/sponsors'
 import { Roles } from '$modules/auth/Roles'
 
 import { getProfile } from './agentHelper'
@@ -13,13 +14,25 @@ import { RecordFollower } from './RecordFollower'
 
 export class AgentController {
   @BackendMethod({ allowed: Roles.admin })
-  static async getHandleFollowers(tzOffset: number) {
+  static async getHandleFollowers(tzOffset: number, handle: string) {
+    const startTime = performance.now()
+    const log = new Log('Agent')
+    log.success('start')
     const agent = new Agent(new URL('https://public.api.bsky.app'))
 
     // Get the user's handle from the session
-    const profile = await getProfile('jyc.dev')
+    const profile = await getProfile(handle)
     if (!profile) {
       return null
+    }
+
+    sponsors.push({ handle: 'jyc.dev', avatar: '', displayName: 'jyc' })
+    if (!sponsors.some((s) => s.handle === handle)) {
+      return {
+        nbFollowers: profile.data.followersCount,
+        followersPeriods: [],
+        msg: "Not yet open to everyone! Let's see where it goes...",
+      }
     }
 
     // Get all followers using cursor pagination
@@ -36,7 +49,6 @@ export class AgentController {
       cursor = followers.data.cursor
     } while (cursor)
 
-    const log = new Log('Agent')
     log.info(`profile`, profile.data.followersCount, allFollowers.length)
     const nbFollowers = profile.data.followersCount
 
@@ -86,6 +98,10 @@ export class AgentController {
         nbFollowNow -= periodData.$count
       }
     }
+
+    const execTime = Math.round(performance.now() - startTime)
+
+    log.info(execTime)
 
     return {
       nbFollowers,
