@@ -11,14 +11,14 @@
   let { handle, displayName, avatar, size = 'w-9' }: Props = $props()
 
   // Get initials from display name
-  let initials = $derived(
-    (displayName ?? handle)
-      .split(' ')
-      .map((word) => word[0])
-      .join('')
-      .slice(0, 2)
-      .toUpperCase(),
-  )
+  // let initials = $derived(
+  //   (displayName ?? handle)
+  //     .split(' ')
+  //     .map((word) => word[0])
+  //     .join('')
+  //     .slice(0, 2)
+  //     .toUpperCase(),
+  // )
 </script>
 
 <div class="avatar">

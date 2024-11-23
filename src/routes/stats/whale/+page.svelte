@@ -948,7 +948,8 @@
           <Avatar {...lastProfile} size="w-9" />
         {:else}
           {lastProfile?.displayName || lastProfile?.handle}
-        {/if} who is position #{lastValue.pos_bsky!.toLocaleString()} on 🦋
+        {/if}
+        on 🦋
       </a>
     </div>
     <div class="mt-4 flex flex-col items-center gap-2">
