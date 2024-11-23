@@ -13,7 +13,7 @@ import { RecordFollow } from './RecordFollow'
 import { RecordFollower } from './RecordFollower'
 
 export class AgentController {
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: true })
   static async getHandleFollowers(tzOffset: number, handle: string) {
     const startTime = performance.now()
     const log = new Log('Agent')
