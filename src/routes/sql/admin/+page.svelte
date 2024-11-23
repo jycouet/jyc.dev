@@ -43,6 +43,56 @@ ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC`,
       sql: `SELECT count(*) FROM "record-plcs"
   `,
     },
+    kindOfEmbed: {
+      label: 'Kind of embed',
+      sql: `SELECT DISTINCT (embed->>'kind') AS kind
+FROM "log-handles-stats", jsonb_array_elements("metadata"::jsonb->'kindOfEmbed') AS embed;;
+  `,
+    },
+    specialties: {
+      label: 'Specialties',
+      sql: `WITH parsed_data AS (
+  SELECT
+    id,
+    SUM(CASE 
+      WHEN lower(embed->>'kind') LIKE '%link to other post%' THEN (embed->>'count')::int
+      ELSE 0 
+    END) AS linkInside,
+    SUM(CASE 
+      WHEN lower(embed->>'kind') LIKE '%link to outside%' THEN (embed->>'count')::int
+      ELSE 0 
+    END) AS linkOutside,
+    SUM(CASE 
+      WHEN lower(embed->>'kind') LIKE '%image%' OR lower(embed->>'kind') LIKE '%video%' THEN (embed->>'count')::int
+      ELSE 0 
+    END) AS art,
+    ("metadata"->>'totalPosts')::int AS totalPosts,
+    ("metadata"->>'totalReposts')::int AS totalReposts,
+    ("metadata"->>'totalLikes')::int AS totalLikes,
+    ("metadata"->>'totalPosts')::int + 
+    ("metadata"->>'totalReposts')::int + 
+    ("metadata"->>'totalLikes')::int AS totalTotal
+  FROM "log-handles-stats", json_array_elements("metadata"->'kindOfEmbed') AS embed
+  GROUP BY id, "metadata"->>'totalPosts', "metadata"->>'totalReposts', "metadata"->>'totalLikes'
+),
+classified_data AS (
+  SELECT
+    id,
+    CASE
+      WHEN (totalPosts + totalReposts + totalLikes) < 6 THEN 'Observer'
+      WHEN (linkOutside::float / totalTotal) > 0.05 THEN 'Explorer'
+      WHEN (linkInside::float / totalTotal) > 0.03 THEN 'Connector'
+      WHEN (art::float / totalTotal) > 0.03 THEN 'Artist'
+      ELSE 'Socialite'
+    END AS specialty
+  FROM parsed_data
+)
+SELECT specialty, COUNT(*) AS count
+FROM classified_data
+GROUP BY specialty
+ORDER BY count DESC;
+  `,
+    },
   } as const
 
   function setPresetQuery(queryId: keyof typeof queries) {

@@ -41,7 +41,7 @@ const categories: Record<
 }
 
 const specialties: Record<
-  'Artist' | 'Connector' | 'Explorer' | 'Conversationalist' | 'Observer',
+  'Artist' | 'Connector' | 'Explorer' | 'Dialogist' | 'Observer',
   { trait: string }
 > = {
   Artist: {
@@ -56,8 +56,8 @@ const specialties: Record<
     trait:
       'Always venturing beyond, bringing external knowledge and resources to enrich conversations.',
   },
-  Conversationalist: {
-    trait: 'Your strength lies in pure dialogue, weaving words into meaningful exchanges.',
+  Dialogist: {
+    trait: 'Your strength lies in weaving words into thoughtful discussions.',
   },
   Observer: {
     trait:
@@ -96,11 +96,14 @@ export function determineCategory(args: {
   let art = 0
 
   for (const embed of kindOfEmbed) {
-    if (embed.kind.includes('link to other post')) {
+    if (embed.kind.toLowerCase().includes('link to other post')) {
       linkInside += embed.count
-    } else if (embed.kind.includes('link to outside')) {
+    } else if (embed.kind.toLowerCase().includes('link to outside')) {
       linkOutside += embed.count
-    } else if (embed.kind.includes('image') || embed.kind.includes('video')) {
+    } else if (
+      embed.kind.toLowerCase().includes('image') ||
+      embed.kind.toLowerCase().includes('video')
+    ) {
       art += embed.count
     }
   }
@@ -135,18 +138,16 @@ export function determineCategory(args: {
 
   // Then determine specialty
   let specialty: keyof typeof specialties
-  if (totalInteractions < 1) {
+  if (totalInteractions < 6) {
     specialty = 'Observer'
-  } else if (linkInsideRatio > 0.1) {
-    specialty = 'Connector'
-  } else if (artRatio > 0.07) {
-    specialty = 'Artist'
-  } else if (linkInsideRatio > 0.05) {
-    specialty = 'Connector'
-  } else if (linkOutsideRatio > 0.06) {
+  } else if (linkOutsideRatio > 0.05) {
     specialty = 'Explorer'
+  } else if (linkInsideRatio > 0.03) {
+    specialty = 'Connector'
+  } else if (artRatio > 0.03) {
+    specialty = 'Artist'
   } else {
-    specialty = 'Conversationalist'
+    specialty = 'Dialogist'
   }
 
   // Combine title and traits
