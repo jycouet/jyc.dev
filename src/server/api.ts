@@ -117,7 +117,7 @@ export const api = remultSveltekit({
       // await upsertIndex(RecordFollower, 'did')
       // await upsertIndex(RecordFollower, 'didFollow')
       // await upsertIndex(RecordFollower, 'createdAt')
-      await upsertIndex(ListItem, 'subject')
+      // await upsertIndex(ListItem, 'subject')
 
       // await repo(BSkyty).updateMany({
       //   where: { id: { $not: '-1' } },
