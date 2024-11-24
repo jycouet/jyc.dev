@@ -26,6 +26,26 @@ export class RecordPlc extends EntityBase {
   @Fields.date()
   createdAt!: Date
 
+  @Fields.string({ allowNull: true })
+  handle?: string | null
+  @Fields.string({ allowNull: true })
+  displayName?: string | null
+  @Fields.string({ allowNull: true })
+  avatar?: string | null
+  @Fields.string({ allowNull: true })
+  description?: string | null
+  @Fields.number({ allowNull: true })
+  followersCount?: number | null
+  @Fields.number({ allowNull: true })
+  followsCount?: number | null
+  @Fields.number({ allowNull: true })
+  postsCount?: number | null
+  @Fields.boolean({ allowNull: true })
+  isInactive?: boolean | null
+
+  @Fields.date({ allowNull: true })
+  indexedAt?: Date | null = null
+
   // @Fields.json({ includeInApi: Roles.admin })
   // metadata!: {
   //   cid: string
