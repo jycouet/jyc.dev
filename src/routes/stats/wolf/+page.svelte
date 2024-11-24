@@ -9,6 +9,8 @@
   import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
+  import RowStarterPack from './RowStarterPack.svelte'
+
   const params = queryParameters(
     {
       q: true,
@@ -113,27 +115,7 @@
                 ? 'opacity-50'
                 : ''} hover:bg-base-200"
             >
-              <td>
-                <div class="flex items-center gap-3">
-                  <Avatar {...pack.creator} />
-                  <a
-                    class="link link-info flex items-center gap-3"
-                    target="_blank"
-                    href={route(`bsky_starter_pack`, {
-                      creator_handle: pack.creator.handle,
-                      rkey: parseUri(pack.id).rkey,
-                    })}
-                  >
-                    <div class="font-bold">{pack.name}</div>
-                  </a>
-                </div>
-              </td>
-              <td>
-                {#each pack.description.split('\n') as line}<p>{line}</p>{/each}
-                <div class="text-right text-sm text-secondary">
-                  {pack.nbMembers ?? 0} members
-                </div>
-              </td>
+              <RowStarterPack {pack} />
             </tr>
           {/each}
           {#if $paginator.loading.nextPage}

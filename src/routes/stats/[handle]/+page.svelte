@@ -13,6 +13,7 @@
   import { route } from '$lib/ROUTES.js'
   import { AtController } from '$modules/at/AtController.js'
 
+  import RowStarterPack from '../wolf/RowStarterPack.svelte'
   import JsonStyle from './JsonStyle.svelte'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -20,6 +21,8 @@
   let { data } = $props()
   let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
+  let dataApiFStarterPacks =
+    $state<ResolvedType<ReturnType<typeof AtController.getInStarterPacks>>>()
 
   let currentISOString = $state('')
   let pos_atproto = $state('')
@@ -748,6 +751,54 @@
           </svelte:fragment>
         </AreaChart>
       </div>
+    </div>
+  {/if}
+
+  {#if (dataApiFStarterPacks ?? []).length > 0}
+    <div class="card bg-base-300 p-4">
+      <div class="flex items-start justify-between">
+        <h3 class="mb-4 text-lg font-bold">
+          In Stater Pack
+          <span class="text-xs text-base-content/50"> (in the Skyzoo known packs)</span>
+        </h3>
+        <div class="stat-value text-primary">
+          {#if dataApiFollows}
+            {dataApiFStarterPacks?.length}
+          {:else}
+            <div class="skeleton h-10 w-20 bg-base-200"></div>
+          {/if}
+        </div>
+      </div>
+
+      <!-- <pre>{JSON.stringify(dataApiFStarterPacks, null, 2)}</pre> -->
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>Creator & Title</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each dataApiFStarterPacks ?? [] as pack}
+            <tr>
+              <RowStarterPack {pack} />
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  {:else}
+    <div class="flex items-center justify-center">
+      <button
+        class="btn btn-outline btn-primary btn-sm"
+        onclick={() => {
+          AtController.getInStarterPacks(data.did!).then((res) => {
+            dataApiFStarterPacks = res
+          })
+        }}
+      >
+        Check Starter Packs
+      </button>
     </div>
   {/if}
 </div>

@@ -1,6 +1,8 @@
-import { Entity, Fields } from 'remult'
+import { Entity, Fields, Relations } from 'remult'
 
 import { Roles } from '$modules/auth/Roles'
+
+import { StarterPack } from './StarterPack'
 
 @Entity<ListItem>('list-item', {
   allowApiRead: true,
@@ -21,4 +23,7 @@ export class ListItem {
 
   @Fields.date()
   createdAt!: Date
+
+  @Relations.toOne<ListItem, StarterPack>(() => StarterPack, { fields: { listUri: 'listUri' } })
+  starterPack!: StarterPack
 }

@@ -8,6 +8,7 @@ import { LogHandleStats } from '$modules/logs/LogHandleStats'
 import { getProfile } from './agentHelper'
 import { BSkyty } from './BSkyty'
 import { determineCategory } from './determineCategory'
+import { ListItem } from './ListItem'
 import { RecordFollow } from './RecordFollow'
 import { RecordPlcStats } from './RecordPlc'
 
@@ -378,6 +379,23 @@ export class AtController {
           followsTotal: nbFollow,
         }
       }
+    } catch (error) {
+      console.error(`error`, error)
+    }
+    return null
+  }
+
+  @BackendMethod({ allowed: true })
+  static async getInStarterPacks(did: string) {
+    try {
+      const items = await repo(ListItem).find({
+        where: { subject: did },
+        include: { starterPack: { include: { creator: true } } },
+      })
+
+      const toRet = items.map((i) => i.starterPack).filter((i) => i)
+
+      return toRet
     } catch (error) {
       console.error(`error`, error)
     }
