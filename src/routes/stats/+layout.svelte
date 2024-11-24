@@ -78,7 +78,7 @@
         </a>
       {/if}
       <h1 class="w-full text-4xl font-bold">
-        <a href={route(`/stats`)}>Sky Zoo</a>
+        <a href={route(`/stats`)}>Sky Zoo2</a>
       </h1>
       <!-- <label class="flex items-center gap-1">
         <input
