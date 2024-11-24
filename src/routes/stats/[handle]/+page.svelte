@@ -30,6 +30,7 @@
   let createdAt = $state('')
   let startedToBeActiveOn = $state('')
   let skipFollow = $page.url.searchParams.get('skip_follow') === 'true'
+  let loadingDataApiFStarterPacks = $state(false)
   $effect(() => {
     const tzOffset = new Date().getTimezoneOffset()
     AtController.getHandleStats(
@@ -790,10 +791,13 @@
   {:else}
     <div class="flex items-center justify-center">
       <button
-        class="btn btn-outline btn-primary btn-sm"
+        disabled={loadingDataApiFStarterPacks}
+        class="btn btn-primary btn-sm"
         onclick={() => {
+          loadingDataApiFStarterPacks = true
           AtController.getInStarterPacks(data.did!).then((res) => {
             dataApiFStarterPacks = res
+            loadingDataApiFStarterPacks = false
           })
         }}
       >
