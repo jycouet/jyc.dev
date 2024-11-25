@@ -17,7 +17,7 @@ export class AgentController {
   static async getHandleFollowers(tzOffset: number, handle: string) {
     const startTime = performance.now()
     const log = new Log('Agent')
-    log.success('start')
+    log.success('start', handle)
     const agent = new Agent(new URL('https://public.api.bsky.app'))
 
     // Get the user's handle from the session
@@ -184,7 +184,7 @@ const getFollows = async (did: string, didFollow: string) => {
 
 const sidequest = async (followers: ProfileView[], didFollow: string) => {
   const results: any[] = []
-  const concurrentLimit = 30
+  const concurrentLimit = 200
   let currentIndex = 0
 
   // Create a queue of promises that maintains concurrent operations

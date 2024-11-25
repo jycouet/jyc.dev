@@ -35,4 +35,10 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:b7du2x5ynpuiatjib4qfanmc/bafkreiaoni5mdwyxf5aesy2wcvikptsps7equilo5rp7yukbtgj5h6aqza@jpeg',
     displayName: 'EOMasters',
   },
+  {
+    handle: 'adaszpilka.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
+    displayName: 'Ada Szpilka',
+  },
 ]
