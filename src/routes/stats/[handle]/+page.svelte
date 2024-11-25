@@ -784,7 +784,11 @@
     </div>
   {/if}
 
-  {#if (dataApiFStarterPacks ?? []).length > 0}
+  {#if dataApiFStarterPacks === null}
+    <div class="flex items-center justify-center text-base-content/50">
+      You are not in any starter pack that I know of yet!
+    </div>
+  {:else if (dataApiFStarterPacks ?? []).length > 0}
     <div class="card bg-base-300 p-4">
       <div class="flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">

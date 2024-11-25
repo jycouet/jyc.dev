@@ -395,6 +395,10 @@ export class AtController {
 
       const toRet = items.map((i) => i.starterPack).filter((i) => i)
 
+      if (items.length === 0) {
+        return null
+      }
+
       return toRet
     } catch (error) {
       console.error(`error`, error)
