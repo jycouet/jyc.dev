@@ -1,4 +1,5 @@
 <script lang="ts">
+  import avatarDefault from '$lib/assets/avatar-default.jpg'
   import { route } from '$lib/ROUTES'
 
   interface Props {
@@ -29,7 +30,11 @@
       data-tip={displayName}
       target="_blank"
     >
-      <img src={avatar} alt="{displayName}'s avatar" class="h-full w-full object-cover" />
+      <img
+        src={avatar || avatarDefault}
+        alt="{displayName}'s avatar"
+        class="h-full w-full object-cover"
+      />
     </a>
   </div>
 </div>

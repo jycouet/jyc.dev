@@ -82,7 +82,7 @@ export const api = remultSveltekit({
     return user ? { ...user, roles } : undefined
   },
   initApi: async () => {
-    await calcLatestGlobalStats()
+    // await calcLatestGlobalStats()
     // SqlDatabase.LogToConsole = 'oneLiner'
     if (!building) {
       const log = new Log('apiInit')
