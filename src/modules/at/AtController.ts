@@ -5,7 +5,7 @@ import { determineCategory } from '$modules/at/determineCategory'
 import { didToPds, listRecordsAll, parseUri } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/RecordFollow'
-import { RecordPlcStats } from '$modules/at/RecordPlc'
+import { RecordPlc, RecordPlcStats } from '$modules/at/RecordPlc'
 import { GlobalKey, KeyValue } from '$modules/global/Entities'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
@@ -402,6 +402,84 @@ export class AtController {
       console.error(`error`, error)
     }
     return null
+  }
+
+  @BackendMethod({ allowed: true })
+  static async getSquirrelSquad(pos_bsky: number) {
+    const minimumRequirements = (profileData: {
+      postsCount?: number
+      followersCount?: number
+      followsCount?: number
+    }) => {
+      return (
+        (profileData.postsCount ?? 0) >= 1 &&
+        (profileData.followersCount || 0) >= 10 &&
+        (profileData.followsCount || 0) >= 10
+      )
+    }
+
+    type Squad = { pos_bsky: number; handle: string; displayName: string; avatar: string }
+    function getSquad(record: RecordPlc, profile: any): Squad {
+      return {
+        pos_bsky: record.pos_bsky!,
+        handle: profile.data.handle,
+        displayName: profile.data.displayName || profile.data.handle,
+        avatar: profile.data.avatar ?? '',
+      }
+    }
+
+    const before: Squad[] = []
+
+    // Get records before pos_bsky
+    let beforeRecords = await repo(RecordPlc).find({
+      where: {
+        pos_bsky: {
+          $lt: pos_bsky,
+          '!=': null,
+        },
+      },
+      orderBy: { pos_bsky: 'desc' },
+      limit: 20, // Reasonable limit to avoid too many checks
+    })
+    // Process records before current position
+    for (const record of beforeRecords) {
+      if (before.length >= 3) break
+
+      const profile = await getProfile(record.did)
+      if (!profile) continue
+
+      if (!minimumRequirements(profile.data)) continue
+
+      before.unshift(getSquad(record, profile))
+    }
+
+    const after: Squad[] = []
+
+    // Get records after pos_bsky
+    let afterRecords = await repo(RecordPlc).find({
+      where: {
+        pos_bsky: {
+          $gt: pos_bsky,
+          '!=': null,
+        },
+      },
+      orderBy: { pos_bsky: 'asc' },
+      limit: 20, // Reasonable limit to avoid too many checks
+    })
+
+    // Process records after current position
+    for (const record of afterRecords) {
+      if (after.length >= 3) break
+
+      const profile = await getProfile(record.did)
+      if (!profile) continue
+
+      if (!minimumRequirements(profile.data)) continue
+
+      after.push(getSquad(record, profile))
+    }
+
+    return { before, after }
   }
 }
 

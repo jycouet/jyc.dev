@@ -23,7 +23,7 @@
 </script>
 
 <div class="avatar">
-  <div class="mask mask-hexagon {size}">
+  <div class="mask mask-hexagon {size}" title={displayName}>
     <a
       href={route(`bsky_profile`, { handle })}
       class="tooltip"

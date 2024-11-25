@@ -1,12 +1,21 @@
 <script lang="ts">
   import Avatar from '$lib/components/Avatar.svelte'
+  import { AtController } from '$modules/at/AtController'
 
   import type { PageData } from './$types'
 
+  type ResolvedType<T> = T extends Promise<infer R> ? R : T
   let { data }: { data: PageData } = $props()
 
-  let squadBefore = $derived([1, 2, 3])
-  let squadAfter = $derived([4, 5, 6])
+  let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getSquirrelSquad>>>()
+
+  $effect(() => {
+    AtController.getSquirrelSquad(data.pos_bsky!).then((res) => {
+      dataApi = res
+    })
+  })
+
+  $inspect(dataApi)
 </script>
 
 <div class="mb-8 flex flex-col gap-4">
@@ -21,9 +30,13 @@
 <div class="mt-16">
   <div class="flex items-start justify-center">
     <div class="grid grid-cols-2 justify-items-center">
-      {#each squadBefore as member, i}
+      {#each dataApi?.before ?? [{}, {}, {}] as member, i}
         <div class={i === 0 ? 'col-span-2' : '-mt-4'}>
-          <Avatar {...data} size="w-20" />
+          {#if dataApi}
+            <Avatar {...member} size="w-20" />
+          {:else}
+            <div class="mask mask-hexagon skeleton m-0.5 h-20 w-20 rounded-full"></div>
+          {/if}
         </div>
       {/each}
     </div>
@@ -33,9 +46,13 @@
     </div>
 
     <div class="grid grid-cols-2 justify-items-center">
-      {#each squadAfter as member, i}
+      {#each dataApi?.after ?? [{}, {}, {}] as member, i}
         <div class={i === 0 ? 'col-span-2' : '-mt-4'}>
-          <Avatar {...data} size="w-20" />
+          {#if dataApi}
+            <Avatar {...member} size="w-20" />
+          {:else}
+            <div class="mask mask-hexagon skeleton m-0.5 h-20 w-20 rounded-full"></div>
+          {/if}
         </div>
       {/each}
     </div>
