@@ -12,7 +12,7 @@ import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
 import { building } from '$app/environment'
 
 import { AgentController } from '$modules/at/AgentController'
-import { AtController } from '$modules/at/AtController'
+import { AtController, calcLatestGlobalStats } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/RecordFollow'
@@ -82,7 +82,7 @@ export const api = remultSveltekit({
     return user ? { ...user, roles } : undefined
   },
   initApi: async () => {
-    // await calcLatestGlobalStats()
+    await calcLatestGlobalStats()
     // SqlDatabase.LogToConsole = 'oneLiner'
     if (!building) {
       const log = new Log('apiInit')

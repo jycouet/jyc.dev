@@ -411,11 +411,11 @@ export type LatestGlobalStats = {
     $count: number
   }[]
   lastValue: RecordPlcStats | undefined
-  lastProfile: {
+  lastProfiles: {
     handle: string
     displayName: string
     avatar: string
-  }
+  }[]
   lastHourSpeedPerSecond: number
 }
 
@@ -436,26 +436,34 @@ export const calcLatestGlobalStats = async () => {
       onDay: new Date(stat.onDay).toISOString().split('T')[0],
     }))
 
-    const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
+    const lastValues = await repo(RecordPlcStats).find({
+      where: { pos_bsky: { '!=': null } },
+      limit: 10,
+    })
 
     const lastHour = await repo(RecordPlcStats).count({
-      createdAt: { $gte: new Date(lastValue!.createdAt.getTime() - 60 * 60 * 1000) },
+      createdAt: { $gte: new Date(lastValues[0]!.createdAt.getTime() - 60 * 60 * 1000) },
       pos_bsky: { '!=': null },
     })
 
-    const profile = await getProfile(lastValue!.did)
-    if (!profile) {
-      throw new Error('Profile not found')
-    }
+    const profiles = await Promise.all(
+      lastValues.map(async (value) => {
+        const profile = await getProfile(value.did)
+        if (!profile) return null
+        return profile
+      }),
+    )
+
+    const validProfiles = profiles.filter((p): p is NonNullable<typeof p> => p !== null)
 
     const toRet: LatestGlobalStats = {
       dailyStats,
-      lastValue,
-      lastProfile: {
+      lastValue: lastValues[0],
+      lastProfiles: validProfiles.map((profile) => ({
         handle: profile.data.handle,
-        displayName: profile.data.displayName ?? profile.data.handle,
+        displayName: profile.data.displayName || profile.data.handle,
         avatar: profile.data.avatar ?? '',
-      },
+      })),
       lastHourSpeedPerSecond: lastHour / (60 * 60),
     }
 

@@ -734,7 +734,7 @@
     return arr
   })
   let lastValue = $state(data?.lastValue)
-  let lastProfile = $state(data?.lastProfile)
+  let lastProfiles = $state(data?.lastProfiles)
   let lastHourSpeedPerSecond = $state(data?.lastHourSpeedPerSecond)
 
   let last7Days = $derived(
@@ -937,25 +937,22 @@
   </div>
 
   {#if lastValue}
-    <div class="mt-10 flex justify-center">
-      <a
-        href={route('bsky_profile', { handle: lastValue!.did })}
-        target="_blank"
-        class="btn btn-info text-xl"
-      >
-        Say 👋 to
-        {#if lastProfile && lastProfile.avatar}
-          <Avatar {...lastProfile} size="w-9" />
-        {:else}
-          {lastProfile?.displayName || lastProfile?.handle}
-        {/if}
-        on 🦋
-      </a>
+    <div>🐋<span class="ml-2 text-sm font-normal text-base-content/70">Newskies</span></div>
+    <div class="flex flex-wrap justify-around gap-2">
+      {#each (lastProfiles ?? []).slice(0, 5) as profile}
+        <div class="flex flex-col items-center gap-2">
+          <Avatar {...profile} size="w-20" />
+          <!-- <span class="font-mono text-xs text-primary"
+            >@{profile.handle.replaceAll('.bsky.social', '...')}</span
+          > -->
+        </div>
+      {/each}
     </div>
+
     <div class="mt-4 flex flex-col items-center gap-2">
       <div class="">Here's a welcome post example:</div>
       <div class="mockup-code relative w-full max-w-2xl bg-base-200">
-        {#if lastProfile}
+        {#if lastProfiles}
           {@const welcomeMessage = ` welcome to Bluesky! 🎉
 
 From skyzoo.blue, I saw that you just landed

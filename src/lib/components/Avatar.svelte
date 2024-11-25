@@ -3,9 +3,9 @@
 
   interface Props {
     handle: string
-    avatar: string
+    avatar: string | undefined
     displayName: string
-    size?: 'w-9' | 'w-6' | 'w-6 md:w-9'
+    size?: 'w-9' | 'w-6' | 'w-6 md:w-9' | 'w-20'
   }
 
   let { handle, displayName, avatar, size = 'w-9' }: Props = $props()
@@ -29,7 +29,7 @@
       data-tip={displayName}
       target="_blank"
     >
-      <img src={avatar} alt="{displayName} avatar" class="h-full w-full object-cover" />
+      <img src={avatar} alt="{displayName}'s avatar" class="h-full w-full object-cover" />
     </a>
   </div>
 </div>

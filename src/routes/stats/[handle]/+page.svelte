@@ -5,6 +5,7 @@
 
   import { page } from '$app/stores'
 
+  import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import Stat from '$lib/components/Stat.svelte'
   import ArrowLeft from '$lib/icons/ArrowLeft.svelte'
@@ -20,6 +21,10 @@
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
 
   let { data } = $props()
+
+  const dtFormat = (options?: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(data.locale, options)
+
   let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
   let dataApiFStarterPacks =
@@ -49,16 +54,16 @@
       })
     }
 
-    currentISOString = new Intl.DateTimeFormat(undefined, {
+    currentISOString = dtFormat({
       dateStyle: 'short',
       timeStyle: 'medium',
     }).format(new Date())
 
     pos_atproto = data.pos_atproto ? new Intl.NumberFormat().format(data.pos_atproto) : ''
     pos_bsky = data.pos_bsky ? new Intl.NumberFormat().format(data.pos_bsky) : ''
-    createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
+    createdAt = data.createdAt ? dtFormat().format(new Date(data.createdAt)) : ''
     startedToBeActiveOn = data.startedToBeActiveOn
-      ? new Intl.DateTimeFormat().format(new Date(data.startedToBeActiveOn))
+      ? dtFormat().format(new Date(data.startedToBeActiveOn))
       : ''
   })
 
@@ -172,7 +177,7 @@
   }
 
   // function getWeekStartsOnFromIntl() {
-  //   const locale = new Intl.Locale(Intl.DateTimeFormat().resolvedOptions().locale)
+  //   const locale = new Intl.Locale(dtFormat().resolvedOptions().locale)
 
   //   // @ts-expect-error
   //   const weekInfo = locale.weekInfo ?? locale.getWeekInfo?.()
@@ -317,7 +322,7 @@
   }
 
   const format = (d: Date, period: PeriodType) => {
-    return new Intl.DateTimeFormat(undefined, {
+    return dtFormat({
       year: 'numeric',
       month: 'short', // Displays the month in abbreviated form, e.g., "Nov"
       day: 'numeric',
@@ -359,13 +364,7 @@
           </div>
         </h2>
         <div class="flex flex-col items-center gap-1">
-          <a href={`https://bsky.app/profile/${data.handle}`} target="_blank">
-            <div class="avatar">
-              <div class="mask mask-hexagon w-20">
-                <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
-              </div>
-            </div>
-          </a>
+          <Avatar {...data} size="w-20" />
           <button
             class="flex flex-col items-center gap-0 rounded-lg p-1 transition-colors hover:scale-110 hover:bg-base-content/30 active:bg-base-content/20"
             onclick={() =>
@@ -643,10 +642,7 @@
           grid: { xTicks: 24, bandAlign: 'between' },
           rule: { x: false, y: false },
           xAxis: {
-            format: (d) =>
-              new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                new Date().setHours(d),
-              ),
+            format: (d) => dtFormat({ hour: '2-digit' }).format(new Date().setHours(d)),
             tickLabelProps: {
               class: 'fill-base-content/50',
             },
@@ -659,9 +655,7 @@
               if (d > 6) {
                 return ''
               }
-              return new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(
-                new Date(2024, 0, d === 0 ? 7 : d),
-              )
+              return dtFormat({ weekday: 'short' }).format(new Date(2024, 0, d === 0 ? 7 : d))
             },
             ticks: 7,
             tickLength: 0,
@@ -678,20 +672,16 @@
             <Tooltip.List>
               <Tooltip.Item
                 label="Weekday"
-                value={new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(
+                value={dtFormat({ weekday: 'long' }).format(
                   new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
                 )}
                 valueAlign="right"
               />
               <Tooltip.Item
                 label="Hour"
-                value={new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                  new Date().setHours(data.hour),
-                ) +
+                value={dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour)) +
                   ' - ' +
-                  new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                    new Date().setHours(data.hour + 1),
-                  )}
+                  dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour + 1))}
                 valueAlign="right"
               />
               <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
