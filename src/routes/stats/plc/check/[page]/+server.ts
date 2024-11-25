@@ -6,45 +6,17 @@ import { RecordPlc } from '$modules/at/RecordPlc'
 
 import type { RequestHandler } from './$types'
 
-const BATCH_SIZE = 100 // Process 100 records at a time
-const CONCURRENT_BATCHES = 5 // Run 5 batches in parallel
-const MAX_CONCURRENT_REQUESTS = 10 // Max concurrent API requests within a batch
+const CONCURRENT_LIMIT = 20 // Maximum concurrent operations
+const BATCH_SIZE = 500 // Number of records to fetch per database query
 const PROGRESS_LOG_INTERVAL = 1000 // Log progress every 1000 records
-
-async function processBatch(records: RecordPlc[], indexedAt: Date, inactiveDate: Date) {
-  // Process records in chunks to limit concurrent API requests
-  const chunks = chunk(records, MAX_CONCURRENT_REQUESTS)
-  for (const chunk of chunks) {
-    await Promise.all(
-      chunk.map(async (plc) => {
-        try {
-          const result = await checkPlcRecord(indexedAt, inactiveDate, plc)
-          if (result) {
-            await repo(RecordPlc).update(plc.did, result)
-            // console.log(`Updated ${plc.did}`)
-          }
-        } catch (error) {
-          console.error(`Failed to process DID: ${plc.did}`, error)
-        }
-      }),
-    )
-  }
-}
-
-// Helper function to split array into chunks
-function chunk<T>(array: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
-    array.slice(i * size, i * size + size),
-  )
-}
 
 const checkPlcRecord = async (indexedAt: Date, inactiveDate: Date, plc: RecordPlc) => {
   let toRet: Partial<RecordPlc> = {
     indexedAt,
   }
 
-  const pds = await didToPds(plc.did, { maxAttempts: 1 })
-  if (!pds) return { ...toRet, invalidPds: true }
+  // const pds = await didToPds(plc.did, { maxAttempts: 1 })
+  // if (!pds) return { ...toRet, invalidPds: true }
 
   try {
     const { data: profile } = await getProfile(plc.did, { maxAttempts: 1 })
@@ -80,10 +52,10 @@ const checkPlcRecord = async (indexedAt: Date, inactiveDate: Date, plc: RecordPl
     //       ? lastLike
     //       : lastPost
 
-    toRet = {
-      ...toRet,
-      // isInactive: lastDate ? lastDate < inactiveDate : true,
-    }
+    // toRet = {
+    //   ...toRet,
+    //   // isInactive: lastDate ? lastDate < inactiveDate : true,
+    // }
   } catch (error) {
     console.error(`Error processing ${plc.did}:`, error)
     // @ts-ignore
@@ -105,7 +77,6 @@ export const GET: RequestHandler = async (event) => {
   const inactiveDate = new Date(inactiveThreshold)
 
   let processedCount = 0
-  let cursor = 0
   const startTime = Date.now()
 
   // Get total count first
@@ -114,13 +85,15 @@ export const GET: RequestHandler = async (event) => {
     indexedAt: null!,
   })
 
+  // Create a queue to manage concurrent operations
+  const queue = new Set<Promise<void>>()
+
   while (true) {
     // Get next batch of records
     const plcs = await repo(RecordPlc).find({
-      limit: BATCH_SIZE * CONCURRENT_BATCHES,
+      limit: BATCH_SIZE,
       page: parseInt(event.params.page) ?? 1,
       where: {
-        // pos_bsky: 8,
         pos_bsky: { $not: null },
         indexedAt: null!,
       },
@@ -129,44 +102,62 @@ export const GET: RequestHandler = async (event) => {
 
     if (plcs.length === 0) break
 
-    // Split records into concurrent batches
-    const batches = chunk(plcs, BATCH_SIZE)
+    // Process records with controlled concurrency
+    for (const plc of plcs) {
+      // Wait if queue is at capacity
+      while (queue.size >= CONCURRENT_LIMIT) {
+        await Promise.race(queue)
+      }
 
-    // Process batches concurrently
-    await Promise.all(batches.map((batch) => processBatch(batch, indexedAt, inactiveDate)))
+      const promise = (async () => {
+        try {
+          const result = await checkPlcRecord(indexedAt, inactiveDate, plc)
+          if (result) {
+            try {
+              await repo(RecordPlc).update(plc, result)
+            } catch (error) {
+              console.log(`result`, result)
+              process.exit(1)
+            }
+          }
+          processedCount++
 
-    processedCount += plcs.length
-    cursor += plcs.length
+          // Log progress
+          if (processedCount % PROGRESS_LOG_INTERVAL === 0) {
+            const elapsedTime = Date.now() - startTime
+            const recordsPerMs = processedCount / elapsedTime
+            const remainingRecords = totalCount - processedCount
+            const estimatedRemainingTime = remainingRecords / recordsPerMs
 
-    // Calculate and log progress with time estimates
-    if (processedCount % PROGRESS_LOG_INTERVAL === 0) {
-      const elapsedTime = Date.now() - startTime
-      const recordsPerMs = processedCount / elapsedTime
-      const remainingRecords = totalCount - processedCount
-      const estimatedRemainingTime = remainingRecords / recordsPerMs
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log('')
+            console.log(
+              `Processed ${processedCount.toLocaleString()} of ${totalCount.toLocaleString()} records ` +
+                `(${((processedCount / totalCount) * 100).toFixed(2)}%) - ` +
+                `Estimated time remaining: ${formatTimeEstimate(estimatedRemainingTime)}`,
+            )
+          }
+        } catch (error) {
+          console.error(`Failed to process DID: ${plc.did}`, error)
+        } finally {
+          // @ts-ignore
+          queue.delete(promise)
+        }
+      })()
 
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log('')
-      console.log(
-        `Processed ${processedCount.toLocaleString()} of ${totalCount.toLocaleString()} records ` +
-          `(${((processedCount / totalCount) * 100).toFixed(2)}%) - ` +
-          `Estimated time remaining: ${formatTimeEstimate(estimatedRemainingTime)}`,
-      )
+      queue.add(promise)
     }
+  }
+
+  // Wait for remaining operations to complete
+  while (queue.size > 0) {
+    await Promise.race(queue)
   }
 
   const totalTime = Date.now() - startTime

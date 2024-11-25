@@ -93,6 +93,15 @@ GROUP BY specialty
 ORDER BY count DESC;
   `,
     },
+    plcSync: {
+      label: 'PLC Sync',
+      sql: `
+      SELECT distinct("indexedError"), count(("indexedError"))
+FROM "record-plcs"
+GROUP BY distinct("indexedError")
+LIMIT 50
+      `,
+    },
   } as const
 
   function setPresetQuery(queryId: keyof typeof queries) {
