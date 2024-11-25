@@ -16,11 +16,12 @@
   import { AtController } from '$modules/at/AtController.js'
 
   import RowStarterPack from '../wolf/RowStarterPack.svelte'
+  import type { PageData } from './$types'
   import JsonStyle from './JsonStyle.svelte'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
 
-  let { data } = $props()
+  let { data }: { data: PageData } = $props()
 
   const dtFormat = (options?: Intl.DateTimeFormatOptions) =>
     new Intl.DateTimeFormat(data.locale, options)
@@ -75,7 +76,7 @@
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
 
-  const description = `${data.displayName} | Stats on Bluesky, At Protocol, ...`
+  const description = `${data.displayName} | Assigns you a Bluesky animal based on your recent activity`
 
   let selection = $state(['like', 'post', 'repost'])
   const toggleSelection = (name: string) => {
@@ -334,9 +335,8 @@
 <Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
 
 <div class="flex items-center justify-between">
-  <a href={route(`/stats`)} class="btn btn-ghost">
-    <ArrowLeft />
-    Check another handle
+  <a href={route(`/stats/[handle]/squirrels`, { handle: data.handle })} class="btn btn-ghost">
+    Check your Squirrel Squad 🐿️
   </a>
   {#if currentISOString}
     <div transition:fade class="font-mono text-xl text-secondary">{currentISOString}</div>

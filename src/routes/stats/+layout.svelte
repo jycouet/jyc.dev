@@ -73,7 +73,10 @@
   <div class="container mx-auto flex-grow px-4 py-8">
     <div class="mx-auto mb-8 flex h-14 max-w-3xl text-center">
       {#if $page.url.pathname !== '/stats'}
-        <a href={route(`/stats`)} class="btn btn-ghost btn-sm absolute mt-2 w-14">
+        <a
+          href={$page.url.pathname.split('/').slice(0, -1).join('/')}
+          class="btn btn-ghost btn-sm absolute mt-2 w-14"
+        >
           <ArrowLeft />
         </a>
       {/if}

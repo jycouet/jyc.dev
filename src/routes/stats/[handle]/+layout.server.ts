@@ -11,7 +11,7 @@ import { ListItem } from '$modules/at/ListItem'
 import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 
-import type { PageServerLoad } from './$types'
+import type { LayoutServerLoad } from './$types'
 
 const log = new Log('at/[handle]/+page.server.ts')
 
@@ -39,7 +39,9 @@ export const load = (async (event) => {
     })
 
     // Don't await this
-    addStarterPack(profile.data.did)
+    if (profile.data.associated?.starterPacks) {
+      addStarterPack(profile.data.did)
+    }
 
     let createdAt = bskyty.createdAt
     let pos_atproto = bskyty.pos_atproto
@@ -163,7 +165,7 @@ export const load = (async (event) => {
       redirect(307, `/at`)
     }
   }
-}) satisfies PageServerLoad
+}) satisfies LayoutServerLoad
 
 const addStarterPack = async (did: string) => {
   const didResolver = new DidResolver({})

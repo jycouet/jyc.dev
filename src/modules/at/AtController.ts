@@ -438,7 +438,7 @@ export const calcLatestGlobalStats = async () => {
 
     const lastValues = await repo(RecordPlcStats).find({
       where: { pos_bsky: { '!=': null } },
-      limit: 10,
+      limit: 5,
     })
 
     const lastHour = await repo(RecordPlcStats).count({

@@ -10,7 +10,7 @@
   import { route } from '$lib/ROUTES'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
-  const description = 'Stats on Bluesky, At Protocol, ...'
+  const description = 'Assigns you a Bluesky animal based on your recent activity'
 
   let handle = $state('')
   let error = $state('')
