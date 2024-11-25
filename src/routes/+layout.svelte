@@ -14,11 +14,15 @@
   let { children }: Props = $props()
 
   $effect(() => {
-    posthog.init(PUBLIC_POSTHOG_KEY, {
-      // api_host: "https://eu.posthog.com",
-      api_host: `${$page.url.origin}/posthog`,
-      ui_host: 'https://eu.posthog.com',
-    })
+    if (PUBLIC_POSTHOG_KEY) {
+      posthog.init(PUBLIC_POSTHOG_KEY, {
+        // api_host: "https://eu.posthog.com",
+        api_host: `${$page.url.origin}/posthog`,
+        ui_host: 'https://eu.posthog.com',
+      })
+    } else {
+      console.info('no posthog key')
+    }
   })
 
   onNavigate((navigation) => {

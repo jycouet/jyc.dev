@@ -3,13 +3,13 @@ export const sponsors = [
     handle: 'tigur.com',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg',
-    displayName: 'Tigur',
+    displayName: 'TheTiGuR, aka Chris Simiskey ',
   },
   {
     handle: 'imlunahey.com',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
-    displayName: 'Luna',
+    displayName: 'luna',
   },
   {
     handle: 'harry-lewiston.bsky.social',

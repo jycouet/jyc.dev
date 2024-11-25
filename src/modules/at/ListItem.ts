@@ -1,8 +1,7 @@
 import { Entity, Fields, Relations } from 'remult'
 
+import { StarterPack } from '$modules/at/StarterPack'
 import { Roles } from '$modules/auth/Roles'
-
-import { StarterPack } from './StarterPack'
 
 @Entity<ListItem>('list-item', {
   allowApiRead: true,
