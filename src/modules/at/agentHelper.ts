@@ -2,12 +2,20 @@ import { Agent } from '@atproto/api'
 
 import { retries } from './helper'
 
-export const getProfile = async (cleanHandle_or_did: string) => {
+export const getProfile = async (
+  cleanHandle_or_did: string,
+  options?: { maxAttempts?: number },
+) => {
   const agent = new Agent(new URL('https://public.api.bsky.app'))
 
-  return await retries(async () => {
-    return await agent.getProfile({ actor: cleanHandle_or_did })
-  })
+  return await retries(
+    async () => {
+      return await agent.getProfile({ actor: cleanHandle_or_did })
+    },
+    {
+      maxAttempts: options?.maxAttempts ?? 6,
+    },
+  )
 }
 
 interface RateLimitInfo {

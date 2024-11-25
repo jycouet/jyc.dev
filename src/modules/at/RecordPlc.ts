@@ -42,9 +42,15 @@ export class RecordPlc extends EntityBase {
   postsCount?: number | null
   @Fields.boolean({ allowNull: true })
   isInactive?: boolean | null
+  @Fields.boolean({ allowNull: true })
+  invalidPds?: boolean | null
+  @Fields.boolean({ allowNull: true })
+  invalidHandle?: boolean | null
 
   @Fields.date({ allowNull: true })
   indexedAt?: Date | null = null
+  @Fields.string({ allowNull: true })
+  indexedError?: string | null
 
   // @Fields.json({ includeInApi: Roles.admin })
   // metadata!: {
