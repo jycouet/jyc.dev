@@ -276,12 +276,12 @@ export class AtController {
           { orderBy: { createdAt: 'desc' } },
         )
 
-        const one_weeks_ago = new Date()
-        one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
+        const three_weeks_ago = new Date()
+        three_weeks_ago.setDate(three_weeks_ago.getDate() - 7 * 3)
 
         const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
           while: (r) =>
-            new Date(r.value.createdAt) > one_weeks_ago &&
+            new Date(r.value.createdAt) > three_weeks_ago &&
             r.value.subject !== lastFollowDid?.didFollow,
         })
         const nbRequests = follows.nbRequest
@@ -329,7 +329,7 @@ export class AtController {
         // Start from current hour
         const now = new Date()
         const startDate = new Date(now)
-        startDate.setDate(startDate.getDate() - 7) // Go back 7 days
+        startDate.setDate(startDate.getDate() - 7 * 3) // Go back 7 days
 
         const followsPeriods = await repo(RecordFollow).groupBy({
           group: ['onDay'],

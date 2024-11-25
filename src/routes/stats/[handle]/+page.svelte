@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { PeriodType } from '@layerstack/utils'
   import { Area, AreaChart, LinearGradient, PieChart, ScatterChart, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
@@ -313,6 +314,15 @@
       return 'Classy company handle! 💼'
     }
     return 'Nice handle! 👋'
+  }
+
+  const format = (d: Date, period: PeriodType) => {
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric',
+      month: 'short', // Displays the month in abbreviated form, e.g., "Nov"
+      day: 'numeric',
+      hour: 'numeric',
+    }).format(d)
   }
 </script>
 
@@ -703,7 +713,7 @@
     <div class="card bg-base-300 p-4">
       <div class="flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">
-          Following <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
+          Following <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
         </h3>
         <div class="stat-value text-primary">
           {#if dataApiFollows}
@@ -749,6 +759,25 @@
                 fill={url}
               />
             </LinearGradient>
+          </svelte:fragment>
+          <svelte:fragment slot="tooltip">
+            <Tooltip.Root let:data>
+              <Tooltip.Header>{format(data.timestamp, PeriodType.Day)}</Tooltip.Header>
+              <Tooltip.List>
+                <!-- <Tooltip.Item
+              label="Day"
+              format="integer"
+              value={data.rawCount.toLocaleString()}
+              valueAlign="right"
+            /> -->
+                <Tooltip.Item
+                  label="Total"
+                  format="integer"
+                  value={data.count.toLocaleString()}
+                  valueAlign="right"
+                />
+              </Tooltip.List>
+            </Tooltip.Root>
           </svelte:fragment>
         </AreaChart>
       </div>

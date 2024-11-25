@@ -101,7 +101,7 @@ export class AgentController {
 
     const execTime = Math.round(performance.now() - startTime)
 
-    log.info(execTime)
+    log.info(`Execution time: ${(execTime / 1000).toFixed(2)}s`)
 
     return {
       nbFollowers,
