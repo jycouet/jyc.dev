@@ -26,6 +26,7 @@ export class AgentController {
     }
 
     sponsors.push({ handle: 'jyc.dev', avatar: '', displayName: 'jyc' })
+    sponsors.push({ handle: 'elouan.xyz', avatar: '', displayName: 'Elouan Grimm' })
     if (!sponsors.some((s) => s.handle === handle)) {
       return {
         nbFollowers: profile.data.followersCount,

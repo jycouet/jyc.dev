@@ -56,14 +56,16 @@ export default defineConfig({
           `export const sponsors = [`,
           sponsorsData
             .map((sponsor) => {
-              return `{
-  handle: '${sponsor.data.handle}',
-  avatar: '${sponsor.data.avatar}',
-  displayName: '${sponsor.data.displayName}',
-}`
+              return `  {
+    handle: '${sponsor.data.handle}',
+    avatar:
+      '${sponsor.data.avatar}',
+    displayName: '${sponsor.data.displayName}',
+  }`
             })
             .join(',\n'),
           `]`,
+          '',
         ])
       },
     },
