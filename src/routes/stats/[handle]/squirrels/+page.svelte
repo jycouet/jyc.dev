@@ -96,7 +96,11 @@
         <div class="grid grid-cols-2 justify-items-center">
           {#each dataApi?.before ?? defaultMembers as member, i}
             <div class={i === 0 ? 'col-span-2' : i === 1 || i === 2 ? '-mt-4' : '-ml-16 -mt-4'}>
-              <Avatar {...member} size="w-16 md:w-20" />
+              <Avatar
+                {...member}
+                size="w-16 md:w-20"
+                linkToSkyzooSquad={$LSContext.linkToSkyzooSquad}
+              />
             </div>
           {/each}
         </div>
