@@ -3,6 +3,7 @@
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import ScreenshotDownload from '$lib/components/ScreenshotDownload.svelte'
+  import { LSContext } from '$lib/stores/LSContext'
   import { AtController } from '$modules/at/AtController'
 
   import JsonStyle from '../JsonStyle.svelte'
@@ -101,7 +102,7 @@
         </div>
 
         <div class="-mx-8 -mt-4 md:-mt-8">
-          <Avatar {...data} size="w-20 md:w-28" />
+          <Avatar {...data} size="w-20 md:w-28" linkToSkyzooSquad={$LSContext.linkToSkyzooSquad} />
           <div class="mt-12 text-center text-4xl md:mt-20">🐿️</div>
         </div>
 
@@ -110,7 +111,11 @@
             <div
               class={`${i === 0 ? 'col-span-2' : i === 1 || i === 2 ? '-mt-4' : '-mr-16 -mt-4'} ${i === 3 && dataApi?.after.length === 4 ? 'col-start-2' : ''} ${i === 1 && dataApi?.after.length === 2 ? 'col-start-2' : ''}`}
             >
-              <Avatar {...member} size="w-16 md:w-20" />
+              <Avatar
+                {...member}
+                size="w-16 md:w-20"
+                linkToSkyzooSquad={$LSContext.linkToSkyzooSquad}
+              />
             </div>
           {/each}
         </div>
@@ -183,5 +188,19 @@
     {:else}
       <div class="skeleton h-6 w-44"></div>
     {/if}
+  </div>
+
+  <div class="mt-8 flex flex-col items-center gap-2 pr-4">
+    <p class="text-xs text-base-content/60">Avatar links to</p>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-info">Bluesky profile</span>
+      <input
+        type="checkbox"
+        class="toggle toggle-primary"
+        bind:checked={$LSContext.linkToSkyzooSquad}
+        title="Toggle between linking to Bluesky profiles or Skyzoo squad pages"
+      />
+      <span class="text-sm text-primary">Skyzoo squad</span>
+    </div>
   </div>
 </div>
