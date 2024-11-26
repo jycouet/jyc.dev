@@ -41,7 +41,7 @@
     id="download-btn"
     {disabled}
     onclick={() => screenshotDownload(document, id, filename)}
-    class="btn btn-square btn-primary btn-sm"><Download /></button
+    class="btn btn-square btn-ghost"><Download /></button
   >
   &nbsp;
 </div>
