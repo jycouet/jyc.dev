@@ -66,9 +66,10 @@
   let hrefShare = $derived(
     createBSkyIntent([
       `Squirrel Squad #${data.pos_bsky} 🐿️`,
-      `${dataApi?.before.map((m) => `@${m.handle}`).join(' ')} ${dataApi?.after
+      `${dataApi?.before
+        .toReversed()
         .map((m) => `@${m.handle}`)
-        .join(' ')}`,
+        .join(' ')} ${dataApi?.after.map((m) => `@${m.handle}`).join(' ')}`,
       '',
       'Squad created on the same minute in 🦋',
       `👉 https://skyzoo.blue/stats/${data.handle}/squirrels`,
