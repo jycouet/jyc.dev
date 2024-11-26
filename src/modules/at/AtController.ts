@@ -1,5 +1,6 @@
 import { BackendMethod, repo } from 'remult'
 
+import { fetchImageAsBase64 } from '$lib'
 import { getProfile } from '$modules/at/agentHelper'
 import { determineCategory } from '$modules/at/determineCategory'
 import { didToPds, listRecordsAll, parseUri } from '$modules/at/helper'
@@ -429,7 +430,11 @@ export class AtController {
       followsCount: number
       postsCount: number
     }
-    function mapSquad(record: RecordPlc, profile: any): Squad {
+    async function mapSquad(record: RecordPlc, profile: any): Promise<Squad> {
+      if (profile.data.avatar) {
+        profile.data.avatar = `data:image/jpeg;base64,${await fetchImageAsBase64(profile.data.avatar)}`
+      }
+
       return {
         pos_bsky: record.pos_bsky!,
         handle: profile.data.handle,
@@ -473,7 +478,7 @@ export class AtController {
 
           if (!minimumRequirements(profile.data)) continue
 
-          squad.push(mapSquad(record, profile))
+          squad.push(await mapSquad(record, profile))
         }
         return squad
       })(),
@@ -505,7 +510,7 @@ export class AtController {
 
           if (!minimumRequirements(profile.data)) continue
 
-          squad.push(mapSquad(record, profile))
+          squad.push(await mapSquad(record, profile))
         }
         return squad
       })(),

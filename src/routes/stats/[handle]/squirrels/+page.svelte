@@ -1,5 +1,5 @@
 <script lang="ts">
-  // import { toPng } from 'html-to-image'
+  import { toPng } from 'html-to-image'
 
   import og from '$lib/assets/og-squirrel.png'
   import Avatar from '$lib/components/Avatar.svelte'
@@ -40,21 +40,21 @@
     })
   })
 
-  // async function download() {
-  //   const el = document.querySelector('#squad')
-  //   if (!el) return
+  async function download() {
+    const el = document.querySelector('#squad')
+    if (!el) return
 
-  //   toPng(el as HTMLElement, { cacheBust: true })
-  //     .then((dataUrl) => {
-  //       const link = document.createElement('a')
-  //       link.download = `Squad_${data.pos_bsky}.png`
-  //       link.href = dataUrl
-  //       link.click()
-  //     })
-  //     .catch((err) => {
-  //       console.error(err)
-  //     })
-  // }
+    toPng(el as HTMLElement, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement('a')
+        link.download = `Squad_${data.pos_bsky}.png`
+        link.href = dataUrl
+        link.click()
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
 
   // TODO: fix this one day!
   // https://github.com/bluesky-social/social-app/issues/6133
@@ -66,7 +66,7 @@
 
   let hrefShare = $derived(
     createBSkyIntent([
-      `Squirrel Squad #${data.pos_bsky} 🐿️`,
+      `#SquirrelSquad #${data.pos_bsky} 🐿️`,
       `${dataApi?.before
         .toReversed()
         .map((m) => `@${m.handle}`)
@@ -187,11 +187,12 @@
     </div>
   </div>
 
-  <div class="mt-4 flex justify-center gap-4">
+  <div class="mt-4 flex items-center justify-center gap-4">
+    <button disabled={!dataApi} onclick={download} class="btn btn-primary">Download Image</button>
     {#if dataApi}
       <a href={hrefShare} class="link link-info"> Share your Squad on 🦋 </a>
     {:else}
-      <div class="skeleton h-6 w-52"></div>
+      <div class="skeleton h-6 w-44"></div>
     {/if}
   </div>
 </div>

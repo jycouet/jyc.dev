@@ -4,6 +4,7 @@ import { redirect } from '@sveltejs/kit'
 import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
+import { fetchImageAsBase64 } from '$lib'
 import { getProfile } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
@@ -141,11 +142,16 @@ export const load = (async (event) => {
       }
     }
 
+    let avatar = profile.data.avatar
+    if (avatar) {
+      avatar = `data:image/jpeg;base64,${await fetchImageAsBase64(avatar)}`
+    }
+
     return {
       did: profile.data.did,
       handle: profile.data.handle,
       displayName: profile.data.displayName || profile.data.handle,
-      avatar: profile.data.avatar,
+      avatar,
       description: profile.data.description || '',
       pos_atproto,
       pos_bsky,
