@@ -23,18 +23,24 @@
 </script>
 
 <div class="avatar">
-  <div class="mask mask-hexagon {size}" title={displayName}>
-    <a
-      href={route(`bsky_profile`, { handle })}
-      class="tooltip"
-      data-tip={displayName}
-      target="_blank"
-    >
-      <img
-        src={avatar || avatarDefault}
-        alt="{displayName}'s avatar"
-        class="h-full w-full object-cover"
-      />
-    </a>
-  </div>
+  {#if handle}
+    <div class="mask mask-hexagon {size}" title={displayName}>
+      <a
+        href={route(`bsky_profile`, { handle })}
+        class="tooltip"
+        data-tip={displayName}
+        target="_blank"
+      >
+        <img
+          src={avatar || avatarDefault}
+          alt="{displayName}'s avatar"
+          class="h-full w-full object-cover"
+        />
+      </a>
+    </div>
+  {:else}
+    <div class="mask mask-hexagon {size}">
+      <div class="skeleton h-full w-full"></div>
+    </div>
+  {/if}
 </div>
