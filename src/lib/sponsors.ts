@@ -40,5 +40,5 @@ export const sponsors = [
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
     displayName: 'Ada Szpilka',
-  }
+  },
 ]

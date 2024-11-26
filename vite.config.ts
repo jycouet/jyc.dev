@@ -63,7 +63,7 @@ export default defineConfig({
     displayName: '${sponsor.data.displayName}',
   }`
             })
-            .join(',\n'),
+            .join(',\n') + ',',
           `]`,
           '',
         ])

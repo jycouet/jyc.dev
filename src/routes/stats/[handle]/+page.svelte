@@ -8,6 +8,7 @@
   import og from '$lib/assets/og-punches.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
+  import ScreenshotDownload from '$lib/components/ScreenshotDownload.svelte'
   import Stat from '$lib/components/Stat.svelte'
   import Heart from '$lib/icons/Heart.svelte'
   import Repost from '$lib/icons/Repost.svelte'
@@ -457,86 +458,91 @@
     </div>
   </div>
 
-  <div class="card bg-base-300 p-4">
-    <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
-      </h3>
-      {#if dataApi}
-        <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
-      {:else}
-        <div class="skeleton h-7 w-32 bg-base-200"></div>
-      {/if}
-    </div>
-
-    <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
-      <div class="flex h-[250px] w-full flex-col items-center gap-2">
-        <PieChart
-          data={kindOfPost}
-          key="key"
-          value="value"
-          range={[-90, 90]}
-          innerRadius={-20}
-          cornerRadius={7}
-          padAngle={0.02}
-          props={{ group: { y: 0 }, pie: { sort: null, tweened: true }, arc: { tweened: true } }}
-          padding={{ bottom: -100 }}
-          cRange={dataApi
-            ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
-            : ['oklch(var(--n))']}
-        ></PieChart>
-        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
-        <div
-          class="absolute mt-14 text-center text-3xl sm:mt-20 {dataApi?.altPercentage === 100
-            ? 'drop-shadow-[0_0_20px_rgba(234,179,8,1)]'
-            : ''} "
-        >
-          {dataApi?.category?.emoji ?? '💡'}
-        </div>
-        <div class="mb-4 flex w-full flex-col items-center gap-2">
-          {#if dataApi}
-            <h4 class="z-10 -mx-4 text-center text-xl font-bold text-primary">
-              {dataApi?.category?.title ?? '...'}
-            </h4>
-            <p class="z-10 text-center text-sm text-base-content/70">
-              {dataApi?.category?.traits}
-            </p>
-          {:else}
-            <div class="z-10 text-center text-xl font-bold text-primary">
-              <div class="skeleton h-8 w-48 bg-base-200"></div>
-            </div>
-            <div class="z-10 text-center text-sm text-base-content/70">
-              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
-              <div class="skeleton mx-auto mb-2 h-3 w-72 bg-base-200"></div>
-              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
-              <div class="skeleton mx-auto h-3 w-10 bg-base-200"></div>
-            </div>
-          {/if}
-        </div>
+  <div id="insights">
+    <div class="card bg-base-300 p-4">
+      <div class="mb-6 flex items-start justify-between">
+        <h3 class="mb-4 text-lg font-bold">
+          Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
+        </h3>
+        <ScreenshotDownload id="#insights" filename="Insights.png" disabled={!dataApi} />
+        {#if dataApi}
+          <a class="link link-secondary w-28" href={hrefShare} target="_blank"> Share it on 🦋 </a>
+        {:else}
+          <div class="skeleton h-7 w-28 bg-base-200"></div>
+        {/if}
       </div>
-      <div class="h-[250px] w-full">
-        {#if kindOfEmbed.length > 0}
+
+      <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
+        <div class="flex h-[250px] w-full flex-col items-center gap-2">
           <PieChart
-            data={kindOfEmbed}
-            cRange={dataApi
-              ? dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))
-              : ['oklch(var(--n))']}
-            key="kind"
-            value="count"
+            data={kindOfPost}
+            key="key"
+            value="value"
+            range={[-90, 90]}
             innerRadius={-20}
             cornerRadius={7}
             padAngle={0.02}
-            props={{ pie: { tweened: true } }}
+            props={{ group: { y: 0 }, pie: { sort: null, tweened: true }, arc: { tweened: true } }}
+            padding={{ bottom: -100 }}
+            cRange={dataApi
+              ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
+              : ['oklch(var(--n))']}
           ></PieChart>
-          <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
-        {:else if dataApi}
+          <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
           <div
-            class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
+            class="absolute mt-14 text-center text-3xl sm:mt-20 {dataApi?.altPercentage === 100
+              ? 'drop-shadow-[0_0_20px_rgba(234,179,8,1)]'
+              : ''} "
           >
-            <span class="text-lg">No posts yet...</span>
-            <span class="text-sm">Add something and come back! 😉</span>
+            {dataApi?.category?.emoji ?? '💡'}
           </div>
-        {/if}
+          <div class="mb-4 flex w-full flex-col items-center gap-2">
+            {#if dataApi}
+              <h4 class="z-10 -mx-4 text-center text-xl font-bold text-primary">
+                {dataApi?.category?.title ?? '...'}
+              </h4>
+              <p class="z-10 text-center text-sm text-base-content/70">
+                {dataApi?.category?.traits}
+              </p>
+            {:else}
+              <div class="z-10 text-center text-xl font-bold text-primary">
+                <div class="skeleton h-8 w-48 bg-base-200"></div>
+              </div>
+              <div class="z-10 text-center text-sm text-base-content/70">
+                <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+                <div class="skeleton mx-auto mb-2 h-3 w-72 bg-base-200"></div>
+                <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+                <div class="skeleton mx-auto h-3 w-10 bg-base-200"></div>
+              </div>
+            {/if}
+          </div>
+        </div>
+        <div class="h-[250px] w-full">
+          {#if kindOfEmbed.length > 0}
+            <PieChart
+              data={kindOfEmbed}
+              cRange={dataApi
+                ? dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))
+                : ['oklch(var(--n))']}
+              key="kind"
+              value="count"
+              innerRadius={-20}
+              cornerRadius={7}
+              padAngle={0.02}
+              props={{ pie: { tweened: true } }}
+            ></PieChart>
+            <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
+              Kind of content
+            </div>
+          {:else if dataApi}
+            <div
+              class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
+            >
+              <span class="text-lg">No posts yet...</span>
+              <span class="text-sm">Add something and come back! 😉</span>
+            </div>
+          {/if}
+        </div>
       </div>
     </div>
   </div>
@@ -572,6 +578,7 @@
       icon={Repost}
     />
   </div>
+
   <div class="card bg-base-300 p-4">
     <div class="mb-6 flex items-start justify-between">
       <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">

@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { toPng } from 'html-to-image'
-
   import og from '$lib/assets/og-squirrel.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
-  import Download from '$lib/icons/Download.svelte'
+  import ScreenshotDownload from '$lib/components/ScreenshotDownload.svelte'
   import { AtController } from '$modules/at/AtController'
 
   import JsonStyle from '../JsonStyle.svelte'
@@ -40,31 +38,6 @@
       // score = Math.round(((postsCount ?? 0) * 3 + normalizedFollows) / followersFactor)
     })
   })
-
-  async function download() {
-    const el = document.querySelector('#squad')
-    if (!el) return
-
-    // @ts-ignore
-    el.style.padding = '1rem'
-    // @ts-ignore
-    el.style.backgroundColor = '#4ca2fe'
-
-    toPng(el as HTMLElement, { cacheBust: true })
-      .then((dataUrl) => {
-        // @ts-ignore
-        el.style.padding = '0rem'
-        // @ts-ignore
-        el.style.backgroundColor = 'transparent'
-        const link = document.createElement('a')
-        link.download = `Squad_${data.pos_bsky}.png`
-        link.href = dataUrl
-        link.click()
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }
 
   // TODO: fix this one day!
   // https://github.com/bluesky-social/social-app/issues/6133
@@ -116,7 +89,8 @@
       <div class="mockup-browser-toolbar">
         <div class="input">skyzoo.blue</div>
       </div> -->
-    <div class="card bg-base-300 p-4 pt-8 md:pt-12">
+    <div class="card bg-base-300 p-3 md:p-5">
+      <ScreenshotDownload disabled={!dataApi} id="#squad" filename={`Squad_${data.pos_bsky}.png`} />
       <div class="flex items-start justify-center">
         <div class="grid grid-cols-2 justify-items-center">
           {#each dataApi?.before ?? defaultMembers as member, i}
@@ -204,9 +178,6 @@
   </div>
 
   <div class="mt-4 flex items-center justify-center gap-4">
-    <button disabled={!dataApi} onclick={download} class="btn btn-primary"
-      ><Download /> Image</button
-    >
     {#if dataApi}
       <a href={hrefShare} class="link link-info"> Share your Squad on 🦋 </a>
     {:else}
