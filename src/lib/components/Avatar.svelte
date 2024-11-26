@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Shine, Tilt } from 'svelte-ux'
-
   import avatarDefault from '$lib/assets/avatar-default.jpg'
   import { route } from '$lib/ROUTES'
 
@@ -36,26 +34,11 @@
         data-tip={displayName}
         target="_blank"
       >
-        <Shine
-          lightColor={linkToSkyzooSquad ? '#ff865b' : '#1582ef'}
-          lightRadius={200}
-          specularConstant={0.5}
-          surfaceScale={10}
-        >
-          <Tilt class="transition duration-500 hover:scale-110">
-            <!-- <img
-            src={image}
-            width="180px"
-            class="transition ease-out"
-            alt="example {i}"
-          /> -->
-            <img
-              src={avatar || avatarDefault}
-              alt="{displayName}'s avatar"
-              class="h-full w-full object-cover transition ease-out"
-            />
-          </Tilt>
-        </Shine>
+        <img
+          src={avatar || avatarDefault}
+          alt="{displayName}'s avatar"
+          class="h-full w-full object-cover duration-500 ease-out hover:scale-110"
+        />
       </a>
     </div>
   {:else}
