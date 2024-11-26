@@ -4,6 +4,7 @@
   import { Area, AreaChart, Brush, LinearGradient, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
+  import og from '$lib/assets/og-whale.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
@@ -778,7 +779,7 @@
   }
 </script>
 
-<Og title="Sky Zoo - Whale Stats" {description} />
+<Og title="Sky Zoo - Whale Stats" {description} {og} />
 
 <div class="flex flex-col gap-8">
   <h2 class="flex items-end justify-between gap-2 text-2xl font-bold">

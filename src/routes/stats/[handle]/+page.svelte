@@ -5,6 +5,7 @@
 
   import { page } from '$app/stores'
 
+  import og from '$lib/assets/og-punches.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import Stat from '$lib/components/Stat.svelte'
@@ -332,7 +333,7 @@
   }
 </script>
 
-<Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
+<Og title={`${data.displayName} | Sky Zoo - Stats`} {description} {og} />
 
 <div class="flex items-center justify-between">
   <a href={route(`/stats/[handle]/squirrels`, { handle: data.handle })} class="btn btn-ghost">

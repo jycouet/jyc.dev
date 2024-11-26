@@ -1,6 +1,7 @@
 <script lang="ts">
   // import { toPng } from 'html-to-image'
 
+  import og from '$lib/assets/og-squirrel.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { AtController } from '$modules/at/AtController'
@@ -88,6 +89,7 @@
 <Og
   title={`${data.displayName} | Squirrel Squad`}
   description={`Here you'll find your Bluesky neighbors, users who registered around the same time as you!`}
+  {og}
 />
 
 <div class="mb-8 flex flex-col gap-4">

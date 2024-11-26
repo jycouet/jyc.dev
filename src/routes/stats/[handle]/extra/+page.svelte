@@ -6,6 +6,8 @@
 
   import { page } from '$app/stores'
 
+  import og from '$lib/assets/og-punches.png'
+  import Og from '$lib/components/Og.svelte'
   import { AgentController } from '$modules/at/AgentController'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -58,7 +60,11 @@
       hour: 'numeric',
     }).format(d)
   }
+
+  const description = `Assigns you a Bluesky animal based on your recent activity`
 </script>
+
+<Og title={`Sky Zoo - Stats`} {description} {og} />
 
 <div class="card bg-base-300 p-4">
   <div class="flex items-start justify-between">

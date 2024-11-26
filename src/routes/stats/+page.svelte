@@ -7,6 +7,7 @@
   import { goto } from '$app/navigation'
 
   import Og from '$lib/components/Og.svelte'
+  import og from '$lib/assets/og-insights.png'
   import { route } from '$lib/ROUTES'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
 
@@ -98,7 +99,7 @@
   }
 </script>
 
-<Og title="Sky Zoo" {description} />
+<Og title="Sky Zoo" {description} og={} />
 
 <div class="flex flex-col gap-28">
   <div class="grid grid-cols-1 items-end gap-8">

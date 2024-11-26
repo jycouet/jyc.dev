@@ -1,6 +1,7 @@
 <script lang="ts">
   import { queryParameters } from 'sveltekit-search-params'
 
+  import og from '$lib/assets/og-wolf.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
@@ -56,7 +57,7 @@
   const description = 'Looking for a starter pack? Here you go!'
 </script>
 
-<Og title="Sky Zoo - Starter Packs Browser" {description} />
+<Og title="Sky Zoo - Starter Packs Browser" {description} {og} />
 
 <div class="container mx-auto space-y-4">
   <div class="relative mb-8">

@@ -2,13 +2,21 @@
   import { page } from '$app/stores'
 
   import fav from '$lib/assets/favicon.svg'
-  import og from '$lib/assets/og.png'
+
+  // import og from '$lib/assets/og.png'
+
+  interface Props {
+    title: string
+    description: string
+    og: string
+  }
 
   const {
     //
     title = 'jyc.dev',
     description = 'A place where I share my thoughts...',
-  } = $props()
+    og,
+  }: Props = $props()
 
   let canonicalUrl = $derived(`${$page.url.origin}${$page.url.pathname}`)
 </script>

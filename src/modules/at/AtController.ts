@@ -409,6 +409,7 @@ export class AtController {
     const minimumRequirements = (profileData: Awaited<ReturnType<typeof getProfile>>['data']) => {
       // console.log(`profile.data`, profileData)
       const labelValues = (profileData.labels ?? []).map((c) => c.val)
+
       const toExclude = ['porn', 'nsfw', 'adult']
       return (
         !labelValues.some((label) => toExclude.includes(label)) &&
