@@ -336,7 +336,7 @@
 
 <div class="flex items-center justify-between">
   <a href={route(`/stats/[handle]/squirrels`, { handle: data.handle })} class="btn btn-ghost">
-    Check your Squirrel Squad 🐿️
+    Check Squirrel Squad 🐿️
   </a>
   {#if currentISOString}
     <div transition:fade class="font-mono text-xl text-secondary">{currentISOString}</div>

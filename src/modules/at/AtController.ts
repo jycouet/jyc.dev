@@ -406,12 +406,13 @@ export class AtController {
 
   @BackendMethod({ allowed: true })
   static async getSquirrelSquad(pos_bsky: number) {
-    const minimumRequirements = (profileData: {
-      postsCount?: number
-      followersCount?: number
-      followsCount?: number
-    }) => {
+    const minimumRequirements = (profileData: Awaited<ReturnType<typeof getProfile>>['data']) => {
+      // console.log(`profile.data`, profileData)
+      const labelValues = (profileData.labels ?? []).map((c) => c.val)
+      const toExclude = ['porn', 'nsfw', 'adult']
       return (
+        !labelValues.some((label) => toExclude.includes(label)) &&
+        (profileData.postsCount ?? 0) >= 1 &&
         (profileData.postsCount ?? 0) >= 1 &&
         (profileData.followersCount || 0) >= 10 &&
         (profileData.followsCount || 0) >= 10
@@ -427,7 +428,7 @@ export class AtController {
       followsCount: number
       postsCount: number
     }
-    function getSquad(record: RecordPlc, profile: any): Squad {
+    function mapSquad(record: RecordPlc, profile: any): Squad {
       return {
         pos_bsky: record.pos_bsky!,
         handle: profile.data.handle,
@@ -438,6 +439,10 @@ export class AtController {
         postsCount: profile.data.postsCount,
       }
     }
+
+    // TODO: reduce this number once we have the invalid handle in palce
+    const SQUAD_SIDE_DB = 86
+    const SQUAD_SIDE = 5
 
     const [before, after] = await Promise.all([
       // Get and process records before pos_bsky
@@ -451,15 +456,15 @@ export class AtController {
             },
           },
           orderBy: { pos_bsky: 'desc' },
-          limit: 25, // Reasonable limit to avoid too many checks
+          limit: SQUAD_SIDE_DB, // Reasonable limit to avoid too many checks
         })
 
         for (const record of beforeRecords) {
-          if (squad.length >= 5) break
+          if (squad.length >= SQUAD_SIDE) break
 
           let profile
           try {
-            profile = await getProfile(record.did)
+            profile = await getProfile(record.did, { maxAttempts: 3 })
             if (!profile) continue
           } catch (error) {
             continue
@@ -467,7 +472,7 @@ export class AtController {
 
           if (!minimumRequirements(profile.data)) continue
 
-          squad.unshift(getSquad(record, profile))
+          squad.push(mapSquad(record, profile))
         }
         return squad
       })(),
@@ -483,15 +488,15 @@ export class AtController {
             },
           },
           orderBy: { pos_bsky: 'asc' },
-          limit: 25, // Reasonable limit to avoid too many checks
+          limit: SQUAD_SIDE_DB, // Reasonable limit to avoid too many checks
         })
 
         for (const record of afterRecords) {
-          if (squad.length >= 5) break
+          if (squad.length >= SQUAD_SIDE) break
 
           let profile
           try {
-            profile = await getProfile(record.did)
+            profile = await getProfile(record.did, { maxAttempts: 3 })
             if (!profile) continue
           } catch (error) {
             continue
@@ -499,7 +504,7 @@ export class AtController {
 
           if (!minimumRequirements(profile.data)) continue
 
-          squad.push(getSquad(record, profile))
+          squad.push(mapSquad(record, profile))
         }
         return squad
       })(),

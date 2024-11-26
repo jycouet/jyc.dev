@@ -40,7 +40,7 @@
     </div>
   {:else}
     <div class="mask mask-hexagon {size}">
-      <div class="skeleton h-full w-full"></div>
+      <div class="skeleton h-full w-full bg-primary/10"></div>
     </div>
   {/if}
 </div>
