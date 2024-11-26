@@ -7,7 +7,6 @@
   import og from '$lib/assets/og-whale.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
-  import { route } from '$lib/ROUTES'
   import { type LatestGlobalStats } from '$modules/at/AtController'
 
   const description = 'Global statistics on Bluesky usage'

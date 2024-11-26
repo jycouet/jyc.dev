@@ -9,7 +9,6 @@
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import Stat from '$lib/components/Stat.svelte'
-  import ArrowLeft from '$lib/icons/ArrowLeft.svelte'
   import Heart from '$lib/icons/Heart.svelte'
   import Repost from '$lib/icons/Repost.svelte'
   import Send from '$lib/icons/Send.svelte'

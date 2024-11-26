@@ -2,12 +2,9 @@
   import { queryParameters } from 'sveltekit-search-params'
 
   import og from '$lib/assets/og-wolf.png'
-  import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
   import { containsWords } from '$lib/remultHelper'
-  import { route } from '$lib/ROUTES'
-  import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
   import RowStarterPack from './RowStarterPack.svelte'
@@ -40,7 +37,7 @@
       paginator.load({})
     } else {
       clearTimeout(debounceTimer)
-      console.log('debounce')
+      console.info('debounce')
       debounceTimer = setTimeout(() => {
         paginator.load({
           $or: [

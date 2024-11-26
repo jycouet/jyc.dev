@@ -5,10 +5,9 @@ import { BackendMethod, repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { sponsors } from '$lib/sponsors'
-import { Roles } from '$modules/auth/Roles'
 
 import { getProfile } from './agentHelper'
-import { didToPds, listRecordsAll, parseUri } from './helper'
+import { didToPds, listRecordsAll } from './helper'
 import { RecordFollow } from './RecordFollow'
 import { RecordFollower } from './RecordFollower'
 
@@ -114,13 +113,13 @@ let globalcount = 0
 const getFollows = async (did: string, didFollow: string) => {
   const alreadyInDb = await repo(RecordFollower).findFirst({ did, didFollow })
   if (alreadyInDb) {
-    console.log(`alreadyInDb`, alreadyInDb.createdAt)
+    console.info(`alreadyInDb`, alreadyInDb.createdAt)
     return alreadyInDb.createdAt
   }
 
   const alreadyInDb2 = await repo(RecordFollow).findFirst({ did, didFollow })
   if (alreadyInDb2) {
-    console.log(`alreadyInDb2 GREAT`, alreadyInDb2.createdAt)
+    console.info(`alreadyInDb2 GREAT`, alreadyInDb2.createdAt)
     await repo(RecordFollower).upsert({
       where: {
         did,
@@ -144,7 +143,7 @@ const getFollows = async (did: string, didFollow: string) => {
       })
 
       globalcount += follows.nbRequest
-      console.log(`nbRequest`, follows.nbRequest, globalcount)
+      console.info(`nbRequest`, follows.nbRequest, globalcount)
       const follow = follows.records[follows.records.length - 1]
       const ins = await repo(RecordFollower).upsert({
         where: {
@@ -199,7 +198,7 @@ const sidequest = async (followers: ProfileView[], didFollow: string) => {
       const promise = (async () => {
         try {
           const result = await getFollows(follower.did, didFollow)
-          console.log(`Finished ${index + 1}/${followers.length}`)
+          console.info(`Finished ${index + 1}/${followers.length}`)
           results.push(result)
         } catch (error) {
           console.error(`Error getting follows for ${follower.did}:`, error)
