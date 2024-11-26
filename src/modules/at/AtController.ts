@@ -418,66 +418,92 @@ export class AtController {
       )
     }
 
-    type Squad = { pos_bsky: number; handle: string; displayName: string; avatar: string }
+    type Squad = {
+      pos_bsky: number
+      handle: string
+      displayName: string
+      avatar: string
+      followersCount: number
+      followsCount: number
+      postsCount: number
+    }
     function getSquad(record: RecordPlc, profile: any): Squad {
       return {
         pos_bsky: record.pos_bsky!,
         handle: profile.data.handle,
         displayName: profile.data.displayName || profile.data.handle,
         avatar: profile.data.avatar ?? '',
+        followersCount: profile.data.followersCount,
+        followsCount: profile.data.followsCount,
+        postsCount: profile.data.postsCount,
       }
     }
 
-    const before: Squad[] = []
+    const [before, after] = await Promise.all([
+      // Get and process records before pos_bsky
+      (async () => {
+        const squad: Squad[] = []
+        const beforeRecords = await repo(RecordPlc).find({
+          where: {
+            pos_bsky: {
+              $lt: pos_bsky,
+              '!=': null,
+            },
+          },
+          orderBy: { pos_bsky: 'desc' },
+          limit: 25, // Reasonable limit to avoid too many checks
+        })
 
-    // Get records before pos_bsky
-    let beforeRecords = await repo(RecordPlc).find({
-      where: {
-        pos_bsky: {
-          $lt: pos_bsky,
-          '!=': null,
-        },
-      },
-      orderBy: { pos_bsky: 'desc' },
-      limit: 20, // Reasonable limit to avoid too many checks
-    })
-    // Process records before current position
-    for (const record of beforeRecords) {
-      if (before.length >= 3) break
+        for (const record of beforeRecords) {
+          if (squad.length >= 5) break
 
-      const profile = await getProfile(record.did)
-      if (!profile) continue
+          let profile
+          try {
+            profile = await getProfile(record.did)
+            if (!profile) continue
+          } catch (error) {
+            continue
+          }
 
-      if (!minimumRequirements(profile.data)) continue
+          if (!minimumRequirements(profile.data)) continue
 
-      before.unshift(getSquad(record, profile))
-    }
+          squad.unshift(getSquad(record, profile))
+        }
+        return squad
+      })(),
 
-    const after: Squad[] = []
+      // Get and process records after pos_bsky
+      (async () => {
+        const squad: Squad[] = []
+        const afterRecords = await repo(RecordPlc).find({
+          where: {
+            pos_bsky: {
+              $gt: pos_bsky,
+              '!=': null,
+            },
+          },
+          orderBy: { pos_bsky: 'asc' },
+          limit: 25, // Reasonable limit to avoid too many checks
+        })
 
-    // Get records after pos_bsky
-    let afterRecords = await repo(RecordPlc).find({
-      where: {
-        pos_bsky: {
-          $gt: pos_bsky,
-          '!=': null,
-        },
-      },
-      orderBy: { pos_bsky: 'asc' },
-      limit: 20, // Reasonable limit to avoid too many checks
-    })
+        for (const record of afterRecords) {
+          if (squad.length >= 5) break
 
-    // Process records after current position
-    for (const record of afterRecords) {
-      if (after.length >= 3) break
+          let profile
+          try {
+            profile = await getProfile(record.did)
+            if (!profile) continue
+          } catch (error) {
+            continue
+          }
 
-      const profile = await getProfile(record.did)
-      if (!profile) continue
+          if (!minimumRequirements(profile.data)) continue
 
-      if (!minimumRequirements(profile.data)) continue
-
-      after.push(getSquad(record, profile))
-    }
+          squad.push(getSquad(record, profile))
+        }
+        return squad
+      })(),
+    ])
 
     return { before, after }
   }

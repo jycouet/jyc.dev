@@ -6,7 +6,7 @@
     handle: string
     avatar: string | undefined
     displayName: string
-    size?: 'w-9' | 'w-6' | 'w-6 md:w-9' | 'w-20' | 'w-28'
+    size?: 'w-9' | 'w-6' | 'w-6 md:w-9' | 'w-20' | 'w-16 md:w-20' | 'w-20 md:w-28'
   }
 
   let { handle, displayName, avatar, size = 'w-9' }: Props = $props()

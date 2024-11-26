@@ -2,6 +2,7 @@
   import { page } from '$app/stores'
 
   import fav from '$lib/assets/favicon.svg'
+  import og from '$lib/assets/og.png'
 
   const {
     //
@@ -25,7 +26,7 @@
   <meta property="og:description" content={description} />
   <meta property="og:type" content="blog" />
   <meta property="og:url" content={canonicalUrl} />
-  <meta property="og:image" content={fav} />
+  <meta property="og:image" content={og} />
 
   <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -33,5 +34,5 @@
   <meta property="twitter:url" content={$page.url.href} />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={fav} />
+  <meta name="twitter:image" content={og} />
 </svelte:head>
