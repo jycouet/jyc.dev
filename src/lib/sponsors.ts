@@ -36,7 +36,7 @@ export const sponsors = [
     displayName: 'EOMasters',
   },
   {
-    handle: 'adaszpilka.bsky.social',
+    handle: 'adaszpilka.art',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
     displayName: 'Ada Szpilka',

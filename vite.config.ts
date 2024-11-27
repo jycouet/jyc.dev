@@ -44,7 +44,7 @@ export default defineConfig({
           'patak.dev',
           'robertlin.bsky.social',
           'eomasters.org',
-          'adaszpilka.bsky.social',
+          'adaszpilka.art',
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
