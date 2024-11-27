@@ -10,9 +10,9 @@
     if (!el) return
 
     // @ts-ignore
-    el.style.padding = '1rem'
+    el.style.padding = '0.75rem'
     // @ts-ignore
-    el.style.backgroundColor = '#4ca2fe'
+    el.style.backgroundColor = '#1185FE'
 
     const downloadBtn = el.querySelector('#download-btn')
     if (downloadBtn) {

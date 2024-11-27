@@ -459,12 +459,16 @@
   </div>
 
   <div id="insights">
-    <div class="card bg-base-300 p-4">
+    <div class="card bg-base-300 p-4 shadow-md">
       <div class="mb-6 flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">
           Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
         </h3>
-        <ScreenshotDownload id="#insights" filename="Insights.png" disabled={!dataApi} />
+        <ScreenshotDownload
+          id="#insights"
+          filename={`Insights_${data.handle}.png`}
+          disabled={!dataApi}
+        />
         {#if dataApi}
           <a class="link link-secondary w-28" href={hrefShare} target="_blank"> Share it on 🦋 </a>
         {:else}
@@ -579,130 +583,137 @@
     />
   </div>
 
-  <div class="card bg-base-300 p-4">
-    <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
-        <span>Your punches</span>
-        <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
-      </h3>
-      <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
-        <button onclick={() => toggleSelection('like')}>
-          <span
-            class="stat-value {selection.includes('like')
-              ? 'text-[#4ca2fe]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}
-              <span class="text-sm text-gray-500"> likes</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
-        <button onclick={() => toggleSelection('post')}>
-          <span
-            class="stat-value {selection.includes('post')
-              ? 'text-[#fd6f9c]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
-              <span class="text-sm text-gray-500"> posts</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
-        <button onclick={() => toggleSelection('repost')}>
-          <span
-            class="stat-value {selection.includes('repost')
-              ? 'text-[#b387fa]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
-              <span class="text-sm text-gray-500"> reposts</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
+  <div id="punch-card">
+    <div class="card bg-base-300 p-4">
+      <div class="mb-6 flex items-start justify-between">
+        <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
+          <span>Your punches</span>
+          <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
+        </h3>
+        <ScreenshotDownload
+          id="#punch-card"
+          filename={`Punches_${data.handle}.png`}
+          disabled={!dataApi}
+        />
+        <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
+          <button onclick={() => toggleSelection('like')}>
+            <span
+              class="stat-value {selection.includes('like')
+                ? 'text-[#4ca2fe]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}
+                <span class="text-sm text-gray-500"> likes</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+          <button onclick={() => toggleSelection('post')}>
+            <span
+              class="stat-value {selection.includes('post')
+                ? 'text-[#fd6f9c]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
+                <span class="text-sm text-gray-500"> posts</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+          <button onclick={() => toggleSelection('repost')}>
+            <span
+              class="stat-value {selection.includes('repost')
+                ? 'text-[#b387fa]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
+                <span class="text-sm text-gray-500"> reposts</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="h-[250px] w-full">
-      <ScatterChart
-        x="hour"
-        y="weekday"
-        r="count"
-        xPadding={[20, 20]}
-        yPadding={[20, 20]}
-        padding={{ left: 24, bottom: 44, right: 8 }}
-        xDomain={[0, 23]}
-        yDomain={getyDomain()}
-        props={{
-          points: {
-            tweened: true,
-          },
+      <div class="h-[250px] w-full">
+        <ScatterChart
+          x="hour"
+          y="weekday"
+          r="count"
+          xPadding={[20, 20]}
+          yPadding={[20, 20]}
+          padding={{ left: 24, bottom: 44, right: 20 }}
+          xDomain={[0, 23]}
+          yDomain={getyDomain()}
+          props={{
+            points: {
+              tweened: true,
+            },
 
-          grid: { xTicks: 24, bandAlign: 'between' },
-          rule: { x: false, y: false },
-          xAxis: {
-            format: (d) => dtFormat({ hour: '2-digit' }).format(new Date().setHours(d)),
-            tickLabelProps: {
-              class: 'fill-base-content/50',
+            grid: { xTicks: 24, bandAlign: 'between' },
+            rule: { x: false, y: false },
+            xAxis: {
+              format: (d) => dtFormat({ hour: '2-digit' }).format(new Date().setHours(d)),
+              tickLabelProps: {
+                class: 'fill-base-content/50',
+              },
             },
-          },
-          yAxis: {
-            format: (d: number) => {
-              if (d < 0) {
-                return ''
-              }
-              if (d > 6) {
-                return ''
-              }
-              return dtFormat({ weekday: 'short' }).format(new Date(2024, 0, d === 0 ? 7 : d))
+            yAxis: {
+              format: (d: number) => {
+                if (d < 0) {
+                  return ''
+                }
+                if (d > 6) {
+                  return ''
+                }
+                return dtFormat({ weekday: 'short' }).format(new Date(2024, 0, d === 0 ? 7 : d))
+              },
+              ticks: 7,
+              tickLength: 0,
+              tickLabelProps: {
+                class: 'fill-base-content/50',
+              },
             },
-            ticks: 7,
-            tickLength: 0,
-            tickLabelProps: {
-              class: 'fill-base-content/50',
-            },
-          },
-        }}
-        series={punchCard}
-      >
-        <svelte:fragment slot="tooltip">
-          <Tooltip.Root let:data>
-            <Tooltip.Header>{data.seriesKey}</Tooltip.Header>
-            <Tooltip.List>
-              <Tooltip.Item
-                label="Weekday"
-                value={dtFormat({ weekday: 'long' }).format(
-                  new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
-                )}
-                valueAlign="right"
-              />
-              <Tooltip.Item
-                label="Hour"
-                value={dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour)) +
-                  ' - ' +
-                  dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour + 1))}
-                valueAlign="right"
-              />
-              <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
-            </Tooltip.List>
-          </Tooltip.Root>
-        </svelte:fragment>
-      </ScatterChart>
-      <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
-        Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and time
-        (x).
-      </div>
-      <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
+          }}
+          series={punchCard}
+        >
+          <svelte:fragment slot="tooltip">
+            <Tooltip.Root let:data>
+              <Tooltip.Header>{data.seriesKey}</Tooltip.Header>
+              <Tooltip.List>
+                <Tooltip.Item
+                  label="Weekday"
+                  value={dtFormat({ weekday: 'long' }).format(
+                    new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
+                  )}
+                  valueAlign="right"
+                />
+                <Tooltip.Item
+                  label="Hour"
+                  value={dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour)) +
+                    ' - ' +
+                    dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour + 1))}
+                  valueAlign="right"
+                />
+                <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
+              </Tooltip.List>
+            </Tooltip.Root>
+          </svelte:fragment>
+        </ScatterChart>
+        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
+          Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and
+          time (x).
+        </div>
+        <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
         Clicking on the total number of likes, posts and reposts will hide/show on the punch card.
       </div> -->
+      </div>
     </div>
   </div>
 
