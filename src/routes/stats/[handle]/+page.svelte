@@ -336,7 +336,10 @@
 <Og title={`${data.displayName} | Sky Zoo - Stats`} {description} {og} />
 
 <div class="flex items-center justify-between">
-  <a href={route(`/stats/[handle]/squirrels`, { handle: data.handle })} class="btn btn-ghost">
+  <a
+    href={route(`/stats/[handle]/squirrels`, { handle: data.handle })}
+    class="btn btn-ghost underline"
+  >
     Check Squirrel Squad 🐿️
   </a>
   {#if currentISOString}

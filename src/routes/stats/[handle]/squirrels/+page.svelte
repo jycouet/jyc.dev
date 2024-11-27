@@ -3,6 +3,7 @@
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import ScreenshotDownload from '$lib/components/ScreenshotDownload.svelte'
+  import { route } from '$lib/ROUTES'
   import { LSContext } from '$lib/stores/LSContext'
   import { AtController } from '$modules/at/AtController'
 
@@ -79,10 +80,9 @@
 <div class="mb-8 flex flex-col gap-4">
   <h1 class="text-3xl font-bold text-primary">Squirrel Squad 🐿️</h1>
   <p class="text-md text-base-content/70">
-    Here you'll find your Bluesky neighbors - users who registered around the same time as you! This
-    includes 5 users who joined before you and 5 who joined after you.
+    Here you'll find your Bluesky neighbors - Users who registered around the same time as you! This
+    includes 5 users who joined before you and 5 who joined after you. All within the same minute!
   </p>
-  <p class="text-md text-base-content/70">Welcome to your squad! 🐿️</p>
 </div>
 <div class="mt-16">
   <div id="squad">
@@ -206,5 +206,13 @@
       />
       <span class="text-sm text-primary">Skyzoo squad</span>
     </div>
+    <p class="text-xs text-base-content/60">Jump from Squad to Squad</p>
+    <p class="text-md mt-4 text-base-content/70">
+      See other <a
+        class="link link-info"
+        target="_blank"
+        href={route('bsky_hashtag', { hashtag: 'SquirrelSquad' })}>#SquirrelSquad</a
+      > on Bluesky!
+    </p>
   </div>
 </div>
