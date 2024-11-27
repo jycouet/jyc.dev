@@ -48,13 +48,18 @@ export default defineConfig({
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
-            return await getProfile(handle)
+            try {
+              return await getProfile(handle)
+            } catch (error) {
+              console.error(error)
+            }
           }),
         )
 
         write('src/lib/sponsors.ts', [
           `export const sponsors = [`,
           sponsorsData
+            .filter((c) => c !== undefined)
             .map((sponsor) => {
               return `  {
     handle: '${sponsor.data.handle}',
