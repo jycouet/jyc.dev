@@ -585,7 +585,7 @@
 
   <div id="punch-card">
     <div class="card bg-base-300 p-4">
-      <div class="mb-6 flex items-start justify-between">
+      <div class="mb-3 flex items-start justify-between">
         <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
           <span>Punches</span>
           <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
@@ -648,7 +648,7 @@
           r="count"
           xPadding={[20, 20]}
           yPadding={[20, 20]}
-          padding={{ left: 24, bottom: 44, right: 20 }}
+          padding={{ left: 24, bottom: 20, right: 20 }}
           xDomain={[0, 23]}
           yDomain={getyDomain()}
           props={{
@@ -706,13 +706,13 @@
             </Tooltip.Root>
           </svelte:fragment>
         </ScatterChart>
-        <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
-          Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and
-          time (x).
-        </div>
         <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
         Clicking on the total number of likes, posts and reposts will hide/show on the punch card.
-      </div> -->
+        </div> -->
+      </div>
+      <div class="mt-1 text-right text-xs text-base-content/30">
+        Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and time
+        (x) of your current timezone.
       </div>
     </div>
   </div>
