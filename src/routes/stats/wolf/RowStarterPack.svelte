@@ -14,6 +14,7 @@
 <td>
   <div class="flex items-center gap-3">
     <Avatar {...pack.creator} />
+    {console.log(pack)}
     <a
       class="link link-info flex items-center gap-3"
       target="_blank"

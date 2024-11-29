@@ -4,7 +4,6 @@ import { redirect } from '@sveltejs/kit'
 import { repo, SqlDatabase } from 'remult'
 import { Log } from '@kitql/helpers'
 
-import { upsert } from '$lib/remultHelper'
 import { getProfile } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
@@ -182,8 +181,7 @@ const addStarterPack = async (did: string) => {
         // console.log(`starterPack`, starterPack)
 
         try {
-          // await repo(StarterPack).upsert({
-          await upsert(StarterPack, {
+          await repo(StarterPack).upsert({
             where: { id: starterPack.uri },
             set: {
               creatorDid: did,
@@ -200,8 +198,7 @@ const addStarterPack = async (did: string) => {
       }
       for (const listItem of listitems.records) {
         try {
-          // await repo(ListItem).upsert({
-          await upsert(ListItem, {
+          await repo(ListItem).upsert({
             where: { id: listItem.uri },
             set: {
               listUri: listItem.value.list,
