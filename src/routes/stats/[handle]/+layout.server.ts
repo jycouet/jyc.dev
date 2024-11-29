@@ -1,10 +1,10 @@
 import { DidResolver, getPds } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
-import { repo } from 'remult'
+import { repo, SqlDatabase } from 'remult'
 import { Log } from '@kitql/helpers'
 
-import { fetchImageAsBase64 } from '$lib'
+import { upsert } from '$lib/remultHelper'
 import { getProfile } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
@@ -142,16 +142,11 @@ export const load = (async (event) => {
       }
     }
 
-    let avatar = profile.data.avatar
-    if (avatar) {
-      avatar = `data:image/jpeg;base64,${await fetchImageAsBase64(avatar)}`
-    }
-
     return {
       did: profile.data.did,
       handle: profile.data.handle,
       displayName: profile.data.displayName || profile.data.handle,
-      avatar,
+      avatar: profile.data.avatar,
       description: profile.data.description || '',
       pos_atproto,
       pos_bsky,
@@ -184,8 +179,11 @@ const addStarterPack = async (did: string) => {
         listRecordsAll(pds, did, 'app.bsky.graph.listitem'),
       ])
       for (const starterPack of starterPacks.records) {
+        // console.log(`starterPack`, starterPack)
+
         try {
-          await repo(StarterPack).upsert({
+          // await repo(StarterPack).upsert({
+          await upsert(StarterPack, {
             where: { id: starterPack.uri },
             set: {
               creatorDid: did,
@@ -202,7 +200,8 @@ const addStarterPack = async (did: string) => {
       }
       for (const listItem of listitems.records) {
         try {
-          await repo(ListItem).upsert({
+          // await repo(ListItem).upsert({
+          await upsert(ListItem, {
             where: { id: listItem.uri },
             set: {
               listUri: listItem.value.list,

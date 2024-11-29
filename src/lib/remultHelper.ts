@@ -32,3 +32,20 @@ export const containsWords = <Entity>(
     }),
   } as EntityFilter<Entity>
 }
+
+export const upsert = async <Entity>(
+  ent: ClassType<Entity>,
+  arg: { where: EntityFilter<Entity>; set: Partial<Entity> },
+) => {
+  const { where, set } = arg
+  const found = await repo(ent).findFirst(where)
+  // console.log(`found`, found)
+
+  if (found) {
+    // console.log(`updating`)
+    await repo(ent).save({ ...found, ...set })
+  } else {
+    // console.log(`inserting`)
+    await repo(ent).insert(set)
+  }
+}

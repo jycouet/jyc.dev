@@ -20,7 +20,7 @@
   // let score: number | undefined = $state(undefined)
 
   $effect(() => {
-    AtController.getSquirrelSquad(data.pos_bsky!).then((res) => {
+    AtController.getSquirrelSquad(data.pos_bsky!, data.avatar!).then((res) => {
       dataApi = res
       followersCount =
         res.after.reduce((acc, curr) => acc + curr.followersCount, 0) +
@@ -106,7 +106,12 @@
         </div>
 
         <div class="-mx-8 -mt-4 md:-mt-8">
-          <Avatar {...data} size="w-20 md:w-28" linkToSkyzooSquad={$LSContext.linkToSkyzooSquad} />
+          <Avatar
+            {...data}
+            avatar={dataApi?.avatarBlob}
+            size="w-20 md:w-28"
+            linkToSkyzooSquad={$LSContext.linkToSkyzooSquad}
+          />
           <div class="mt-12 text-center text-4xl md:mt-20">🐿️</div>
         </div>
 

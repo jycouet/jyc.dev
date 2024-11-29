@@ -406,7 +406,7 @@ export class AtController {
   }
 
   @BackendMethod({ allowed: true })
-  static async getSquirrelSquad(pos_bsky: number) {
+  static async getSquirrelSquad(pos_bsky: number, avatarUrl: string) {
     const minimumRequirements = (profileData: Awaited<ReturnType<typeof getProfile>>['data']) => {
       // console.log(`profile.data`, profileData)
       const labelValues = (profileData.labels ?? []).map((c) => c.val)
@@ -516,7 +516,11 @@ export class AtController {
       })(),
     ])
 
-    return { before, after }
+    return {
+      before,
+      after,
+      avatarBlob: `data:image/jpeg;base64,${await fetchImageAsBase64(avatarUrl)}`,
+    }
   }
 }
 
