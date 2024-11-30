@@ -54,6 +54,12 @@ export const sponsors = [
     displayName: 'rahaeli ',
   },
   {
+    handle: 'aunticles.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreidek7h5vbwdh2xacvy7vjtsluhb5iturrji3q42ugbv2i65tob56e@jpeg',
+    displayName: 'Aunticles',
+  },
+  {
     handle: 'srsholmes.com',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiaklwrlozbg2pfrrrehz6chpjdebyrp7u2xcvjry6bfnphhwtgxqu@jpeg',

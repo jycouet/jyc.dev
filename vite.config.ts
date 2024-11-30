@@ -47,6 +47,7 @@ export default defineConfig({
           'adaszpilka.art',
           'fettstorch.com',
           'rahaeli.bsky.social',
+          'aunticles.bsky.social',
           'srsholmes.com',
         ]
         const sponsorsData = await Promise.all(
