@@ -101,7 +101,7 @@
 
 <Og title="Sky Zoo" {description} {og} />
 
-<div class="flex flex-col gap-28">
+<div class="flex flex-col gap-16">
   <div class="grid grid-cols-1 items-end gap-8">
     <form onsubmit={handleSubmit} class="flex flex-col gap-4">
       <div class="form-control flex gap-4">

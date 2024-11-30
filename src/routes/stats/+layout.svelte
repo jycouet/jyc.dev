@@ -122,9 +122,9 @@
         <a href="https://ko-fi.com/E1E416BE51" target="_blank"><KoFi /></a>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-col items-center gap-2">
         <span>Sponsors 💖</span>
-        <div class="avatar-group -space-x-1">
+        <div class="flex flex-wrap justify-center gap-1">
           {#each sponsors as sponsor}
             <Avatar {...sponsor} />
           {/each}

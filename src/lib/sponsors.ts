@@ -53,4 +53,10 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:ocsbmyulc2grbq3esflddyj6/bafkreiglg5q2bvpj66aagiabddm3m2graclqrvn3ahq4ieasl7cqp7fmme@jpeg',
     displayName: 'rahaeli ',
   },
+  {
+    handle: 'srsholmes.com',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiaklwrlozbg2pfrrrehz6chpjdebyrp7u2xcvjry6bfnphhwtgxqu@jpeg',
+    displayName: 'Simon Holmes',
+  },
 ]
