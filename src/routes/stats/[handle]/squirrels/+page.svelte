@@ -52,13 +52,15 @@
   let hrefShare = $derived(
     createBSkyIntent([
       `#SquirrelSquad #${data.pos_bsky} 🐿️`,
-      `${dataApi?.before
-        .toReversed()
-        .map((m) => `@${m.handle}`)
-        .join(' ')} ${dataApi?.after.map((m) => `@${m.handle}`).join(' ')}`,
-      '',
+      // `${dataApi?.before
+      //   .toReversed()
+      //   .map((m) => `@${m.handle}`)
+      //   .join(' ')} ${dataApi?.after.map((m) => `@${m.handle}`).join(' ')}`,
+      // '',
       'Squad created on the same minute in 🦋',
+      '',
       `👉 https://skyzoo.blue/stats/${data.handle}/squirrels`,
+      '',
       "Let's connect differently! 🐾",
     ]),
   )
@@ -108,7 +110,7 @@
         <div class="-mx-8 -mt-4 md:-mt-8">
           <Avatar
             {...data}
-            avatar={dataApi?.avatarBlob}
+            avatar={dataApi?.avatarBlob ?? data.avatar}
             size="w-20 md:w-28"
             linkToSkyzooSquad={$LSContext.linkToSkyzooSquad}
           />
@@ -192,11 +194,25 @@
   </div>
 
   <div class="mt-4 flex items-center justify-center gap-4">
-    {#if dataApi}
-      <a href={hrefShare} class="link link-info"> Share your Squad on 🦋 </a>
-    {:else}
-      <div class="skeleton h-6 w-44"></div>
-    {/if}
+    <div class="flex flex-col items-center gap-2">
+      {#if dataApi}
+        <a href={hrefShare} target="_blank" class="link link-info"> Share your Squad on 🦋 </a>
+        <div class="text-xs text-base-content/50">
+          If you wanna tag your squad, here's the list:
+          <p>
+            {dataApi?.before
+              .toReversed()
+
+              .map((m) => `@${m.handle}`)
+              .join(' ')}
+            {dataApi?.after.map((m) => `@${m.handle}`).join(' ')}
+          </p>
+        </div>
+      {:else}
+        <div class="skeleton h-6 w-44"></div>
+        <div class="skeleton h-12 w-96"></div>
+      {/if}
+    </div>
   </div>
 
   <div class="mt-8 flex flex-col items-center gap-2 pr-4">
