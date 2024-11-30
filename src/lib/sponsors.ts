@@ -41,4 +41,16 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
     displayName: 'Ada Szpilka',
   },
+  {
+    handle: 'fettstorch.com',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreignfimw5a4hkcbzkaun23k63oi5e3xafr7yqgpuvua5oosnva4izm@jpeg',
+    displayName: 'Julian',
+  },
+  {
+    handle: 'rahaeli.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:ocsbmyulc2grbq3esflddyj6/bafkreiglg5q2bvpj66aagiabddm3m2graclqrvn3ahq4ieasl7cqp7fmme@jpeg',
+    displayName: 'rahaeli ',
+  },
 ]

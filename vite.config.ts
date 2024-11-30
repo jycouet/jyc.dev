@@ -45,6 +45,8 @@ export default defineConfig({
           'robertlin.bsky.social',
           'eomasters.org',
           'adaszpilka.art',
+          'fettstorch.com',
+          'rahaeli.bsky.social',
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
