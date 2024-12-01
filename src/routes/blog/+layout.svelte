@@ -17,7 +17,7 @@
     <a href={route(`/blog`)} aria-label="Back home">jyc.dev</a>
   </h1>
 
-  <span class="text-sm italic">Some takes about web devs.</span>
+  <span class="text-sm italic">Some takes about web devs!</span>
 
   <div class="flex flex-grow flex-col gap-4">
     {@render children?.()}
