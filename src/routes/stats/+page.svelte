@@ -106,18 +106,25 @@
 
   let suggestions = $state<ProfileViewBasic[]>([])
   let showSuggestions = $state(false)
+  let loadingSuggestions = $state(false)
+
+  let isFirstLoad = $state(true)
 
   const handleInput = async (e: Event) => {
     clearTimeout(debounceTimer)
     e.preventDefault()
     if (handle) {
+      loadingSuggestions = true
+      showSuggestions = true
       debounceTimer = setTimeout(async () => {
         try {
           const res = await AgentController.searchActorsTypeahead(handle)
           suggestions = res.data.actors
-          showSuggestions = true
         } catch (error) {
           console.error('Error fetching suggestions:', error)
+        } finally {
+          loadingSuggestions = false
+          isFirstLoad = false
         }
       }, 333)
       error = ''
@@ -168,27 +175,42 @@
                 />
               </label>
 
-              {#if showSuggestions && suggestions.length > 0}
-                <div class="absolute z-10 mt-1 w-full rounded-lg border bg-base-100 shadow-lg">
+              {#if showSuggestions}
+                <div
+                  class="absolute z-10 mt-1 w-full rounded-lg border border-base-300 bg-base-200 shadow-lg"
+                >
                   <ul class="menu p-2">
-                    {#each suggestions as suggestion}
+                    {#if isFirstLoad && loadingSuggestions}
                       <li>
-                        <button
-                          type="button"
-                          class="flex items-center gap-2 py-2"
-                          onclick={() => selectSuggestion(suggestion)}
-                        >
-                          <div class="mask mask-hexagon size-8" title={suggestion.handle}>
-                            <img
-                              src={suggestion.avatar || avatarDefault}
-                              alt="{suggestion.handle}'s avatar"
-                              class="h-full w-full object-cover duration-500 ease-out hover:scale-110"
-                            />
-                          </div>
-                          <span class="font-mono text-primary">@{suggestion.handle}</span>
-                        </button>
+                        <div class="flex items-center gap-2 py-2">
+                          <span class="loading loading-spinner loading-sm"></span>
+                          Loading suggestions...
+                        </div>
                       </li>
-                    {/each}
+                    {:else if suggestions.length === 0}
+                      <li class="opacity-50">
+                        <div class="flex items-center gap-2 py-2">No handles found</div>
+                      </li>
+                    {:else}
+                      {#each suggestions as suggestion}
+                        <li class={loadingSuggestions ? 'opacity-50' : ''}>
+                          <button
+                            type="button"
+                            class="flex items-center gap-2 py-2"
+                            onclick={() => selectSuggestion(suggestion)}
+                          >
+                            <div class="mask mask-hexagon size-8" title={suggestion.handle}>
+                              <img
+                                src={suggestion.avatar || avatarDefault}
+                                alt="{suggestion.handle}'s avatar"
+                                class="h-full w-full object-cover duration-500 ease-out hover:scale-110"
+                              />
+                            </div>
+                            <span class="font-mono text-primary">@{suggestion.handle}</span>
+                          </button>
+                        </li>
+                      {/each}
+                    {/if}
                   </ul>
                 </div>
               {/if}
