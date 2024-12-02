@@ -293,11 +293,16 @@
       >
     </a>
 
-    <a href={route(`/stats/whale`)} class="btn btn-secondary flex h-28 w-full flex-col text-lg">
+    <button  disabled class="btn btn-secondary flex h-28 w-full flex-col text-lg">
+      <span class="italic">Whale 🐋</span>
+      <span>Global Statistics - WILL BE BACK SOON</span>
+      <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
+    </button>
+    <!-- <a href={route(`/stats/whale`)} class="btn btn-secondary flex h-28 w-full flex-col text-lg">
       <span class="italic">Whale 🐋</span>
       <span>Global Statistics</span>
       <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
-    </a>
+    </a> -->
   </div>
 
   <Shortcut binds={['ArrowUp']} run={() => handleKeyNavigation('up')} />
