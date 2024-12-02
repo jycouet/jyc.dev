@@ -33,7 +33,7 @@ import { SqlController } from '$modules/sql/SqlController'
 import { Roles } from '../modules/auth/Roles'
 
 SqlDatabase.LogToConsole = false
-// SqlDatabase.LogToConsole = 'oneLiner'
+SqlDatabase.LogToConsole = 'oneLiner'
 
 export const dataProvider = DATABASE_URL
   ? await createPostgresDataProvider({

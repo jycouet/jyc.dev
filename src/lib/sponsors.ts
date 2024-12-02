@@ -44,7 +44,7 @@ export const sponsors = [
   {
     handle: 'fettstorch.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreignfimw5a4hkcbzkaun23k63oi5e3xafr7yqgpuvua5oosnva4izm@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreig654f3w2ldwibasroi4za4zcqjhr7qza3djikyhqaemfjjtatbqm@jpeg',
     displayName: 'Julian',
   },
   {
@@ -62,7 +62,7 @@ export const sponsors = [
   {
     handle: 'srsholmes.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiaklwrlozbg2pfrrrehz6chpjdebyrp7u2xcvjry6bfnphhwtgxqu@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiepzp7ivksk6a3hrqmy4jsqfdhidpbaotflheltdjnsgd6gla6qbq@jpeg',
     displayName: 'Simon Holmes',
   },
 ]
