@@ -108,6 +108,12 @@ export class AgentController {
       followersPeriods: followsPeriodsToRet,
     }
   }
+
+  @BackendMethod({ allowed: true })
+  static async searchActorsTypeahead(q: string) {
+    const agent = new Agent(new URL('https://public.api.bsky.app'))
+    return await agent.searchActorsTypeahead({ q, limit: 5 })
+  }
 }
 
 let globalcount = 0

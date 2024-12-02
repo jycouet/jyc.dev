@@ -159,10 +159,10 @@ export const load = (async (event) => {
   } catch (error) {
     const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']
     if (error instanceof Error && notValidError.includes(error.message)) {
-      redirect(307, `/at?h=${cleanHandle}&e=not-valid`)
+      redirect(307, `/stats?h=${cleanHandle}&e=not-valid`)
     } else {
       console.error(`error in PageServerLoad`, cleanHandle, error)
-      redirect(307, `/at`)
+      redirect(307, `/stats`)
     }
   }
 }) satisfies LayoutServerLoad
