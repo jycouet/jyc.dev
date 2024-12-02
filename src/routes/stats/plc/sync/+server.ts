@@ -33,7 +33,7 @@ interface Plc {
 
 export const GET: RequestHandler = async ({ fetch }) => {
   const repo = remult.repo(RecordPlc)
-  const TOTAL_EXPECTED_RECORDS = 17_000_000
+  const TOTAL_EXPECTED_RECORDS = 30_000_000
   const startTime = Date.now()
   let loopStartTime: number
 

@@ -1,7 +1,6 @@
-import { repo, SqlDatabase } from 'remult'
+import { repo } from 'remult'
 
 import { getProfile } from '$modules/at/agentHelper'
-import { didToPds, getRecord, listRecords } from '$modules/at/helper'
 import { RecordPlc } from '$modules/at/RecordPlc'
 
 import type { RequestHandler } from './$types'
@@ -116,7 +115,7 @@ export const GET: RequestHandler = async (event) => {
             try {
               await repo(RecordPlc).update(plc, result)
             } catch (error) {
-              console.log(`result`, result)
+              console.info(`result`, result)
               process.exit(1)
             }
           }
@@ -129,15 +128,15 @@ export const GET: RequestHandler = async (event) => {
             const remainingRecords = totalCount - processedCount
             const estimatedRemainingTime = remainingRecords / recordsPerMs
 
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log('')
-            console.log(
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info('')
+            console.info(
               `Processed ${processedCount.toLocaleString()} of ${totalCount.toLocaleString()} records ` +
                 `(${((processedCount / totalCount) * 100).toFixed(2)}%) - ` +
                 `Estimated time remaining: ${formatTimeEstimate(estimatedRemainingTime)}`,
