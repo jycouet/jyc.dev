@@ -1,7 +1,7 @@
 import { DidResolver, getPds } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
-import { repo, SqlDatabase } from 'remult'
+import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { getProfile } from '$modules/at/agentHelper'

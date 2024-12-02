@@ -60,6 +60,7 @@ export const listRecords = async (
     cursor?: string
     limit?: number
     reverse?: boolean
+    maxAttempts?: number
   },
 ) => {
   const listRecordsUrl = new URL(`${pds}/xrpc/com.atproto.repo.listRecords`)
@@ -74,17 +75,22 @@ export const listRecords = async (
   }
   const url = listRecordsUrl.toString()
 
-  return retries(async () => {
-    try {
-      const res = await fetch(url)
-      if (!res.ok) {
-        throw new Error(`${repo} | ${collection} | Failed to list records: ${res.statusText}`)
+  return retries(
+    async () => {
+      try {
+        const res = await fetch(url)
+        if (!res.ok) {
+          throw new Error(`${repo} | ${collection} | Failed to list records: ${res.statusText}`)
+        }
+        return res.json()
+      } catch (error) {
+        throw new Error(`${repo} | ${collection} | Failed to list records(decode): ${error}`)
       }
-      return res.json()
-    } catch (error) {
-      throw new Error(`${repo} | ${collection} | Failed to list records: ${error}`)
-    }
-  })
+    },
+    {
+      maxAttempts: options?.maxAttempts ?? 6,
+    },
+  )
 }
 
 export const getRecord = async (pds: string, repo: string, collection: string, rkey: string) => {
@@ -220,7 +226,7 @@ export const parseUri = (uri: string) => {
   }
 }
 
-export const didToPds = async (did?: string) => {
+export const didToPds = async (did?: string, options?: { maxAttempts?: number }) => {
   if (!did) {
     return null
   }
@@ -241,11 +247,10 @@ export const didToPds = async (did?: string) => {
           return pds
         }
       }
-
       return null
     },
     {
-      maxAttempts: 10,
+      maxAttempts: options?.maxAttempts ?? 6,
       msgError: `didToPds(${did})`,
     },
   )

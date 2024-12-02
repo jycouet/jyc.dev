@@ -69,7 +69,7 @@ export class AgentController {
     // CHART
     const now = new Date()
     const startDate = new Date(now)
-    startDate.setDate(startDate.getDate() - 21) // Go back 7 days
+    startDate.setDate(startDate.getDate() - 28) // Go back 7 days
 
     const followsPeriods = await repo(RecordFollower).groupBy({
       group: ['onDay'],
