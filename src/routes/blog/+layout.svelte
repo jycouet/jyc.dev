@@ -10,7 +10,7 @@
   // import "../../app.pcss";
 </script>
 
-<Og />
+<Og title="jyc.dev" description="Some takes about web devs!" og="https://jyc.dev/og.png" />
 
 <div class="mx-auto flex h-screen w-[800px] flex-col gap-4 p-4">
   <h1 class="text-3xl text-primary">

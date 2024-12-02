@@ -148,7 +148,9 @@ export const listRecordsAll = async (
             break
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        theEnd = true
+      }
     } else {
       allRecords.push(...response.records)
     }

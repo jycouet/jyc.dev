@@ -22,7 +22,9 @@
           <!-- Step 1: Handle -->
           <div class="form-control">
             <label for="handle" class="label">
-              <span class="label-text text-lg font-medium text-gray-300">1. Enter your Handle</span>
+              <span class="label-text text-lg font-medium text-gray-300"
+                >1. Enter your full Handle</span
+              >
             </label>
             <input
               name="handle"

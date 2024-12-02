@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { ProfileViewBasic } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
   import { BarChart } from 'layerchart'
   import { queryParameters } from 'sveltekit-search-params'
 
@@ -6,11 +7,15 @@
 
   import { goto } from '$app/navigation'
 
+  import avatarDefault from '$lib/assets/avatar-default.jpg'
+  import og from '$lib/assets/og-insights.png'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
+  import { AgentController } from '$modules/at/AgentController'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
+  import Shortcut from '$lib/components/Shortcut.svelte'
 
-  const description = 'Stats on Bluesky, At Protocol, ...'
+  const description = 'Assigns you a Bluesky animal based on your recent activity'
 
   let handle = $state('')
   let error = $state('')
@@ -86,7 +91,7 @@
         } else {
           await goto(route(`/stats/[handle]`, { handle, skip_follow: 'true' }))
         }
-      } catch (e) {
+      } catch (err) {
         error = 'An error occurred'
       } finally {
         loading = false
@@ -96,13 +101,82 @@
       loading = false
     }
   }
+
+  let debounceTimer: ReturnType<typeof setTimeout>
+
+  let suggestions = $state<ProfileViewBasic[]>([])
+  let showSuggestions = $state(false)
+  let loadingSuggestions = $state(false)
+
+  let isFirstLoad = $state(true)
+
+  let selectedIndex = $state(-1)
+  let suggestionRefs = $state<HTMLElement[]>([])
+
+  const handleInput = async (e: Event) => {
+    clearTimeout(debounceTimer)
+    e.preventDefault()
+    if (handle) {
+      loadingSuggestions = true
+      showSuggestions = true
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await AgentController.searchActorsTypeahead(handle)
+          suggestions = res.data.actors
+        } catch (error) {
+          console.error('Error fetching suggestions:', error)
+        } finally {
+          loadingSuggestions = false
+          isFirstLoad = false
+        }
+      }, 333)
+      error = ''
+    } else {
+      suggestions = []
+      showSuggestions = false
+    }
+  }
+
+  const handleKeyNavigation = (direction: 'up' | 'down' | 'enter') => {
+    if (!showSuggestions || suggestions.length === 0) return
+
+    if (direction === 'up') {
+      selectedIndex = selectedIndex <= 0 ? suggestions.length - 1 : selectedIndex - 1
+    } else if (direction === 'down') {
+      selectedIndex = selectedIndex >= suggestions.length - 1 ? 0 : selectedIndex + 1
+    } else if (direction === 'enter' && selectedIndex !== -1) {
+      selectSuggestion(suggestions[selectedIndex])
+    }
+
+    // Scroll selected item into view
+    suggestionRefs[selectedIndex]?.scrollIntoView({ block: 'nearest' })
+  }
+
+  const selectSuggestion = async (suggestion: ProfileViewBasic) => {
+    handle = suggestion.handle
+    showSuggestions = false
+    selectedIndex = -1
+    // @ts-ignore
+    handleSubmit({ preventDefault: () => {} })
+  }
+
+  $effect(() => {
+    if (suggestions.length === 0) {
+      selectedIndex = -1
+    }
+  })
 </script>
 
-<Og title="Sky Zoo" {description} />
+<Og title="Sky Zoo" {description} {og} />
 
-<div class="flex flex-col gap-28">
+<div class="flex flex-col gap-16">
   <div class="grid grid-cols-1 items-end gap-8">
-    <form onsubmit={handleSubmit} class="flex flex-col gap-4">
+    <form
+      onsubmit={handleSubmit}
+      oninput={handleInput}
+      class="flex flex-col gap-4"
+      autocomplete="off"
+    >
       <div class="form-control flex gap-4">
         <div class="flex items-end gap-4">
           <div class="flex-1">
@@ -113,18 +187,67 @@
               {/if}
             </div>
 
-            <label
-              class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''} "
-            >
-              @
-              <input
-                type="text"
-                class="grow placeholder:text-base-content/30"
-                id="handle"
-                bind:value={handle}
-                placeholder="handle.bsky.social"
-              />
-            </label>
+            <div class="relative">
+              <label
+                class="input input-bordered flex items-center gap-2 {error ? 'input-error' : ''}"
+              >
+                @
+                <input
+                  type="text"
+                  class="grow placeholder:text-base-content/30"
+                  id="handle"
+                  bind:value={handle}
+                  placeholder="handle.bsky.social"
+                />
+              </label>
+
+              {#if showSuggestions}
+                <div
+                  class="absolute z-10 mt-1 w-full rounded-lg border border-base-300 bg-base-200 shadow-lg"
+                >
+                  <ul class="menu p-2">
+                    {#if isFirstLoad && loadingSuggestions}
+                      <li>
+                        <div class="flex items-center gap-2 py-2">
+                          <span class="loading loading-spinner loading-sm"></span>
+                          Loading suggestions...
+                        </div>
+                      </li>
+                    {:else if suggestions.length === 0}
+                      <li class="opacity-50">
+                        <div class="flex items-center gap-2 py-2">No handles found</div>
+                      </li>
+                    {:else}
+                      {#each suggestions as suggestion, index}
+                        <li 
+                          class={`
+                            ${loadingSuggestions ? 'opacity-50' : ''} 
+                            ${selectedIndex === index ? 'bg-primary/20' : ''}
+                          `}
+                          bind:this={suggestionRefs[index]}
+                        >
+                          <button
+                            type="button"
+                            class="flex items-center gap-2 py-2"
+                            onclick={() => selectSuggestion(suggestion)}
+                            onmouseenter={() => (selectedIndex = index)}
+                          >
+                            <div class="mask mask-hexagon size-8" title={suggestion.handle}>
+                              <img
+                                src={suggestion.avatar || avatarDefault}
+                                alt="{suggestion.handle}'s avatar"
+                                class="h-full w-full object-cover duration-500 ease-out hover:scale-110"
+                              />
+                            </div>
+                            <span class="font-mono text-primary">@{suggestion.handle}</span>
+                          </button>
+                        </li>
+                      {/each}
+                    {/if}
+                  </ul>
+                </div>
+              {/if}
+            </div>
           </div>
         </div>
 
@@ -170,10 +293,19 @@
       >
     </a>
 
-    <a href={route(`/stats/whale`)} class="btn btn-secondary flex h-28 w-full flex-col text-lg">
+    <button  disabled class="btn btn-secondary flex h-28 w-full flex-col text-lg">
+      <span class="italic">Whale 🐋</span>
+      <span>Global Statistics - WILL BE BACK SOON</span>
+      <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
+    </button>
+    <!-- <a href={route(`/stats/whale`)} class="btn btn-secondary flex h-28 w-full flex-col text-lg">
       <span class="italic">Whale 🐋</span>
       <span>Global Statistics</span>
       <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
-    </a>
+    </a> -->
   </div>
+
+  <Shortcut binds={['ArrowUp']} run={() => handleKeyNavigation('up')} />
+  <Shortcut binds={['ArrowDown']} run={() => handleKeyNavigation('down')} />
+  <Shortcut binds={['Enter']} run={() => handleKeyNavigation('enter')} />
 </div>

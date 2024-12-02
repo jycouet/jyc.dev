@@ -90,14 +90,18 @@ export const api = remultSveltekit({
       // @ts-ignore
       SqlController.dataProvider = dataProvider
 
-      const clientPostHog = new PostHog(PUBLIC_POSTHOG_KEY, {
-        host: 'https://eu.i.posthog.com',
-      })
-      clientPostHog.capture({
-        distinctId: new Date().toISOString(),
-        event: 'server-start',
-      })
-      clientPostHog.flush()
+      if (PUBLIC_POSTHOG_KEY) {
+        const clientPostHog = new PostHog(PUBLIC_POSTHOG_KEY, {
+          host: 'https://eu.i.posthog.com',
+        })
+        clientPostHog.capture({
+          distinctId: new Date().toISOString(),
+          event: 'server-start',
+        })
+        clientPostHog.flush()
+      } else {
+        log.info('no posthog key')
+      }
 
       // await upsertIndex(RecordPlc, 'did')
       // await upsertIndex(RecordPlc, 'createdAt')

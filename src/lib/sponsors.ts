@@ -3,13 +3,13 @@ export const sponsors = [
     handle: 'tigur.com',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg',
-    displayName: 'Tigur',
+    displayName: 'TheTiGuR, aka Chris Simiskey ',
   },
   {
     handle: 'imlunahey.com',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
-    displayName: 'Luna',
+    displayName: 'luna',
   },
   {
     handle: 'harry-lewiston.bsky.social',
@@ -34,5 +34,35 @@ export const sponsors = [
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:b7du2x5ynpuiatjib4qfanmc/bafkreiaoni5mdwyxf5aesy2wcvikptsps7equilo5rp7yukbtgj5h6aqza@jpeg',
     displayName: 'EOMasters',
+  },
+  {
+    handle: 'adaszpilka.art',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
+    displayName: 'Ada Szpilka',
+  },
+  {
+    handle: 'fettstorch.com',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreieapcv2agyidn6asopfppksjj3tjnueb5727wnkckmm3gdlljztae@jpeg',
+    displayName: 'Julian',
+  },
+  {
+    handle: 'rahaeli.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:ocsbmyulc2grbq3esflddyj6/bafkreiglg5q2bvpj66aagiabddm3m2graclqrvn3ahq4ieasl7cqp7fmme@jpeg',
+    displayName: 'rahaeli ',
+  },
+  {
+    handle: 'aunticles.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreidek7h5vbwdh2xacvy7vjtsluhb5iturrji3q42ugbv2i65tob56e@jpeg',
+    displayName: 'Aunticles',
+  },
+  {
+    handle: 'srsholmes.com',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiepzp7ivksk6a3hrqmy4jsqfdhidpbaotflheltdjnsgd6gla6qbq@jpeg',
+    displayName: 'Simon Holmes',
   },
 ]

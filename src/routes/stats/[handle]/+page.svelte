@@ -1,12 +1,15 @@
 <script lang="ts">
+  import { PeriodType } from '@layerstack/utils'
   import { Area, AreaChart, LinearGradient, PieChart, ScatterChart, Tooltip } from 'layerchart'
   import { fade } from 'svelte/transition'
 
   import { page } from '$app/stores'
 
+  import og from '$lib/assets/og-punches.png'
+  import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
+  import ScreenshotDownload from '$lib/components/ScreenshotDownload.svelte'
   import Stat from '$lib/components/Stat.svelte'
-  import ArrowLeft from '$lib/icons/ArrowLeft.svelte'
   import Heart from '$lib/icons/Heart.svelte'
   import Repost from '$lib/icons/Repost.svelte'
   import Send from '$lib/icons/Send.svelte'
@@ -14,11 +17,16 @@
   import { AtController } from '$modules/at/AtController.js'
 
   import RowStarterPack from '../wolf/RowStarterPack.svelte'
+  import type { PageData } from './$types'
   import JsonStyle from './JsonStyle.svelte'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
 
-  let { data } = $props()
+  let { data }: { data: PageData } = $props()
+
+  const dtFormat = (options?: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(data.locale, options)
+
   let dataApi = $state<ResolvedType<ReturnType<typeof AtController.getHandleStats>>>()
   let dataApiFollows = $state<ResolvedType<ReturnType<typeof AtController.getHandleFollow>>>()
   let dataApiFStarterPacks =
@@ -48,16 +56,16 @@
       })
     }
 
-    currentISOString = new Intl.DateTimeFormat(undefined, {
+    currentISOString = dtFormat({
       dateStyle: 'short',
       timeStyle: 'medium',
     }).format(new Date())
 
     pos_atproto = data.pos_atproto ? new Intl.NumberFormat().format(data.pos_atproto) : ''
     pos_bsky = data.pos_bsky ? new Intl.NumberFormat().format(data.pos_bsky) : ''
-    createdAt = data.createdAt ? new Intl.DateTimeFormat().format(new Date(data.createdAt)) : ''
+    createdAt = data.createdAt ? dtFormat().format(new Date(data.createdAt)) : ''
     startedToBeActiveOn = data.startedToBeActiveOn
-      ? new Intl.DateTimeFormat().format(new Date(data.startedToBeActiveOn))
+      ? dtFormat().format(new Date(data.startedToBeActiveOn))
       : ''
   })
 
@@ -69,7 +77,7 @@
     return `hsl(${hue}, ${options?.saturation ?? 70}%, ${options?.lightness ?? 70}%)`
   }
 
-  const description = `${data.displayName} | Stats on Bluesky, At Protocol, ...`
+  const description = `${data.displayName} | Assigns you a Bluesky animal based on your recent activity`
 
   let selection = $state(['like', 'post', 'repost'])
   const toggleSelection = (name: string) => {
@@ -171,7 +179,7 @@
   }
 
   // function getWeekStartsOnFromIntl() {
-  //   const locale = new Intl.Locale(Intl.DateTimeFormat().resolvedOptions().locale)
+  //   const locale = new Intl.Locale(dtFormat().resolvedOptions().locale)
 
   //   // @ts-expect-error
   //   const weekInfo = locale.weekInfo ?? locale.getWeekInfo?.()
@@ -314,14 +322,25 @@
     }
     return 'Nice handle! 👋'
   }
+
+  const format = (d: Date, period: PeriodType) => {
+    return dtFormat({
+      year: 'numeric',
+      month: 'short', // Displays the month in abbreviated form, e.g., "Nov"
+      day: 'numeric',
+      hour: 'numeric',
+    }).format(d)
+  }
 </script>
 
-<Og title={`${data.displayName} | Sky Zoo - Stats`} {description} />
+<Og title={`${data.displayName} | Sky Zoo - Stats`} {description} {og} />
 
 <div class="flex items-center justify-between">
-  <a href={route(`/stats`)} class="btn btn-ghost">
-    <ArrowLeft />
-    Check another handle
+  <a
+    href={route(`/stats/[handle]/squirrels`, { handle: data.handle })}
+    class="btn btn-ghost underline"
+  >
+    Check Squirrel Squad 🐿️
   </a>
   {#if currentISOString}
     <div transition:fade class="font-mono text-xl text-secondary">{currentISOString}</div>
@@ -349,13 +368,7 @@
           </div>
         </h2>
         <div class="flex flex-col items-center gap-1">
-          <a href={`https://bsky.app/profile/${data.handle}`} target="_blank">
-            <div class="avatar">
-              <div class="mask mask-hexagon w-20">
-                <img src={data.avatar} alt={`${data.displayName}'s avatar`} />
-              </div>
-            </div>
-          </a>
+          <Avatar {...data} size="w-20" />
           <button
             class="flex flex-col items-center gap-0 rounded-lg p-1 transition-colors hover:scale-110 hover:bg-base-content/30 active:bg-base-content/20"
             onclick={() =>
@@ -448,86 +461,95 @@
     </div>
   </div>
 
-  <div class="card bg-base-300 p-4">
-    <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 text-lg font-bold">
-        Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
-      </h3>
-      {#if dataApi}
-        <a class="link link-secondary" href={hrefShare} target="_blank"> Share it on 🦋 </a>
-      {:else}
-        <div class="skeleton h-7 w-32 bg-base-200"></div>
-      {/if}
-    </div>
-
-    <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
-      <div class="flex h-[250px] w-full flex-col items-center gap-2">
-        <PieChart
-          data={kindOfPost}
-          key="key"
-          value="value"
-          range={[-90, 90]}
-          innerRadius={-20}
-          cornerRadius={7}
-          padAngle={0.02}
-          props={{ group: { y: 0 }, pie: { sort: null, tweened: true }, arc: { tweened: true } }}
-          padding={{ bottom: -100 }}
-          cRange={dataApi
-            ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
-            : ['oklch(var(--n))']}
-        ></PieChart>
-        <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
-        <div
-          class="absolute mt-14 text-center text-3xl sm:mt-20 {dataApi?.altPercentage === 100
-            ? 'drop-shadow-[0_0_20px_rgba(234,179,8,1)]'
-            : ''} "
-        >
-          {dataApi?.category?.emoji ?? '💡'}
-        </div>
-        <div class="mb-4 flex w-full flex-col items-center gap-2">
-          {#if dataApi}
-            <h4 class="z-10 -mx-4 text-center text-xl font-bold text-primary">
-              {dataApi?.category?.title ?? '...'}
-            </h4>
-            <p class="z-10 text-center text-sm text-base-content/70">
-              {dataApi?.category?.traits}
-            </p>
-          {:else}
-            <div class="z-10 text-center text-xl font-bold text-primary">
-              <div class="skeleton h-8 w-48 bg-base-200"></div>
-            </div>
-            <div class="z-10 text-center text-sm text-base-content/70">
-              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
-              <div class="skeleton mx-auto mb-2 h-3 w-72 bg-base-200"></div>
-              <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
-              <div class="skeleton mx-auto h-3 w-10 bg-base-200"></div>
-            </div>
-          {/if}
-        </div>
+  <div id="insights">
+    <div class="card bg-base-300 p-4 shadow-md">
+      <div class="mb-6 flex items-start justify-between">
+        <h3 class="mb-4 text-lg font-bold">
+          Insights <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
+        </h3>
+        <ScreenshotDownload
+          id="#insights"
+          filename={`Insights_${data.handle}.png`}
+          disabled={!dataApi}
+        />
+        {#if dataApi}
+          <a class="link link-secondary w-28" href={hrefShare} target="_blank"> Share it on 🦋 </a>
+        {:else}
+          <div class="skeleton h-7 w-28 bg-base-200"></div>
+        {/if}
       </div>
-      <div class="h-[250px] w-full">
-        {#if kindOfEmbed.length > 0}
+
+      <div class="flex h-[500px] w-full flex-col md:h-[250px] md:flex-row">
+        <div class="flex h-[250px] w-full flex-col items-center gap-2">
           <PieChart
-            data={kindOfEmbed}
-            cRange={dataApi
-              ? dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))
-              : ['oklch(var(--n))']}
-            key="kind"
-            value="count"
+            data={kindOfPost}
+            key="key"
+            value="value"
+            range={[-90, 90]}
             innerRadius={-20}
             cornerRadius={7}
             padAngle={0.02}
-            props={{ pie: { tweened: true } }}
+            props={{ group: { y: 0 }, pie: { sort: null, tweened: true }, arc: { tweened: true } }}
+            padding={{ bottom: -100 }}
+            cRange={dataApi
+              ? ['oklch(var(--p))', 'oklch(var(--a))', 'oklch(var(--su))']
+              : ['oklch(var(--n))']}
           ></PieChart>
-          <div class="absolute bottom-4 right-4 text-xs text-base-content/30">Kind of content</div>
-        {:else if dataApi}
+          <div class="absolute left-4 top-20 text-xs text-base-content/30">Kind of post</div>
           <div
-            class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
+            class="absolute mt-14 text-center text-3xl sm:mt-20 {dataApi?.altPercentage === 100
+              ? 'drop-shadow-[0_0_20px_rgba(234,179,8,1)]'
+              : ''} "
           >
-            <span class="text-lg">No posts yet...</span>
-            <span class="text-sm">Add something and come back! 😉</span>
+            {dataApi?.category?.emoji ?? '💡'}
           </div>
-        {/if}
+          <div class="mb-4 flex w-full flex-col items-center gap-2">
+            {#if dataApi}
+              <h4 class="z-10 -mx-4 text-center text-xl font-bold text-primary">
+                {dataApi?.category?.title ?? '...'}
+              </h4>
+              <p class="z-10 text-center text-sm text-base-content/70">
+                {dataApi?.category?.traits}
+              </p>
+            {:else}
+              <div class="z-10 text-center text-xl font-bold text-primary">
+                <div class="skeleton h-8 w-48 bg-base-200"></div>
+              </div>
+              <div class="z-10 text-center text-sm text-base-content/70">
+                <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+                <div class="skeleton mx-auto mb-2 h-3 w-72 bg-base-200"></div>
+                <div class="skeleton mx-auto mb-2 h-3 w-64 bg-base-200"></div>
+                <div class="skeleton mx-auto h-3 w-10 bg-base-200"></div>
+              </div>
+            {/if}
+          </div>
+        </div>
+        <div class="h-[250px] w-full">
+          {#if kindOfEmbed.length > 0}
+            <PieChart
+              data={kindOfEmbed}
+              cRange={dataApi
+                ? dataApi?.kindOfEmbed?.map((d) => getBackgroundColor(d.kind))
+                : ['oklch(var(--n))']}
+              key="kind"
+              value="count"
+              innerRadius={-20}
+              cornerRadius={7}
+              padAngle={0.02}
+              props={{ pie: { tweened: true } }}
+            ></PieChart>
+            <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
+              Kind of content
+            </div>
+          {:else if dataApi}
+            <div
+              class="flex h-full w-full flex-col items-center justify-center gap-2 text-base-content/50"
+            >
+              <span class="text-lg">No posts yet...</span>
+              <span class="text-sm">Add something and come back! 😉</span>
+            </div>
+          {/if}
+        </div>
       </div>
     </div>
   </div>
@@ -563,139 +585,138 @@
       icon={Repost}
     />
   </div>
-  <div class="card bg-base-300 p-4">
-    <div class="mb-6 flex items-start justify-between">
-      <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
-        <span>Your punchs</span>
-        <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
-      </h3>
-      <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
-        <button onclick={() => toggleSelection('like')}>
-          <span
-            class="stat-value {selection.includes('like')
-              ? 'text-[#4ca2fe]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}
-              <span class="text-sm text-gray-500"> likes</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
-        <button onclick={() => toggleSelection('post')}>
-          <span
-            class="stat-value {selection.includes('post')
-              ? 'text-[#fd6f9c]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
-              <span class="text-sm text-gray-500"> posts</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
-        <button onclick={() => toggleSelection('repost')}>
-          <span
-            class="stat-value {selection.includes('repost')
-              ? 'text-[#b387fa]'
-              : 'text-base-content/10'}"
-          >
-            {#if dataApi}
-              {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
-              <span class="text-sm text-gray-500"> reposts</span>
-            {:else}
-              <div class="skeleton h-10 w-24 bg-base-200"></div>
-            {/if}
-          </span>
-        </button>
+
+  <div id="punch-card">
+    <div class="card bg-base-300 p-4">
+      <div class="mb-3 flex items-start justify-between">
+        <h3 class="mb-4 flex flex-col items-center gap-2 text-lg font-bold md:flex-row">
+          <span>Punches</span>
+          <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
+        </h3>
+        <ScreenshotDownload
+          id="#punch-card"
+          filename={`Punches_${data.handle}.png`}
+          disabled={!dataApi}
+        />
+        <div class="flex flex-col items-end gap-4 md:flex-row md:items-center">
+          <button onclick={() => toggleSelection('like')}>
+            <span
+              class="stat-value {selection.includes('like')
+                ? 'text-[#4ca2fe]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalLikes ?? 0)}
+                <span class="text-sm text-gray-500"> likes</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+          <button onclick={() => toggleSelection('post')}>
+            <span
+              class="stat-value {selection.includes('post')
+                ? 'text-[#fd6f9c]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalPosts ?? 0)}
+                <span class="text-sm text-gray-500"> posts</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+          <button onclick={() => toggleSelection('repost')}>
+            <span
+              class="stat-value {selection.includes('repost')
+                ? 'text-[#b387fa]'
+                : 'text-base-content/10'}"
+            >
+              {#if dataApi}
+                {new Intl.NumberFormat().format(dataApi?.totalReposts ?? 0)}
+                <span class="text-sm text-gray-500"> reposts</span>
+              {:else}
+                <div class="skeleton h-10 w-24 bg-base-200"></div>
+              {/if}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="h-[250px] w-full">
-      <ScatterChart
-        x="hour"
-        y="weekday"
-        r="count"
-        xPadding={[20, 20]}
-        yPadding={[20, 20]}
-        padding={{ left: 24, bottom: 44, right: 8 }}
-        xDomain={[0, 23]}
-        yDomain={getyDomain()}
-        props={{
-          points: {
-            tweened: true,
-          },
+      <div class="h-[250px] w-full">
+        <ScatterChart
+          x="hour"
+          y="weekday"
+          r="count"
+          xPadding={[20, 20]}
+          yPadding={[20, 20]}
+          padding={{ left: 24, bottom: 20, right: 20 }}
+          xDomain={[0, 23]}
+          yDomain={getyDomain()}
+          props={{
+            points: {
+              tweened: true,
+            },
 
-          grid: { xTicks: 24, bandAlign: 'between' },
-          rule: { x: false, y: false },
-          xAxis: {
-            format: (d) =>
-              new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                new Date().setHours(d),
-              ),
-            tickLabelProps: {
-              class: 'fill-base-content/50',
+            grid: { xTicks: 24, bandAlign: 'between' },
+            rule: { x: false, y: false },
+            xAxis: {
+              format: (d) => dtFormat({ hour: '2-digit' }).format(new Date().setHours(d)),
+              tickLabelProps: {
+                class: 'fill-base-content/50',
+              },
             },
-          },
-          yAxis: {
-            format: (d: number) => {
-              if (d < 0) {
-                return ''
-              }
-              if (d > 6) {
-                return ''
-              }
-              return new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(
-                new Date(2024, 0, d === 0 ? 7 : d),
-              )
+            yAxis: {
+              format: (d: number) => {
+                if (d < 0) {
+                  return ''
+                }
+                if (d > 6) {
+                  return ''
+                }
+                return dtFormat({ weekday: 'short' }).format(new Date(2024, 0, d === 0 ? 7 : d))
+              },
+              ticks: 7,
+              tickLength: 0,
+              tickLabelProps: {
+                class: 'fill-base-content/50',
+              },
             },
-            ticks: 7,
-            tickLength: 0,
-            tickLabelProps: {
-              class: 'fill-base-content/50',
-            },
-          },
-        }}
-        series={punchCard}
-      >
-        <svelte:fragment slot="tooltip">
-          <Tooltip.Root let:data>
-            <Tooltip.Header>{data.seriesKey}</Tooltip.Header>
-            <Tooltip.List>
-              <Tooltip.Item
-                label="Weekday"
-                value={new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(
-                  new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
-                )}
-                valueAlign="right"
-              />
-              <Tooltip.Item
-                label="Hour"
-                value={new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                  new Date().setHours(data.hour),
-                ) +
-                  ' - ' +
-                  new Intl.DateTimeFormat(undefined, { hour: '2-digit' }).format(
-                    new Date().setHours(data.hour + 1),
+          }}
+          series={punchCard}
+        >
+          <svelte:fragment slot="tooltip">
+            <Tooltip.Root let:data>
+              <Tooltip.Header>{data.seriesKey}</Tooltip.Header>
+              <Tooltip.List>
+                <Tooltip.Item
+                  label="Weekday"
+                  value={dtFormat({ weekday: 'long' }).format(
+                    new Date(2024, 0, data.weekday === 0 ? 7 : data.weekday),
                   )}
-                valueAlign="right"
-              />
-              <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
-            </Tooltip.List>
-          </Tooltip.Root>
-        </svelte:fragment>
-      </ScatterChart>
-      <div class="absolute bottom-4 right-4 text-xs text-base-content/30">
-        Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and time
-        (x).
-      </div>
-      <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
+                  valueAlign="right"
+                />
+                <Tooltip.Item
+                  label="Hour"
+                  value={dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour)) +
+                    ' - ' +
+                    dtFormat({ hour: '2-digit' }).format(new Date().setHours(data.hour + 1))}
+                  valueAlign="right"
+                />
+                <Tooltip.Item label="Count" value={data.count} valueAlign="right" />
+              </Tooltip.List>
+            </Tooltip.Root>
+          </svelte:fragment>
+        </ScatterChart>
+        <!-- <div class="absolute bottom-0 right-4 text-xs text-base-content/30">
         Clicking on the total number of likes, posts and reposts will hide/show on the punch card.
-      </div> -->
+        </div> -->
+      </div>
+      <div class="mt-1 text-right text-xs text-base-content/30">
+        Each time you like, post or repost, the app will count <b>+1</b> on the correct day (y) and time
+        (x) of your current timezone.
+      </div>
     </div>
   </div>
 
@@ -703,7 +724,7 @@
     <div class="card bg-base-300 p-4">
       <div class="flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">
-          Following <span class="text-xs text-base-content/50"> (Rolling 7 days)</span>
+          Following <span class="text-xs text-base-content/50"> (Rolling 21 days)</span>
         </h3>
         <div class="stat-value text-primary">
           {#if dataApiFollows}
@@ -750,16 +771,39 @@
               />
             </LinearGradient>
           </svelte:fragment>
+          <svelte:fragment slot="tooltip">
+            <Tooltip.Root let:data>
+              <Tooltip.Header>{format(data.timestamp, PeriodType.Day)}</Tooltip.Header>
+              <Tooltip.List>
+                <!-- <Tooltip.Item
+              label="Day"
+              format="integer"
+              value={data.rawCount.toLocaleString()}
+              valueAlign="right"
+            /> -->
+                <Tooltip.Item
+                  label="Total"
+                  format="integer"
+                  value={data.count.toLocaleString()}
+                  valueAlign="right"
+                />
+              </Tooltip.List>
+            </Tooltip.Root>
+          </svelte:fragment>
         </AreaChart>
       </div>
     </div>
   {/if}
 
-  {#if (dataApiFStarterPacks ?? []).length > 0}
+  {#if dataApiFStarterPacks === null}
+    <div class="flex items-center justify-center text-base-content/50">
+      You are not in any starter pack that I know of yet!
+    </div>
+  {:else if (dataApiFStarterPacks ?? []).length > 0}
     <div class="card bg-base-300 p-4">
       <div class="flex items-start justify-between">
         <h3 class="mb-4 text-lg font-bold">
-          In Stater Pack
+          In Starter Pack
           <span class="text-xs text-base-content/50"> (in the Skyzoo known packs)</span>
         </h3>
         <div class="stat-value text-primary">

@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { Area, AreaChart, LinearGradient } from 'layerchart'
+  import { PeriodType } from '@layerstack/utils'
+  import { Area, AreaChart, LinearGradient, Tooltip } from 'layerchart'
 
   import { remult, type UserInfo } from 'remult'
 
   import { page } from '$app/stores'
 
+  import og from '$lib/assets/og-punches.png'
+  import Og from '$lib/components/Og.svelte'
   import { AgentController } from '$modules/at/AgentController'
 
   type ResolvedType<T> = T extends Promise<infer R> ? R : T
@@ -48,7 +51,20 @@
       count: d.count,
     })),
   )
+
+  const format = (d: Date, period: PeriodType) => {
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric',
+      month: 'short', // Displays the month in abbreviated form, e.g., "Nov"
+      day: 'numeric',
+      hour: 'numeric',
+    }).format(d)
+  }
+
+  const description = `Assigns you a Bluesky animal based on your recent activity`
 </script>
+
+<Og title={`Sky Zoo - Stats`} {description} {og} />
 
 <div class="card bg-base-300 p-4">
   <div class="flex items-start justify-between">
@@ -99,6 +115,25 @@
             fill={url}
           />
         </LinearGradient>
+      </svelte:fragment>
+      <svelte:fragment slot="tooltip">
+        <Tooltip.Root let:data>
+          <Tooltip.Header>{format(data.timestamp, PeriodType.Day)}</Tooltip.Header>
+          <Tooltip.List>
+            <!-- <Tooltip.Item
+              label="Day"
+              format="integer"
+              value={data.rawCount.toLocaleString()}
+              valueAlign="right"
+            /> -->
+            <Tooltip.Item
+              label="Total"
+              format="integer"
+              value={data.count.toLocaleString()}
+              valueAlign="right"
+            />
+          </Tooltip.List>
+        </Tooltip.Root>
       </svelte:fragment>
     </AreaChart>
   </div>

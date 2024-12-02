@@ -1,10 +1,9 @@
 import { Entity, Fields, Filter, Relations } from 'remult'
 import { sqlRelations, sqlRelationsFilter } from 'remult/internals'
 
+import { BSkyty } from '$modules/at/BSkyty'
+import { ListItem } from '$modules/at/ListItem'
 import { Roles } from '$modules/auth/Roles'
-
-import { BSkyty } from './BSkyty'
-import { ListItem } from './ListItem'
 
 @Entity<StarterPack>('starter-packs', {
   allowApiRead: true,

@@ -12,6 +12,7 @@
 <Og
   title="Thumbnail & metadata"
   description="A tool to generate thumbnail & metadata for your youtube videos"
+  og="https://jyc.dev/og.png"
 />
 
 <div class="m-auto flex flex-col gap-8 py-4" style="width: 480px">

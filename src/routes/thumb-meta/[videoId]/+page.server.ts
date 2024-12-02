@@ -6,24 +6,11 @@ import { cyan, green, Log } from '@kitql/helpers'
 import { YOUTUBE_API_KEY } from '$env/static/private'
 import { dev } from '$app/environment'
 
+import { fetchImageAsBase64 } from '$lib'
+
 import type { PageServerLoad } from './$types'
 
 const log = new Log('jyc.dev')
-
-async function fetchImageAsBase64(url: string) {
-  try {
-    const response = await fetch(url, {
-      mode: 'cors',
-      redirect: 'follow',
-    })
-    const arrayBuffer = await response.arrayBuffer()
-    // @ts-ignore
-    const base64String = Buffer.from(arrayBuffer).toString('base64')
-    return base64String
-  } catch (error) {
-    console.error('Failed to fetch and convert image', error)
-  }
-}
 
 export const load = (async ({ fetch, params }) => {
   const initData = await getVideoViews(params.videoId)

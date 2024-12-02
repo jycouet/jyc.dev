@@ -1,12 +1,10 @@
 <script lang="ts">
   import { queryParameters } from 'sveltekit-search-params'
 
-  import Avatar from '$lib/components/Avatar.svelte'
+  import og from '$lib/assets/og-wolf.png'
   import Og from '$lib/components/Og.svelte'
   import { paginatorStore } from '$lib/paginatorStore'
   import { containsWords } from '$lib/remultHelper'
-  import { route } from '$lib/ROUTES'
-  import { parseUri } from '$modules/at/helper'
   import { StarterPack } from '$modules/at/StarterPack'
 
   import RowStarterPack from './RowStarterPack.svelte'
@@ -39,7 +37,7 @@
       paginator.load({})
     } else {
       clearTimeout(debounceTimer)
-      console.log('debounce')
+      console.info('debounce')
       debounceTimer = setTimeout(() => {
         paginator.load({
           $or: [
@@ -56,7 +54,7 @@
   const description = 'Looking for a starter pack? Here you go!'
 </script>
 
-<Og title="Sky Zoo - Starter Packs Browser" {description} />
+<Og title="Sky Zoo - Starter Packs Browser" {description} {og} />
 
 <div class="container mx-auto space-y-4">
   <div class="relative mb-8">

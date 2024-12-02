@@ -1,7 +1,7 @@
 import { DidResolver, getPds } from '@atproto/identity'
 import { redirect } from '@sveltejs/kit'
 
-import { repo } from 'remult'
+import { repo, SqlDatabase } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { getProfile } from '$modules/at/agentHelper'
@@ -11,7 +11,7 @@ import { ListItem } from '$modules/at/ListItem'
 import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 
-import type { PageServerLoad } from './$types'
+import type { LayoutServerLoad } from './$types'
 
 const log = new Log('at/[handle]/+page.server.ts')
 
@@ -39,7 +39,9 @@ export const load = (async (event) => {
     })
 
     // Don't await this
-    addStarterPack(profile.data.did)
+    if (profile.data.associated?.starterPacks) {
+      addStarterPack(profile.data.did)
+    }
 
     let createdAt = bskyty.createdAt
     let pos_atproto = bskyty.pos_atproto
@@ -157,13 +159,13 @@ export const load = (async (event) => {
   } catch (error) {
     const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']
     if (error instanceof Error && notValidError.includes(error.message)) {
-      redirect(307, `/at?h=${cleanHandle}&e=not-valid`)
+      redirect(307, `/stats?h=${cleanHandle}&e=not-valid`)
     } else {
       console.error(`error in PageServerLoad`, cleanHandle, error)
-      redirect(307, `/at`)
+      redirect(307, `/stats`)
     }
   }
-}) satisfies PageServerLoad
+}) satisfies LayoutServerLoad
 
 const addStarterPack = async (did: string) => {
   const didResolver = new DidResolver({})
@@ -176,6 +178,8 @@ const addStarterPack = async (did: string) => {
         listRecordsAll(pds, did, 'app.bsky.graph.listitem'),
       ])
       for (const starterPack of starterPacks.records) {
+        // console.log(`starterPack`, starterPack)
+
         try {
           await repo(StarterPack).upsert({
             where: { id: starterPack.uri },

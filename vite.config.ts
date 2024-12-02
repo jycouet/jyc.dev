@@ -2,7 +2,11 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { kitRoutes } from 'vite-plugin-kit-routes'
 
+import { write } from '@kitql/internals'
+
 import type { KIT_ROUTES } from '$lib/ROUTES'
+
+import { getProfile } from './src/modules/at/agentHelper'
 
 export default defineConfig({
   plugins: [
@@ -30,5 +34,49 @@ export default defineConfig({
         },
       },
     }),
+    {
+      name: 'sponsors',
+      async buildStart() {
+        const sponsors = [
+          'tigur.com',
+          'imlunahey.com',
+          'harry-lewiston.bsky.social',
+          'patak.dev',
+          'robertlin.bsky.social',
+          'eomasters.org',
+          'adaszpilka.art',
+          'fettstorch.com',
+          'rahaeli.bsky.social',
+          'aunticles.bsky.social',
+          'srsholmes.com',
+        ]
+        const sponsorsData = await Promise.all(
+          sponsors.map(async (handle) => {
+            try {
+              return await getProfile(handle)
+            } catch (error) {
+              console.error(error)
+            }
+          }),
+        )
+
+        write('src/lib/sponsors.ts', [
+          `export const sponsors = [`,
+          sponsorsData
+            .filter((c) => c !== undefined)
+            .map((sponsor) => {
+              return `  {
+    handle: '${sponsor.data.handle}',
+    avatar:
+      '${sponsor.data.avatar}',
+    displayName: '${sponsor.data.displayName}',
+  }`
+            })
+            .join(',\n') + ',',
+          `]`,
+          '',
+        ])
+      },
+    },
   ],
 })

@@ -1,16 +1,15 @@
 import { BackendMethod, repo } from 'remult'
 
+import { fetchImageAsBase64 } from '$lib'
+import { getProfile } from '$modules/at/agentHelper'
+import { determineCategory } from '$modules/at/determineCategory'
 import { didToPds, listRecordsAll, parseUri } from '$modules/at/helper'
+import { ListItem } from '$modules/at/ListItem'
+import { RecordFollow } from '$modules/at/RecordFollow'
+import { RecordPlc, RecordPlcStats } from '$modules/at/RecordPlc'
 import { GlobalKey, KeyValue } from '$modules/global/Entities'
 import { LogHandleFollow } from '$modules/logs/LogHandleFollow'
 import { LogHandleStats } from '$modules/logs/LogHandleStats'
-
-import { getProfile } from './agentHelper'
-import { BSkyty } from './BSkyty'
-import { determineCategory } from './determineCategory'
-import { ListItem } from './ListItem'
-import { RecordFollow } from './RecordFollow'
-import { RecordPlcStats } from './RecordPlc'
 
 interface ActivityCounts {
   yesterday: number
@@ -276,12 +275,12 @@ export class AtController {
           { orderBy: { createdAt: 'desc' } },
         )
 
-        const one_weeks_ago = new Date()
-        one_weeks_ago.setDate(one_weeks_ago.getDate() - 7)
+        const three_weeks_ago = new Date()
+        three_weeks_ago.setDate(three_weeks_ago.getDate() - 7 * 3)
 
         const follows = await listRecordsAll(pds, did, 'app.bsky.graph.follow', {
           while: (r) =>
-            new Date(r.value.createdAt) > one_weeks_ago &&
+            new Date(r.value.createdAt) > three_weeks_ago &&
             r.value.subject !== lastFollowDid?.didFollow,
         })
         const nbRequests = follows.nbRequest
@@ -329,7 +328,7 @@ export class AtController {
         // Start from current hour
         const now = new Date()
         const startDate = new Date(now)
-        startDate.setDate(startDate.getDate() - 7) // Go back 7 days
+        startDate.setDate(startDate.getDate() - 7 * 3) // Go back 7 days
 
         const followsPeriods = await repo(RecordFollow).groupBy({
           group: ['onDay'],
@@ -395,11 +394,133 @@ export class AtController {
 
       const toRet = items.map((i) => i.starterPack).filter((i) => i)
 
+      if (items.length === 0) {
+        return null
+      }
+
       return toRet
     } catch (error) {
       console.error(`error`, error)
     }
     return null
+  }
+
+  @BackendMethod({ allowed: true })
+  static async getSquirrelSquad(pos_bsky: number, avatarUrl: string) {
+    const minimumRequirements = (profileData: Awaited<ReturnType<typeof getProfile>>['data']) => {
+      // console.log(`profile.data`, profileData)
+      const labelValues = (profileData.labels ?? []).map((c) => c.val)
+
+      const toExclude = ['porn', 'nsfw', 'adult']
+      return (
+        !labelValues.some((label) => toExclude.includes(label)) &&
+        (profileData.postsCount ?? 0) >= 1 &&
+        (profileData.postsCount ?? 0) >= 1 &&
+        (profileData.followersCount || 0) >= 10 &&
+        (profileData.followsCount || 0) >= 10
+      )
+    }
+
+    type Squad = {
+      pos_bsky: number
+      handle: string
+      displayName: string
+      avatar: string
+      followersCount: number
+      followsCount: number
+      postsCount: number
+    }
+    async function mapSquad(record: RecordPlc, profile: any): Promise<Squad> {
+      if (profile.data.avatar) {
+        profile.data.avatar = `data:image/jpeg;base64,${await fetchImageAsBase64(profile.data.avatar)}`
+      }
+
+      return {
+        pos_bsky: record.pos_bsky!,
+        handle: profile.data.handle,
+        displayName: profile.data.displayName || profile.data.handle,
+        avatar: profile.data.avatar ?? '',
+        followersCount: profile.data.followersCount,
+        followsCount: profile.data.followsCount,
+        postsCount: profile.data.postsCount,
+      }
+    }
+
+    // TODO: reduce this number once we have the invalid handle in palce
+    const SQUAD_SIDE_DB = 86
+    const SQUAD_SIDE = 5
+
+    const [before, after] = await Promise.all([
+      // Get and process records before pos_bsky
+      (async () => {
+        const squad: Squad[] = []
+        const beforeRecords = await repo(RecordPlc).find({
+          where: {
+            pos_bsky: {
+              $lt: pos_bsky,
+              '!=': null,
+            },
+          },
+          orderBy: { pos_bsky: 'desc' },
+          limit: SQUAD_SIDE_DB, // Reasonable limit to avoid too many checks
+        })
+
+        for (const record of beforeRecords) {
+          if (squad.length >= SQUAD_SIDE) break
+
+          let profile
+          try {
+            profile = await getProfile(record.did, { maxAttempts: 3 })
+            if (!profile) continue
+          } catch (error) {
+            continue
+          }
+
+          if (!minimumRequirements(profile.data)) continue
+
+          squad.push(await mapSquad(record, profile))
+        }
+        return squad
+      })(),
+
+      // Get and process records after pos_bsky
+      (async () => {
+        const squad: Squad[] = []
+        const afterRecords = await repo(RecordPlc).find({
+          where: {
+            pos_bsky: {
+              $gt: pos_bsky,
+              '!=': null,
+            },
+          },
+          orderBy: { pos_bsky: 'asc' },
+          limit: SQUAD_SIDE_DB, // Reasonable limit to avoid too many checks
+        })
+
+        for (const record of afterRecords) {
+          if (squad.length >= SQUAD_SIDE) break
+
+          let profile
+          try {
+            profile = await getProfile(record.did, { maxAttempts: 3 })
+            if (!profile) continue
+          } catch (error) {
+            continue
+          }
+
+          if (!minimumRequirements(profile.data)) continue
+
+          squad.push(await mapSquad(record, profile))
+        }
+        return squad
+      })(),
+    ])
+
+    return {
+      before,
+      after,
+      avatarBlob: `data:image/jpeg;base64,${await fetchImageAsBase64(avatarUrl)}`,
+    }
   }
 }
 
@@ -409,11 +530,11 @@ export type LatestGlobalStats = {
     $count: number
   }[]
   lastValue: RecordPlcStats | undefined
-  lastProfile: {
+  lastProfiles: {
     handle: string
     displayName: string
     avatar: string
-  }
+  }[]
   lastHourSpeedPerSecond: number
 }
 
@@ -434,26 +555,34 @@ export const calcLatestGlobalStats = async () => {
       onDay: new Date(stat.onDay).toISOString().split('T')[0],
     }))
 
-    const lastValue = await repo(RecordPlcStats).findFirst({ pos_bsky: { '!=': null } })
+    const lastValues = await repo(RecordPlcStats).find({
+      where: { pos_bsky: { '!=': null } },
+      limit: 5,
+    })
 
     const lastHour = await repo(RecordPlcStats).count({
-      createdAt: { $gte: new Date(lastValue!.createdAt.getTime() - 60 * 60 * 1000) },
+      createdAt: { $gte: new Date(lastValues[0]!.createdAt.getTime() - 60 * 60 * 1000) },
       pos_bsky: { '!=': null },
     })
 
-    const profile = await getProfile(lastValue!.did)
-    if (!profile) {
-      throw new Error('Profile not found')
-    }
+    const profiles = await Promise.all(
+      lastValues.map(async (value) => {
+        const profile = await getProfile(value.did)
+        if (!profile) return null
+        return profile
+      }),
+    )
+
+    const validProfiles = profiles.filter((p): p is NonNullable<typeof p> => p !== null)
 
     const toRet: LatestGlobalStats = {
       dailyStats,
-      lastValue,
-      lastProfile: {
+      lastValue: lastValues[0],
+      lastProfiles: validProfiles.map((profile) => ({
         handle: profile.data.handle,
-        displayName: profile.data.displayName ?? profile.data.handle,
+        displayName: profile.data.displayName || profile.data.handle,
         avatar: profile.data.avatar ?? '',
-      },
+      })),
       lastHourSpeedPerSecond: lastHour / (60 * 60),
     }
 
