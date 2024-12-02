@@ -3,7 +3,13 @@
 
   import Download from '$lib/icons/Download.svelte'
 
-  let { disabled, id, filename } = $props()
+  interface Props {
+    disabled: boolean
+    id: string
+    filename: string
+  }
+
+  let { disabled, id, filename }: Props = $props()
 
   async function screenshotDownload(document: Document, id: string, filename: string) {
     const el = document.querySelector(id)

@@ -9,11 +9,11 @@
 
   import avatarDefault from '$lib/assets/avatar-default.jpg'
   import og from '$lib/assets/og-insights.png'
-  import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { AgentController } from '$modules/at/AgentController'
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
+  import Shortcut from '$lib/components/Shortcut.svelte'
 
   const description = 'Assigns you a Bluesky animal based on your recent activity'
 
@@ -91,7 +91,7 @@
         } else {
           await goto(route(`/stats/[handle]`, { handle, skip_follow: 'true' }))
         }
-      } catch (e) {
+      } catch (err) {
         error = 'An error occurred'
       } finally {
         loading = false
@@ -109,6 +109,9 @@
   let loadingSuggestions = $state(false)
 
   let isFirstLoad = $state(true)
+
+  let selectedIndex = $state(-1)
+  let suggestionRefs = $state<HTMLElement[]>([])
 
   const handleInput = async (e: Event) => {
     clearTimeout(debounceTimer)
@@ -134,11 +137,34 @@
     }
   }
 
+  const handleKeyNavigation = (direction: 'up' | 'down' | 'enter') => {
+    if (!showSuggestions || suggestions.length === 0) return
+
+    if (direction === 'up') {
+      selectedIndex = selectedIndex <= 0 ? suggestions.length - 1 : selectedIndex - 1
+    } else if (direction === 'down') {
+      selectedIndex = selectedIndex >= suggestions.length - 1 ? 0 : selectedIndex + 1
+    } else if (direction === 'enter' && selectedIndex !== -1) {
+      selectSuggestion(suggestions[selectedIndex])
+    }
+
+    // Scroll selected item into view
+    suggestionRefs[selectedIndex]?.scrollIntoView({ block: 'nearest' })
+  }
+
   const selectSuggestion = async (suggestion: ProfileViewBasic) => {
     handle = suggestion.handle
-    await goto(route(`/stats/[handle]`, { handle }))
-    // showSuggestions = false
+    showSuggestions = false
+    selectedIndex = -1
+    // @ts-ignore
+    handleSubmit({ preventDefault: () => {} })
   }
+
+  $effect(() => {
+    if (suggestions.length === 0) {
+      selectedIndex = -1
+    }
+  })
 </script>
 
 <Og title="Sky Zoo" {description} {og} />
@@ -192,12 +218,19 @@
                         <div class="flex items-center gap-2 py-2">No handles found</div>
                       </li>
                     {:else}
-                      {#each suggestions as suggestion}
-                        <li class={loadingSuggestions ? 'opacity-50' : ''}>
+                      {#each suggestions as suggestion, index}
+                        <li 
+                          class={`
+                            ${loadingSuggestions ? 'opacity-50' : ''} 
+                            ${selectedIndex === index ? 'bg-primary/20' : ''}
+                          `}
+                          bind:this={suggestionRefs[index]}
+                        >
                           <button
                             type="button"
                             class="flex items-center gap-2 py-2"
                             onclick={() => selectSuggestion(suggestion)}
+                            onmouseenter={() => (selectedIndex = index)}
                           >
                             <div class="mask mask-hexagon size-8" title={suggestion.handle}>
                               <img
@@ -266,4 +299,8 @@
       <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
     </a>
   </div>
+
+  <Shortcut binds={['ArrowUp']} run={() => handleKeyNavigation('up')} />
+  <Shortcut binds={['ArrowDown']} run={() => handleKeyNavigation('down')} />
+  <Shortcut binds={['Enter']} run={() => handleKeyNavigation('enter')} />
 </div>
