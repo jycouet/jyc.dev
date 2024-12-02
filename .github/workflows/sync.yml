@@ -1,18 +1,18 @@
-name: Scheduled Ping
-# This workflow is triggered at a scheduled interval of every 30 minutes
-on:
-  schedule:
-    # * is a special character in YAML so you have to quote this string.
-    # /10 denotes that it will run once every 10 minutes
-    - cron: '*/10 * * * *'
+# name: Scheduled Ping
+# # This workflow is triggered at a scheduled interval of every 30 minutes
+# on:
+#   schedule:
+#     # * is a special character in YAML so you have to quote this string.
+#     # /10 denotes that it will run once every 10 minutes
+#     - cron: '*/10 * * * *'
 
-jobs:
-  pinger_job:
-    name: A job to ping
-    runs-on: ubuntu-latest
-    env:
-      URL: ${{ secrets.URL }}
-      METHOD: GET # the method used to make the request. It is GET by default
-    steps:
-      - id: ping
-        uses: sisodiya2421/pinger@master
+# jobs:
+#   pinger_job:
+#     name: A job to ping
+#     runs-on: ubuntu-latest
+#     env:
+#       URL: ${{ secrets.URL }}
+#       METHOD: GET # the method used to make the request. It is GET by default
+#     steps:
+#       - id: ping
+#         uses: sisodiya2421/pinger@master
