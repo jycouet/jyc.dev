@@ -44,7 +44,7 @@ export const sponsors = [
   {
     handle: 'fettstorch.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreig654f3w2ldwibasroi4za4zcqjhr7qza3djikyhqaemfjjtatbqm@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreieapcv2agyidn6asopfppksjj3tjnueb5727wnkckmm3gdlljztae@jpeg',
     displayName: 'Julian',
   },
   {
