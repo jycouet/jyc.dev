@@ -4,16 +4,17 @@ import { retries } from './helper'
 
 export const getProfile = async (
   cleanHandle_or_did: string,
-  options?: { maxAttempts?: number },
+  options?: { maxAttempts?: number; withLog?: boolean },
 ) => {
   const agent = new Agent(new URL('https://public.api.bsky.app'))
-
+  const withLog = options?.withLog ?? true
   return await retries(
     async () => {
       return await agent.getProfile({ actor: cleanHandle_or_did })
     },
     {
       maxAttempts: options?.maxAttempts ?? 6,
+      withLog,
     },
   )
 }

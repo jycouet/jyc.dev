@@ -1,4 +1,4 @@
-import { repo } from 'remult'
+import { repo, SqlDatabase } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import { getProfile } from '$modules/at/agentHelper'
@@ -19,7 +19,7 @@ const checkPlcRecord = async (indexedAt: Date, did: string): Promise<Partial<Rec
   // if (!pds) return { ...toRet, invalidPds: true }
 
   try {
-    const { data: profile } = await getProfile(did, { maxAttempts: 1 })
+    const { data: profile } = await getProfile(did, { maxAttempts: 1, withLog: false })
 
     toRet = {
       ...toRet,
@@ -91,16 +91,19 @@ const checkPlcRecord = async (indexedAt: Date, did: string): Promise<Partial<Rec
 }
 
 const logCheck = new Log('plc record')
-export const _checkAndUpdatePlcRecord = async (indexedAt: Date, did: string) => {
+export const _checkAndUpdatePlcRecord = async (indexedAt: Date, did: string, withLoogs = true) => {
   try {
     const result = await checkPlcRecord(indexedAt, did)
     if (result) {
       await repo(RecordPlc).update(did, result)
-      logCheck.success(`Updated ${did}`)
+      if (withLoogs) {
+        logCheck.success(`Updated ${did}`)
+      }
     }
   } catch (error) {
-    logCheck.error(`Failed to update ${did}`, error)
-    // console.info(`result`, result)
+    if (withLoogs) {
+      logCheck.error(`Failed to update ${did}`, error)
+    } // console.info(`result`, result)
     // process.exit(1)
   }
 }
@@ -124,20 +127,22 @@ async function processInBatches(
 
   while (processedCount < maxProcessedCount) {
     // Fetch batch of records
+    // SqlDatabase.LogToConsole = 'oneLiner'
     const plcs = await repo(RecordPlc).find({
       limit: BATCH_SIZE,
       page: currentPage,
       where: {
-        pos_bsky: { $not: null },
-        indexedAt: null!,
+        state: RecordPlcState.UNKNOWN,
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'asc', indexedAt: 'asc' },
     })
+    // SqlDatabase.LogToConsole = false
+    // process.exit(1)
 
     if (plcs.length === 0) break
 
     // Process batch concurrently with limit
-    const batchPromises = plcs.map((plc) => _checkAndUpdatePlcRecord(indexedAt, plc.did))
+    const batchPromises = plcs.map((plc) => _checkAndUpdatePlcRecord(indexedAt, plc.did, false))
 
     // Process in chunks of CONCURRENT_LIMIT
     for (let i = 0; i < batchPromises.length; i += CONCURRENT_LIMIT) {
@@ -176,7 +181,7 @@ export const GET: RequestHandler = async (event) => {
     : 1
   const maxProcessedCount = event.url.searchParams.get('max')
     ? parseInt(event.url.searchParams.get('max')!)
-    : 99_999
+    : 9_999
 
   console.info('Start', page, maxProcessedCount)
 
@@ -184,8 +189,7 @@ export const GET: RequestHandler = async (event) => {
 
   // Get total count first
   const totalCount = await repo(RecordPlc).count({
-    pos_bsky: { $not: null },
-    indexedAt: null!,
+    state: RecordPlcState.UNKNOWN,
   })
 
   const { processedCount, totalTime } = await processInBatches(

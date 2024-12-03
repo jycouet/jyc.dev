@@ -17,9 +17,20 @@ jobs:
       - id: ping
         uses: sisodiya2421/pinger@master
 
+  pinger_job_check:
+    name: Job Check
+    needs: pinger_job_sync
+    runs-on: ubuntu-latest
+    env:
+      URL: ${{ secrets.URLCheck }}
+      METHOD: GET # the method used to make the request. It is GET by default
+    steps:
+      - id: ping
+        uses: sisodiya2421/pinger@master
+
   pinger_job_top:
     name: Job Top
-    needs: pinger_job_sync # This ensures Job Top runs after Job Sync
+    needs: pinger_job_check
     runs-on: ubuntu-latest
     env:
       URL: ${{ secrets.URLTop }}

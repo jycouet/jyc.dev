@@ -3,18 +3,20 @@ import { AtUri } from '@atproto/syntax'
 
 import { Log, sleep } from '@kitql/helpers'
 
+const log = new Log(`retries`)
+
 export async function retries<T>(
   fn: () => Promise<T>,
   options?: {
     maxAttempts?: number
     baseDelay?: number
     msgError?: string
+    withLog?: boolean
   },
 ): Promise<T> {
   const maxAttempts = options?.maxAttempts ?? 6 // delayMs 6&10 => 1270
   const baseDelay = options?.baseDelay ?? 10
-
-  const log = new Log(`retries`)
+  const withLog = options?.withLog ?? true
 
   for (let i = 0; i < maxAttempts; i++) {
     try {
@@ -22,11 +24,15 @@ export async function retries<T>(
       return result
     } catch (error) {
       if (i >= maxAttempts - 1) {
-        log.error(options?.msgError ?? 'Error')
+        if (withLog) {
+          log.error(options?.msgError ?? 'Error')
+        }
         throw error
       }
       const delayMs = baseDelay * 2 ** i
-      log.info(`Retrying in ${delayMs}ms...`)
+      if (withLog) {
+        log.info(`Retrying in ${delayMs}ms...`)
+      }
       await sleep(delayMs)
     }
   }
