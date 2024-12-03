@@ -218,7 +218,7 @@
   <div class="mt-8 flex flex-col items-center gap-2 pr-4">
     <p class="text-xs text-base-content/60">Avatar links to</p>
     <div class="flex items-center gap-2">
-      <span class="text-sm text-info">Bluesky profile</span>
+      <span class="text-right text-sm text-info">Bluesky profile</span>
       <input
         type="checkbox"
         class="toggle toggle-primary"

@@ -8,7 +8,7 @@ export const load = (async () => {
   const topProfiles = await repo(RecordPlc).find({
     where: { followersCount: { $gt: 0 } },
     orderBy: { followersCount: 'desc' },
-    limit: 300,
+    limit: 999,
   })
 
   return {

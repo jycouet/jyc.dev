@@ -10,11 +10,11 @@ import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async (event) => {
   const log = new Log('plc-check-top')
-  log.info('Checking top 900 PLCs')
+  log.info('Checking top 3000 PLCs')
 
   const top1000 = await repo(RecordPlc).find({
     where: { followersCount: { $gt: 0 } },
-    limit: 900,
+    limit: 3000,
     orderBy: { followersCount: 'desc' },
   })
 
@@ -23,7 +23,7 @@ export const GET: RequestHandler = async (event) => {
   const indexedAt = new Date()
   await Promise.all(top1000.map((plc) => limit(() => _checkAndUpdatePlcRecord(indexedAt, plc.did))))
 
-  log.info('Done checking top 900 PLCs')
+  log.info('Done checking top 3000 PLCs')
 
   return new Response(JSON.stringify({}), {
     headers: {

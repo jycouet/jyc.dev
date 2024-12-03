@@ -1,6 +1,7 @@
 <script lang="ts">
   import avatarDefault from '$lib/assets/avatar-default.jpg'
   import og from '$lib/assets/og-lion.png'
+  import ImageLoader from '$lib/components/image/ImageLoader.svelte'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { LSContext } from '$lib/stores/LSContext'
@@ -31,12 +32,12 @@
     <h1 class="text-4xl font-bold">🦁 Top Followed</h1>
 
     <div class="flex items-center justify-between gap-4">
-      <p class="text-base-content/70">The 300 most followed accounts.</p>
+      <p class="text-base-content/70">The 999 most followed accounts.</p>
 
       <div class="flex flex-col items-center gap-1">
         <p class="text-xs text-base-content/60">Links to</p>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-info">Bluesky profile</span>
+          <span class="text-right text-sm text-info">Bluesky profile</span>
           <input
             type="checkbox"
             class="toggle toggle-primary"
@@ -71,11 +72,9 @@
         <div class="card-body">
           <div class="flex items-center gap-3">
             <div class="mask mask-hexagon size-12 flex-shrink-0">
-              <img
-                src={profile.avatar || avatarDefault}
-                alt="{profile.handle}'s avatar"
-                class="h-full w-full object-cover"
-              />
+              <ImageLoader src={profile.avatar || avatarDefault} alt="{profile.handle}'s avatar"
+              ></ImageLoader>
+              <!-- class="h-full w-full object-cover" -->
             </div>
             <div class="flex w-full min-w-0 flex-col">
               <span class="truncate font-bold">{profile.displayName}</span>
