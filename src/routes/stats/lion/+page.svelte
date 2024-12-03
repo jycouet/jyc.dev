@@ -1,6 +1,6 @@
 <script lang="ts">
   import avatarDefault from '$lib/assets/avatar-default.jpg'
-  import og from '$lib/assets/og-whale.png'
+  import og from '$lib/assets/og-lion.png'
   import Og from '$lib/components/Og.svelte'
   import { route } from '$lib/ROUTES'
   import { LSContext } from '$lib/stores/LSContext'
