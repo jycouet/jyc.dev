@@ -33,12 +33,12 @@ import { SqlController } from '$modules/sql/SqlController'
 import { Roles } from '../modules/auth/Roles'
 
 SqlDatabase.LogToConsole = false
-// SqlDatabase.LogToConsole = 'oneLiner'
+SqlDatabase.LogToConsole = 'oneLiner'
 
 export const dataProvider = DATABASE_URL
   ? await createPostgresDataProvider({
       connectionString: DATABASE_URL,
-      orderByNullsFirst: true,
+      // orderByNullsFirst: true,
     })
   : new JsonDataProvider(new JsonEntityFileStorage('./db'))
 
@@ -109,8 +109,8 @@ export const api = remultSveltekit({
       // await upsertIndex(RecordPlc, 'pos_bsky')
       // await upsertIndex(RecordPlc, 'indexedAt')
       // await upsertIndex(RecordPlc, 'followersCount')
-      await upsertIndex(RecordPlc, 'indexedAt')
-      await upsertIndex(RecordPlc, 'state')
+      // await upsertIndex(RecordPlc, 'indexedAt')
+      // await upsertIndex(RecordPlc, 'state')
 
       // await execute(`ALTER TABLE "record-plcs" DROP COLUMN "invalidHandle";`)
       // await execute(`UPDATE "record-plcs" SET "state" = 'UNKNOWN'`)
