@@ -11,6 +11,7 @@ import { ListItem } from '$modules/at/ListItem'
 import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 
+import { _checkAndUpdatePlcRecord } from '../plc/check/+server'
 import type { LayoutServerLoad } from './$types'
 
 const log = new Log('at/[handle]/+page.server.ts')
@@ -19,11 +20,11 @@ export const load = (async (event) => {
   // Remove @ if user included it
   let cleanHandle = event.params.handle.replace('@', '').toLowerCase()
 
+  const profile = await getProfile(cleanHandle)
+  if (!profile) {
+    throw new Error('Profile not found')
+  }
   try {
-    const profile = await getProfile(cleanHandle)
-    if (!profile) {
-      throw new Error('Profile not found')
-    }
     cleanHandle = profile.data.handle
 
     let bskyty = await repo(BSkyty).upsert({
@@ -39,6 +40,7 @@ export const load = (async (event) => {
     })
 
     // Don't await this
+    _checkAndUpdatePlcRecord(new Date(), profile.data.did)
     if (profile.data.associated?.starterPacks) {
       addStarterPack(profile.data.did)
     }

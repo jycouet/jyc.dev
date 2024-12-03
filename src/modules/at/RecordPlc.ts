@@ -3,6 +3,7 @@ import { Entity, EntityBase, Fields } from 'remult'
 import { Roles } from '$modules/auth/Roles'
 
 @Entity<RecordPlc>('record-plcs', {
+  // allowApiRead: true,
   allowApiCrud: Roles.admin,
   defaultOrderBy: { createdAt: 'desc' },
   id: ['did'],

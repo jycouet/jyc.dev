@@ -28,6 +28,7 @@ const PAGES = {
   "/stats/[handle]/squirrels": (params: { handle: (string | number) }) => {
     return `/stats/${params.handle}/squirrels`
   },
+  "/stats/lion": `/stats/lion`,
   "/stats/whale": `/stats/whale`,
   "/stats/wolf": `/stats/wolf`,
   "/thumb-meta": `/thumb-meta`,
@@ -48,9 +49,9 @@ const SERVERS = {
     return `/stats/plc/${params.pos}`
   },
   "GET /stats/plc/at/last": `/stats/plc/at/last`,
-  "GET /stats/plc/check/[page]": (params: { page: (string | number) }) => {
-    return `/stats/plc/check/${params.page}`
-  },
+  "_checkAndUpdatePlcRecord /stats/plc/check": `/stats/plc/check`,
+  "GET /stats/plc/check": `/stats/plc/check`,
+  "GET /stats/plc/check/top": `/stats/plc/check/top`,
   "GET /stats/plc/last": `/stats/plc/last`,
   "GET /stats/plc/sync": `/stats/plc/sync`
 }
@@ -174,9 +175,9 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/[handle]/squirrels': 'handle', '/stats/whale': never, '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
-  SERVERS: { 'GET /api/healthz': never, 'GET /stats/plc/[did]': 'did', 'GET /stats/plc/[pos=int]': 'pos', 'GET /stats/plc/at/last': never, 'GET /stats/plc/check/[page]': 'page', 'GET /stats/plc/last': never, 'GET /stats/plc/sync': never }
+  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/[handle]/squirrels': 'handle', '/stats/lion': never, '/stats/whale': never, '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
+  SERVERS: { 'GET /api/healthz': never, 'GET /stats/plc/[did]': 'did', 'GET /stats/plc/[pos=int]': 'pos', 'GET /stats/plc/at/last': never, '_checkAndUpdatePlcRecord /stats/plc/check': never, 'GET /stats/plc/check': never, 'GET /stats/plc/check/top': never, 'GET /stats/plc/last': never, 'GET /stats/plc/sync': never }
   ACTIONS: { 'login /stats/login': never }
   LINKS: { 'bsky_profile': 'handle', 'bsky_hashtag': 'hashtag', 'bsky_starter_pack': 'creator_handle' | 'rkey' }
-  Params: { link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, handle: never, skip_follow: never, videoId: never, did: never, pos: never, page: never, hashtag: never, creator_handle: never }
+  Params: { link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, handle: never, skip_follow: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
 }

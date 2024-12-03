@@ -298,6 +298,12 @@
       <span>Global Statistics</span>
       <span class="relative bottom-0 text-xs opacity-40"> How many are we ? </span>
     </a>
+
+    <a href={route(`/stats/lion`)} class="btn btn-warning flex h-28 w-full flex-col text-lg">
+      <span class="italic">Lion 🦁</span>
+      <span>Top followed accounts</span>
+      <span class="relative bottom-0 text-xs opacity-40">Update from time to time</span>
+    </a>
   </div>
 
   <Shortcut binds={['ArrowUp']} run={() => handleKeyNavigation('up')} />

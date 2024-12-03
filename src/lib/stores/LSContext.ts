@@ -4,12 +4,14 @@ const browser = typeof window !== 'undefined'
 
 export type TLSContext = {
   linkToSkyzooSquad: boolean
+  linkToSkyzooStats: boolean
 }
 
-const LSContextKey = 'Skyzoo_2024_11_26'
+const LSContextKey = 'Skyzoo_2024_12_03'
 
 const LSContextDefaults: TLSContext = {
   linkToSkyzooSquad: false,
+  linkToSkyzooStats: false,
 }
 
 const LSCurrentContext = browser

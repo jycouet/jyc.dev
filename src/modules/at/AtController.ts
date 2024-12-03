@@ -557,7 +557,7 @@ export const calcLatestGlobalStats = async () => {
 
     const lastValues = await repo(RecordPlcStats).find({
       where: { pos_bsky: { '!=': null } },
-      limit: 7,
+      limit: 5,
     })
 
     const lastHour = await repo(RecordPlcStats).count({
@@ -572,7 +572,10 @@ export const calcLatestGlobalStats = async () => {
         return profile
       }),
     )
-    console.info(`profiles`, profiles)
+    // console.info(
+    //   `profiles`,
+    //   profiles.map((p) => p?.data),
+    // )
 
     const validProfiles = profiles.filter((p): p is NonNullable<typeof p> => p !== null)
 
