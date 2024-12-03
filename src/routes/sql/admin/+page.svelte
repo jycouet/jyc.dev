@@ -11,6 +11,7 @@ ORDER BY "firstTimeHere" DESC
 LIMIT 10`)
   let result: any = $state('')
   let error = $state('')
+  let isLoading = $state(false)
 
   const queries = {
     indexes: {
@@ -111,9 +112,12 @@ LIMIT 50
     e.preventDefault()
     try {
       error = ''
+      isLoading = true
       result = { ...(await SqlController.exec(sqlInput)) }
     } catch (e) {
       error = JSON.stringify(e, null, 2)
+    } finally {
+      isLoading = false
     }
   }
 
@@ -140,10 +144,16 @@ LIMIT 50
         bind:value={sqlInput}
         class="textarea textarea-bordered h-32 font-mono"
         placeholder="Enter SQL command..."
+        disabled={isLoading}
       ></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary">Execute SQL</button>
+    <button type="submit" class="btn btn-primary" disabled={isLoading}>
+      {#if isLoading}
+        <span class="loading loading-spinner"></span>
+      {/if}
+      Execute SQL
+    </button>
   </form>
 
   {#if error}
@@ -159,7 +169,7 @@ LIMIT 50
         {result.r.rowCount} rows
       </span>
     </div>
-    <div class="mt-4 overflow-x-auto">
+    <div class="mt-4 overflow-x-auto {isLoading ? 'opacity-50' : ''}">
       {#if result.r.rows && result.r.rows.length > 0}
         <table class="table table-zebra bg-base-200">
           <thead>
