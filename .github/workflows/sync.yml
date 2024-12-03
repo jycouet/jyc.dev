@@ -19,6 +19,7 @@ jobs:
 
   pinger_job_top:
     name: Job Top
+    needs: pinger_job_sync # This ensures Job Top runs after Job Sync
     runs-on: ubuntu-latest
     env:
       URL: ${{ secrets.URLTop }}

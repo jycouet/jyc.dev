@@ -95,8 +95,7 @@ ORDER BY count DESC;
     },
     plcSync: {
       label: 'PLC Sync',
-      sql: `
-      SELECT distinct("indexedError"), count(("indexedError"))
+      sql: `SELECT distinct("indexedError"), count(("indexedError"))
 FROM "record-plcs"
 GROUP BY distinct("indexedError")
 LIMIT 50

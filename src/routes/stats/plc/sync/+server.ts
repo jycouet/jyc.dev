@@ -1,4 +1,4 @@
-import { remult, SqlDatabase } from 'remult'
+import { repo, SqlDatabase } from 'remult'
 import type { EntityBase } from 'remult'
 import { Log, sleep } from '@kitql/helpers'
 import { read, write } from '@kitql/internals'
@@ -6,7 +6,7 @@ import { read, write } from '@kitql/internals'
 import { dev } from '$app/environment'
 
 import { calcLatestGlobalStats } from '$modules/at/AtController'
-import { RecordPlc } from '$modules/at/RecordPlc'
+import { RecordPlc, RecordPlcState } from '$modules/at/RecordPlc'
 
 import { dataProvider } from '../../../../server/api'
 import type { RequestHandler } from './$types'
@@ -32,19 +32,18 @@ interface Plc {
 }
 
 export const GET: RequestHandler = async ({ fetch }) => {
-  const repo = remult.repo(RecordPlc)
   const TOTAL_EXPECTED_RECORDS = 30_000_000
   const startTime = Date.now()
   let loopStartTime: number
 
   // Get the latest record to determine both cursor and position
-  const latestRecord = await repo.findFirst(
+  const latestRecord = await repo(RecordPlc).findFirst(
     {},
     {
       orderBy: { createdAt: 'desc' },
     },
   )
-  const latestRecordBSky = await repo.findFirst(
+  const latestRecordBSky = await repo(RecordPlc).findFirst(
     {
       pos_bsky: { $not: null },
     },
@@ -125,7 +124,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
       mode === 'plc-to-localfile' ? records : records.filter((c) => c.operation.prev === null)
 
     if (mode.includes('to-db')) {
-      const exiting = await repo.find({
+      const exiting = await repo(RecordPlc).find({
         where: {
           did: { $in: createdRecords.map((c) => c.did) },
         },
@@ -139,11 +138,13 @@ export const GET: RequestHandler = async ({ fetch }) => {
             record.operation.services?.atproto_pds?.endpoint ||
             'no.service.endpoint'
 
-          const data = repo.create({
+          const pos_bsky = service.includes('bsky.') ? nextPositionBsky++ : null
+          const data = repo(RecordPlc).create({
             did: record.did,
             pos_atproto: nextPosition++,
-            pos_bsky: service.includes('bsky.') ? nextPositionBsky++ : null,
+            pos_bsky,
             createdAt: new Date(record.createdAt),
+            state: pos_bsky ? RecordPlcState.UNKNOWN : RecordPlcState.NOT_BSKY,
             // metadata: {
             //   cid: record.cid,
             //   nullified: record.nullified,
@@ -207,7 +208,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
       totalProcessed,
       totalDurationSeconds,
       finalPosition: nextPosition - 1,
-      last: await repo.findFirst({}),
+      last: await repo(RecordPlc).findFirst({}),
     }),
     {
       headers: {

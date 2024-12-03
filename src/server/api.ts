@@ -12,7 +12,7 @@ import { PUBLIC_POSTHOG_KEY } from '$env/static/public'
 import { building } from '$app/environment'
 
 import { AgentController } from '$modules/at/AgentController'
-import { AtController, calcLatestGlobalStats } from '$modules/at/AtController'
+import { AtController } from '$modules/at/AtController'
 import { BSkyty } from '$modules/at/BSkyty'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordFollow } from '$modules/at/RecordFollow'
@@ -106,8 +106,13 @@ export const api = remultSveltekit({
       // await upsertIndex(RecordPlc, 'did')
       // await upsertIndex(RecordPlc, 'createdAt')
       // await upsertIndex(RecordPlc, 'pos_bsky')
-      await upsertIndex(RecordPlc, 'indexedAt')
-      await upsertIndex(RecordPlc, 'followersCount')
+      // await upsertIndex(RecordPlc, 'indexedAt')
+      // await upsertIndex(RecordPlc, 'followersCount')
+
+      // await execute(`ALTER TABLE "record-plcs" DROP COLUMN "invalidHandle";`)
+      // await execute(`UPDATE "record-plcs" SET "state" = 'UNKNOWN'`)
+      // await upsertIndex(RecordPlc, 'state')
+
       // await upsertIndex(StarterPack, 'updatedAt')
       // await upsertIndex(StarterPack, 'creatorDid')
 

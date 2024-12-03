@@ -1,7 +1,8 @@
 import { repo } from 'remult'
+import { Log } from '@kitql/helpers'
 
 import { getProfile } from '$modules/at/agentHelper'
-import { RecordPlc } from '$modules/at/RecordPlc'
+import { RecordPlc, RecordPlcState } from '$modules/at/RecordPlc'
 
 import type { RequestHandler } from './$types'
 
@@ -31,8 +32,25 @@ const checkPlcRecord = async (indexedAt: Date, did: string): Promise<Partial<Rec
       postsCount: profile?.postsCount,
     }
 
-    if (profile?.handle === 'handle.invalid') {
-      return { ...toRet, invalidHandle: true }
+    if (profile?.handle === 'handle.invalid' && profile.displayName === null) {
+      return { ...toRet, state: RecordPlcState.HANDLE_INVALID }
+    }
+
+    if (profile.associated?.labeler) {
+      return { ...toRet, state: RecordPlcState.LABELER }
+    }
+
+    // Let's consider checked here.
+    toRet = { ...toRet, state: RecordPlcState.CHECKED }
+
+    const labelValues = (profile.labels ?? []).map((c) => c.val)
+    const toExclude = ['porn', 'nsfw', 'adult']
+    if (labelValues.some((label) => toExclude.includes(label))) {
+      toRet = {
+        ...toRet,
+        state: RecordPlcState.FILTERED,
+        indexedError: JSON.stringify(labelValues, null, 2),
+      }
     }
 
     // const [likes, posts] = await Promise.all([
@@ -56,23 +74,32 @@ const checkPlcRecord = async (indexedAt: Date, did: string): Promise<Partial<Rec
     //   // isInactive: lastDate ? lastDate < inactiveDate : true,
     // }
   } catch (error) {
-    // console.error(`Error processing ${plc.did}:`, error)
-    // @ts-ignore
-    toRet = { ...toRet, indexedError: error?.message }
+    if (error instanceof Error) {
+      const indexedError = error?.message
+      if (indexedError === 'Account has been suspended') {
+        toRet = { ...toRet, indexedError, state: RecordPlcState.SUSPENDED }
+      } else if (indexedError === 'Account is deactivated') {
+        toRet = { ...toRet, indexedError, state: RecordPlcState.DEACTIVATED }
+      } else {
+        // Don't set the state here... as we don't really know
+        toRet = { ...toRet, indexedError }
+      }
+    }
   }
 
   return toRet
 }
 
+const logCheck = new Log('plc record')
 export const _checkAndUpdatePlcRecord = async (indexedAt: Date, did: string) => {
   try {
     const result = await checkPlcRecord(indexedAt, did)
     if (result) {
       await repo(RecordPlc).update(did, result)
-      console.info(`Updated ${did}`)
+      logCheck.success(`Updated ${did}`)
     }
   } catch (error) {
-    console.info(`Failed to update ${did}`, error)
+    logCheck.error(`Failed to update ${did}`, error)
     // console.info(`result`, result)
     // process.exit(1)
   }
