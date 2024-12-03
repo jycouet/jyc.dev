@@ -67,7 +67,7 @@
         target="_blank"
         class="card card-compact relative bg-base-200 transition-all hover:scale-105 hover:shadow-lg"
       >
-        <div class="badge absolute bottom-2 right-2 bg-neutral">{profile.pos}</div>
+        <div class=" badge absolute -left-2 -top-2 bg-base-300 text-secondary">{profile.pos}</div>
         <div class="card-body">
           <div class="flex items-center gap-3">
             <div class="mask mask-hexagon size-12 flex-shrink-0">
@@ -77,12 +77,12 @@
                 class="h-full w-full object-cover"
               />
             </div>
-            <div class="flex min-w-0 flex-col">
+            <div class="flex w-full min-w-0 flex-col">
               <span class="truncate font-bold">{profile.displayName}</span>
               <span class="truncate font-mono text-sm text-primary">@{profile.handle}</span>
-              <span class="text-sm text-base-content/70">
+              <span class="text-right text-sm text-info">
                 {(profile.followersCount ?? 0).toLocaleString()}
-                <span class="text-[0.5rem]">Followers</span>
+                <!-- <span class="text-[0.5rem]">Followers</span> -->
               </span>
             </div>
           </div>
