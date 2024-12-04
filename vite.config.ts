@@ -49,6 +49,7 @@ export default defineConfig({
           'rahaeli.bsky.social',
           'aunticles.bsky.social',
           'srsholmes.com',
+          'booksthatburn.com',
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
