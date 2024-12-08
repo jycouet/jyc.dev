@@ -26,17 +26,21 @@
   })
 
   $effect(() => {
-    if ($params.h) {
-      handle = $params.h
-      $params.h = null
-    }
     if ($params.e) {
       if ($params.e === 'not-valid') {
         error = 'Not a valid handle'
+      } else if ($params.e === 'not-found') {
+        error = 'Profile not found'
+      } else if ($params.e === 'no-unauthenticated') {
+        error = `This account has "logged-out visibility" <b>enabled</b>.<br />I'll honor this request and not display its statistics.`
       } else {
         error = $params.e
       }
       $params.e = null
+    }
+    if ($params.h) {
+      handle = $params.h
+      $params.h = null
     }
   })
 
@@ -181,9 +185,9 @@
         <div class="flex items-end gap-4">
           <div class="flex-1">
             <div class="label">
-              <span class="label-text">Enter your handle</span>
+              <span class="label-text whitespace-nowrap">Enter your handle</span>
               {#if error}
-                <span class="label-text-alt text-error">{error}</span>
+                <span class="label-text-alt text-error ml-2 text-right">{@html error}</span>
               {/if}
             </div>
 

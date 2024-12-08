@@ -72,6 +72,7 @@ export class RecordPlcState {
 
   static LABELER = new RecordPlcState('labeler') // https://bsky.app/profile/github-labeler.bsky.social
   static FILTERED = new RecordPlcState('filtered')
+  static NO_UNAUTHENTICATED = new RecordPlcState('!no-unauthenticated')
 
   static CHECKED = new RecordPlcState('checked')
 

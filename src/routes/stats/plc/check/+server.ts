@@ -1,7 +1,12 @@
 import { repo, SqlDatabase } from 'remult'
 import { Log } from '@kitql/helpers'
 
-import { getProfile } from '$modules/at/agentHelper'
+import {
+  getLabels,
+  getProfile,
+  has_AnExcluder,
+  has_NoUnauthenticated,
+} from '$modules/at/agentHelper'
 import { RecordPlc, RecordPlcState } from '$modules/at/RecordPlc'
 
 import type { RequestHandler } from './$types'
@@ -43,9 +48,14 @@ const checkPlcRecord = async (indexedAt: Date, did: string): Promise<Partial<Rec
     // Let's consider checked here.
     toRet = { ...toRet, state: RecordPlcState.CHECKED }
 
-    const labelValues = (profile.labels ?? []).map((c) => c.val)
-    const toExclude = ['porn', 'nsfw', 'adult']
-    if (labelValues.some((label) => toExclude.includes(label))) {
+    const labelValues = getLabels(profile)
+    if (has_NoUnauthenticated(labelValues)) {
+      toRet = {
+        ...toRet,
+        state: RecordPlcState.NO_UNAUTHENTICATED,
+        indexedError: JSON.stringify(labelValues, null, 2),
+      }
+    } else if (has_AnExcluder(labelValues)) {
       toRet = {
         ...toRet,
         state: RecordPlcState.FILTERED,

@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit'
 import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
-import { getProfile } from '$modules/at/agentHelper'
+import { getLabels, getProfile, has_NoUnauthenticated } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
 import { listRecords, listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
@@ -20,9 +20,17 @@ export const load = (async (event) => {
   // Remove @ if user included it
   let cleanHandle = event.params.handle.replace('@', '').toLowerCase()
 
-  const profile = await getProfile(cleanHandle)
+  let profile
+  try {
+    profile = await getProfile(cleanHandle)
+  } catch (error) {}
+
   if (!profile) {
-    throw new Error('Profile not found')
+    redirect(307, `/stats?h=${cleanHandle}&e=not-found`)
+  }
+
+  if (has_NoUnauthenticated(getLabels(profile.data))) {
+    redirect(307, `/stats?h=${cleanHandle}&e=no-unauthenticated`)
   }
   try {
     cleanHandle = profile.data.handle

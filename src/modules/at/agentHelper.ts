@@ -33,3 +33,16 @@ export function parseRateLimitHeaders(headers: Record<string, string>): RateLimi
     resetDate: new Date(resetTimestamp * 1000), // Convert Unix timestamp to Date
   }
 }
+
+export const getLabels = (profile: Awaited<ReturnType<typeof getProfile>>['data']) => {
+  return (profile.labels ?? []).map((c) => c.val)
+}
+
+export const has_NoUnauthenticated = (labels: string[]) => {
+  return labels.some((c) => c === '!no-unauthenticated')
+}
+
+export const has_AnExcluder = (labels: string[]) => {
+  const toExclude = ['porn', 'nsfw', 'adult']
+  return labels.some((c) => toExclude.includes(c))
+}

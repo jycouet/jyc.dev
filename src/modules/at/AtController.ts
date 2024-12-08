@@ -1,7 +1,12 @@
 import { BackendMethod, repo } from 'remult'
 
 import { fetchImageAsBase64 } from '$lib'
-import { getProfile } from '$modules/at/agentHelper'
+import {
+  getLabels,
+  getProfile,
+  has_AnExcluder,
+  has_NoUnauthenticated,
+} from '$modules/at/agentHelper'
 import { determineCategory } from '$modules/at/determineCategory'
 import { didToPds, listRecordsAll, parseUri } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
@@ -409,11 +414,11 @@ export class AtController {
   static async getSquirrelSquad(pos_bsky: number, avatarUrl: string) {
     const minimumRequirements = (profileData: Awaited<ReturnType<typeof getProfile>>['data']) => {
       // console.log(`profile.data`, profileData)
-      const labelValues = (profileData.labels ?? []).map((c) => c.val)
+      const labelValues = getLabels(profileData)
 
-      const toExclude = ['porn', 'nsfw', 'adult']
       return (
-        !labelValues.some((label) => toExclude.includes(label)) &&
+        !has_NoUnauthenticated(labelValues) &&
+        !has_AnExcluder(labelValues) &&
         (profileData.postsCount ?? 0) >= 1 &&
         (profileData.postsCount ?? 0) >= 1 &&
         (profileData.followersCount || 0) >= 10 &&
