@@ -11,6 +11,7 @@ import { ListItem } from '$modules/at/ListItem'
 import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
 
+import { sponsors } from '../../../lib/sponsors'
 import { _checkAndUpdatePlcRecord } from '../plc/check/+server'
 import type { LayoutServerLoad } from './$types'
 
@@ -29,9 +30,12 @@ export const load = (async (event) => {
     redirect(307, `/stats?h=${cleanHandle}&e=not-found`)
   }
 
-  if (has_NoUnauthenticated(getLabels(profile.data))) {
+  if (sponsors.map((s) => s.handle).includes(cleanHandle)) {
+    // Let's continue for all sponsors
+  } else if (has_NoUnauthenticated(getLabels(profile.data))) {
     redirect(307, `/stats?h=${cleanHandle}&e=no-unauthenticated`)
   }
+
   try {
     cleanHandle = profile.data.handle
 
