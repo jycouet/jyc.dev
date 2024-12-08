@@ -62,7 +62,13 @@ export const sponsors = [
   {
     handle: 'srsholmes.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiepzp7ivksk6a3hrqmy4jsqfdhidpbaotflheltdjnsgd6gla6qbq@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiaofvuqsqtsxwm6dx7ykvlpx7gcmnl5vwjmnqfx5z62onbgjicgca@jpeg',
     displayName: 'Simon Holmes',
+  },
+  {
+    handle: 'booksthatburn.com',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:lyhaxthjezcea3a75kgowvas/bafkreibq3mnxpd26xvz3njgefgzichqunas2xng5yp5zafwzvzhzy575iq@jpeg',
+    displayName: 'Books That Burn',
   },
 ]
