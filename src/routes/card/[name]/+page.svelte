@@ -15,8 +15,8 @@
       margin: 1,
       errorCorrectionLevel: 'H',
       color: {
-        dark: '#9fb9d0',
-        light: '#121c22',
+        dark: '#0e171e',
+        light: '#9fb9d0',
       },
     })
   })
@@ -36,7 +36,7 @@
         <!-- QR Code -->
         {#if qrCodeDataUrl}
           <div class="mt-4">
-            <img src={qrCodeDataUrl} alt="QR Code" class="" />
+            <img src={qrCodeDataUrl} alt="QR Code" class="rounded-xl" />
           </div>
         {/if}
       </div>
