@@ -1,8 +1,8 @@
 import { Agent } from '@atproto/api'
 import type { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
-import { BackendMethod, repo } from 'remult'
-import { Log } from '@kitql/helpers'
+import { BackendMethod, repo, SqlDatabase } from 'remult'
+import { green, Log } from '@kitql/helpers'
 
 import { sponsors } from '$lib/sponsors'
 
@@ -49,22 +49,31 @@ export class AgentController {
       cursor = followers.data.cursor
     } while (cursor)
 
-    log.info(`profile`, profile.data.followersCount, allFollowers.length)
+    log.info(`profile`, {
+      handle: profile.data.handle,
+      followersCount: profile.data.followersCount,
+      allFollowersLength: allFollowers.length,
+    })
     const nbFollowers = profile.data.followersCount
 
     const didFollow = profile.data.did
-    const weAlreadyHaveTheInfo2 = await repo(RecordFollower).find({ where: { didFollow } })
-    const weAlreadyHaveTheInfo = await repo(RecordFollow).find({ where: { didFollow } })
-    log.info(`weAlreadyHaveTheInfo`, weAlreadyHaveTheInfo.length, weAlreadyHaveTheInfo2.length)
+    // SqlDatabase.LogToConsole = 'oneLiner'
+    const weAlreadyHaveRecordFollower = await repo(RecordFollower).find({ where: { didFollow } })
+    const weAlreadyHaveRecordFollow = await repo(RecordFollow).find({ where: { didFollow } })
+
     const followsToCheck = allFollowers.filter(
       (f) =>
-        !weAlreadyHaveTheInfo.some((wai) => wai.did === f.did) &&
-        !weAlreadyHaveTheInfo2.some((wai) => wai.did === f.did),
+        !weAlreadyHaveRecordFollow.some((wai) => wai.did === f.did) &&
+        !weAlreadyHaveRecordFollower.some((wai) => wai.did === f.did),
     )
-    log.info(`followsToCheck`, followsToCheck.length)
+    log.info(`info...`, {
+      recordFollow: weAlreadyHaveRecordFollow.length,
+      recordFollower: weAlreadyHaveRecordFollower.length,
+      toCheck: followsToCheck.length,
+    })
 
     const results = await sidequest(followsToCheck, didFollow)
-    log.info(`results`, results.length)
+    // log.info(`results`, results.length)
 
     // CHART
     const now = new Date()
@@ -117,27 +126,29 @@ export class AgentController {
 }
 
 let globalcount = 0
-const getFollows = async (did: string, didFollow: string) => {
-  const alreadyInDb = await repo(RecordFollower).findFirst({ did, didFollow })
-  if (alreadyInDb) {
-    console.info(`alreadyInDb`, alreadyInDb.createdAt)
-    return alreadyInDb.createdAt
-  }
+const getFollows = async (did: string, didFollow: string, withCheck = false) => {
+  if (withCheck) {
+    const alreadyInDb = await repo(RecordFollower).findFirst({ did, didFollow })
+    if (alreadyInDb) {
+      console.info(`alreadyInDb`, alreadyInDb.createdAt)
+      return alreadyInDb.createdAt
+    }
 
-  const alreadyInDb2 = await repo(RecordFollow).findFirst({ did, didFollow })
-  if (alreadyInDb2) {
-    console.info(`alreadyInDb2 GREAT`, alreadyInDb2.createdAt)
-    await repo(RecordFollower).upsert({
-      where: {
-        did,
-        didFollow,
-      },
-      set: {
-        createdAt: alreadyInDb2.createdAt,
-        uri: alreadyInDb2.uri,
-      },
-    })
-    return alreadyInDb2.createdAt
+    const alreadyInDb2 = await repo(RecordFollow).findFirst({ did, didFollow })
+    if (alreadyInDb2) {
+      console.info(`alreadyInDb GREAT`, alreadyInDb2.createdAt)
+      await repo(RecordFollower).upsert({
+        where: {
+          did,
+          didFollow,
+        },
+        set: {
+          createdAt: alreadyInDb2.createdAt,
+          uri: alreadyInDb2.uri,
+        },
+      })
+      return alreadyInDb2.createdAt
+    }
   }
 
   const pds = await didToPds(did)
@@ -150,20 +161,29 @@ const getFollows = async (did: string, didFollow: string) => {
       })
 
       globalcount += follows.nbRequest
-      console.info(`nbRequest`, follows.nbRequest, globalcount)
+      console.info(`nbRequest`, { did, req: follows.nbRequest, tot: globalcount })
       const follow = follows.records[follows.records.length - 1]
-      const ins = await repo(RecordFollower).upsert({
-        where: {
+      if (withCheck) {
+        const ins = await repo(RecordFollower).upsert({
+          where: {
+            did,
+            didFollow,
+          },
+          set: {
+            createdAt: new Date(follow.value.createdAt),
+            uri: follow.uri,
+          },
+        })
+        return ins.createdAt
+      } else {
+        const ins = await repo(RecordFollower).insert({
           did,
           didFollow,
-        },
-        set: {
           createdAt: new Date(follow.value.createdAt),
           uri: follow.uri,
-        },
-      })
-
-      return ins.createdAt
+        })
+        return ins.createdAt
+      }
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('TypeError: fetch failed')) {
@@ -205,7 +225,7 @@ const sidequest = async (followers: ProfileView[], didFollow: string) => {
       const promise = (async () => {
         try {
           const result = await getFollows(follower.did, didFollow)
-          console.info(`Finished ${index + 1}/${followers.length}`)
+          console.info(`Finished ${green(`${index + 1}`)}/${followers.length}`)
           results.push(result)
         } catch (error) {
           console.error(`Error getting follows for ${follower.did}:`, error)
