@@ -12,7 +12,7 @@
     name: 'vcard',
     url: `BEGIN:VCARD
 VERSION:3.0
-N:COUET;Jean-Yves;;M.;
+N:COUET;Jean-Yves;;
 FN:Jean-Yves COUET
 GENDER:M
 LANG:fr-FR
