@@ -63,7 +63,9 @@
         </div>
 
         <!-- Profile Info -->
-        <h1 class="text-5xl font-bold">Jean-Yves COUËT</h1>
+        <h1 class="text-5xl font-bold">
+          <a href={route('/card/[name]', { name: 'vcard' })}>Jean-Yves COUËT</a>
+        </h1>
         <h2 class="text-2xl font-bold">JYC</h2>
 
         <div class="m-4 mt-8 flex w-full justify-around">
