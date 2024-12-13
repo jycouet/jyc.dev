@@ -48,6 +48,13 @@
       description:
         '<a class="link link-secondary" href="https://www.youtube.com/@JoyofCodeDev">Youtuber</a> focusing on Svelte, nice and easy content.',
     },
+    {
+      name: 'Eric Wastl',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:ojqk5cygsyhrcpsm4ffo7mij/bafkreidkmhvtgy56izbvekiin7guscbhz64lqcginlzxnvwhbjwzbj7c34@jpeg',
+      description:
+        'Creator of <a class="link link-secondary" href="https://adventofcode.com">adventofcode</a>, a yearly coding challenge.',
+    },
   ]
 </script>
 
