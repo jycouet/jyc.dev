@@ -140,6 +140,10 @@ export const listRecordsAll = async (
     })
     nbRequest++
 
+    // if (nbRequest > 50) {
+    //   console.log(`nbRequest`, { pds, repo, collection, nbRequest })
+    // }
+
     let theEnd = false
     if (options?.while) {
       try {

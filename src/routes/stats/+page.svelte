@@ -15,7 +15,9 @@
   import { LogHandleStats } from '$modules/logs/LogHandleStats'
   import Shortcut from '$lib/components/Shortcut.svelte'
 
-  const description = 'Assigns you a Bluesky animal based on your recent activity'
+  const description = `Assigns you a Bluesky animal based on your recent activity, 
+  find out when you joined the platform (in what what position, even if you didn't make the 10 million event), 
+  and how many people are on the platform. And many more things!`
 
   let handle = $state('')
   let error = $state('')
