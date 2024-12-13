@@ -43,8 +43,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0
       '@sheepdog/svelte':
-        specifier: ^0.12.0
-        version: 0.12.0(svelte@5.1.9)
+        specifier: ^0.12.1
+        version: 0.12.1(svelte@5.1.9)
       '@sveltejs/adapter-node':
         specifier: 5.0.1
         version: 5.0.1(@sveltejs/kit@2.7.4(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))
@@ -738,8 +738,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sheepdog/svelte@0.12.0':
-    resolution: {integrity: sha512-CMl7K4qeLsekzG8YFY7XWoglD/QjcWdTfHQwmo7xO7hQO/HnDjSDw5HKcm9c7KzdCW7Eiel5B4IpSnhqDpzCiQ==}
+  '@sheepdog/core@0.0.2':
+    resolution: {integrity: sha512-fiM+HHA2v0yhRjma2J4Js31CC6tC7Ew553OI2gBa5ERoO8Ye6NHkem7amucwm3MEff44vpRgF1UmL98D0OMIpg==}
+
+  '@sheepdog/svelte@0.12.1':
+    resolution: {integrity: sha512-ss/8fupiGOjXbSIJZmp5pJFrENLbMRMDd/B4InMehRseTvR07hVIRqHG3bZEjXXW4tywu5ioKOOHoJI0CYE9Nw==}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0 || ^5.0.0-next.1
 
@@ -3725,13 +3728,17 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.3':
     optional: true
 
-  '@sheepdog/svelte@0.12.0(svelte@5.1.9)':
+  '@sheepdog/core@0.0.2':
     dependencies:
       acorn: 8.14.0
       esm-env: 1.2.1
       esrap: 1.2.2
-      svelte: 5.1.9
       zimmerframe: 1.1.2
+
+  '@sheepdog/svelte@0.12.1(svelte@5.1.9)':
+    dependencies:
+      '@sheepdog/core': 0.0.2
+      svelte: 5.1.9
 
   '@sveltejs/adapter-node@5.0.1(@sveltejs/kit@2.7.4(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))':
     dependencies:
