@@ -38,7 +38,7 @@ export const sponsors = [
   {
     handle: 'adaszpilka.art',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreifnayihkbyphhy3tiyhlcrrf72dydz2z3tbpmccfrmjmxugu67wha@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreidtryqcrtutlkegtns3ebk4wfwicmr53t5hbpywxrauxvkbuowh3y@jpeg',
     displayName: 'Ada Szpilka',
   },
   {
@@ -57,7 +57,7 @@ export const sponsors = [
     handle: 'aunticles.bsky.social',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreidek7h5vbwdh2xacvy7vjtsluhb5iturrji3q42ugbv2i65tob56e@jpeg',
-    displayName: 'Aunticles',
+    displayName: 'Aunt🎄tinytim🎄icles',
   },
   {
     handle: 'srsholmes.com',

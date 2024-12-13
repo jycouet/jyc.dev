@@ -26,6 +26,7 @@
     "@layerstack/utils": "^0.0.5",
     "@oslojs/crypto": "1.0.1",
     "@oslojs/encoding": "1.1.0",
+    "@sheepdog/svelte": "^0.12.1",
     "@sveltejs/adapter-node": "5.0.1",
     "@sveltejs/kit": "2.7.4",
     "@sveltejs/vite-plugin-svelte": "4.0.0",

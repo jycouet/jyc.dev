@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { task } from '@sheepdog/svelte'
   import { queryParameters } from 'sveltekit-search-params'
+
+  import { sleep } from '@kitql/helpers'
 
   import og from '$lib/assets/og-wolf.png'
   import Og from '$lib/components/Og.svelte'
@@ -23,32 +26,28 @@
     include: { creator: true },
     aggregate: {},
   })
-  // remult.apiClient.httpClient = async (input: RequestInfo | URL, init?: RequestInit) => {
-  //   console.log(init)
-  //   const res = await fetch(input, {
-  //     ...init,
-  //   })
 
-  //   return res
-  // }
-  let debounceTimer: ReturnType<typeof setTimeout>
-  $effect(() => {
-    if (!$params.q) {
-      paginator.load({})
-    } else {
-      clearTimeout(debounceTimer)
-      console.info('debounce')
-      debounceTimer = setTimeout(() => {
-        paginator.load({
-          $or: [
-            containsWords(StarterPack, ['name', 'description'], $params.q ?? ''),
-            // REMULT ?
-            // @ts-ignore
-            StarterPack.filterByCreator({ str: $params.q ?? '' }),
-          ],
-        })
-      }, 433)
+  const myTask = task.restart(async (search: string | null) => {
+    // No debounce on first time here
+    if ($myTask.performCount > 1) {
+      await sleep(433)
     }
+
+    paginator.load(
+      search
+        ? {
+            $or: [
+              containsWords(StarterPack, ['name', 'description'], search),
+              // @ts-ignore (REMULT todo)
+              StarterPack.filterByCreator({ search }),
+            ],
+          }
+        : {},
+    )
+  })
+
+  $effect(() => {
+    myTask.perform($params.q)
   })
 
   const description = 'Looking for a starter pack? Here you go!'

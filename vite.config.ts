@@ -1,3 +1,4 @@
+import { asyncTransform } from '@sheepdog/svelte/vite'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { kitRoutes } from 'vite-plugin-kit-routes'
@@ -11,6 +12,7 @@ import { getProfile } from './src/modules/at/agentHelper'
 export default defineConfig({
   plugins: [
     sveltekit(),
+    asyncTransform(),
     kitRoutes<KIT_ROUTES>({
       PAGES: {
         '/stats/[handle]': {

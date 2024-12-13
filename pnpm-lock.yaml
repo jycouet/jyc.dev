@@ -42,6 +42,9 @@ importers:
       '@oslojs/encoding':
         specifier: 1.1.0
         version: 1.1.0
+      '@sheepdog/svelte':
+        specifier: ^0.12.1
+        version: 0.12.1(svelte@5.1.9)
       '@sveltejs/adapter-node':
         specifier: 5.0.1
         version: 5.0.1(@sveltejs/kit@2.7.4(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))
@@ -740,6 +743,14 @@ packages:
     resolution: {integrity: sha512-HGZgRFFYrMrP3TJlq58nR1xy8zHKId25vhmm5S9jETEfDf6xybPxsavFTJaufe2zgOGYJBskGlj49CwtEuFhWQ==}
     cpu: [x64]
     os: [win32]
+
+  '@sheepdog/core@0.0.2':
+    resolution: {integrity: sha512-fiM+HHA2v0yhRjma2J4Js31CC6tC7Ew553OI2gBa5ERoO8Ye6NHkem7amucwm3MEff44vpRgF1UmL98D0OMIpg==}
+
+  '@sheepdog/svelte@0.12.1':
+    resolution: {integrity: sha512-ss/8fupiGOjXbSIJZmp5pJFrENLbMRMDd/B4InMehRseTvR07hVIRqHG3bZEjXXW4tywu5ioKOOHoJI0CYE9Nw==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0 || ^5.0.0-next.1
 
   '@sveltejs/adapter-node@5.0.1':
     resolution: {integrity: sha512-eYdmxdUWMW+dad1JfMsWBPY2vjXz9eE+52A2AQnXPScPJlIxIVk5mmbaEEzrZivLfO2wEcLTZ5vdC03W69x+iA==}
@@ -1537,6 +1548,9 @@ packages:
 
   esm-env@1.0.0:
     resolution: {integrity: sha512-Cf6VksWPsTuW01vU9Mk/3vRue91Zevka5SjyNf3nEpokFRuqt/KjUQoGAwq9qMmhpLTHmXzSIrFRw8zxWzmFBA==}
+
+  esm-env@1.2.1:
+    resolution: {integrity: sha512-U9JedYYjCnadUlXk7e1Kr+aENQhtUaoaV9+gZm1T8LC/YBAPJx3NSPIAurFOC0U5vrdSevnUJS2/wUVxGwPhng==}
 
   esm@3.2.25:
     resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
@@ -3798,6 +3812,18 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.24.3':
     optional: true
 
+  '@sheepdog/core@0.0.2':
+    dependencies:
+      acorn: 8.14.0
+      esm-env: 1.2.1
+      esrap: 1.2.2
+      zimmerframe: 1.1.2
+
+  '@sheepdog/svelte@0.12.1(svelte@5.1.9)':
+    dependencies:
+      '@sheepdog/core': 0.0.2
+      svelte: 5.1.9
+
   '@sveltejs/adapter-node@5.0.1(@sveltejs/kit@2.7.4(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))(svelte@5.1.9)(vite@5.4.10(@types/node@20.12.7)))':
     dependencies:
       '@rollup/plugin-commonjs': 25.0.8(rollup@4.24.3)
@@ -4698,6 +4724,8 @@ snapshots:
       - supports-color
 
   esm-env@1.0.0: {}
+
+  esm-env@1.2.1: {}
 
   esm@3.2.25: {}
 

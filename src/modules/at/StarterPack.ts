@@ -47,34 +47,22 @@ export class StarterPack {
   })
   nbMembers!: number
 
-  // @Fields.number({
-  //   sqlExpression() {
-  //     return sqlRelations(StarterPack).creator.followersCount
-  //   },
-  // })
-  // creatorFollowersCount!: number
-
-  // @Fields.number({
-  //   sqlExpression() {
-  //     // Higher followers count and lower members count = higher index
-  //     return (await sqlRelations(StarterPack).creator.followersCount) /
-  //       ((await sqlRelations(StarterPack).items.$count()) )
-
-  //   },
-  // })
-  // popularityIndex!: number
-
-  static filterByCreator = Filter.createCustom<StarterPack, { str: string }>(
+  static filterByCreator = Filter.createCustom<StarterPack, { search: string }>(
     // REMULT ?
     // @ts-ignore
-    async ({ str }) => {
-      return sqlRelationsFilter(StarterPack).creator.some({
+    async ({ search }) => {
+      const currentFilter = sqlRelationsFilter(StarterPack).creator.some({
         $or: [
-          { displayName: { $contains: str } },
-          { handle: { $contains: str } },
-          { id: { $contains: str } },
+          { displayName: { $contains: search } },
+          { handle: { $contains: search } },
+          { id: { $contains: search } },
         ],
       })
+      return currentFilter
+      // return {
+      //   filter,
+      //   name: search,
+      // }
     },
   )
 }
