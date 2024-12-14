@@ -13,3 +13,18 @@ export async function fetchImageAsBase64(url: string) {
     console.error('Failed to fetch and convert image', error)
   }
 }
+
+// TODO: fix this one day!
+// https://github.com/bluesky-social/social-app/issues/6133
+export function createBSkyIntent(msg: string[]) {
+  const lowerCaseUserAgent = navigator.userAgent.toLowerCase()
+
+  let lineBreak = '\n'
+
+  if (lowerCaseUserAgent.includes('windows')) {
+    lineBreak = '<br />'
+  }
+  // console.log(`lowerCaseUserAgent`, { lowerCaseUserAgent, lineBreak })
+
+  return `https://bsky.app/intent/compose?text=${encodeURIComponent(msg.join(lineBreak))}`
+}

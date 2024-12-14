@@ -5,6 +5,7 @@
 
   import { page } from '$app/stores'
 
+  import { createBSkyIntent } from '$lib'
   import og from '$lib/assets/og-punches.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
@@ -195,14 +196,6 @@
     // const weekEndsOn = (weekStartsOn + 6) % 7
 
     return [6, 0]
-  }
-
-  // TODO: fix this one day!
-  // https://github.com/bluesky-social/social-app/issues/6133
-  function createBSkyIntent(msg: string[]) {
-    // If I'm on windows it should be <br>, if not it should be \n
-    const lineBreak = navigator.userAgent.toLowerCase().includes('windows') ? '<br>' : '\n'
-    return `https://bsky.app/intent/compose?text=${encodeURIComponent(msg.join(lineBreak))}`
   }
 
   type FormattedPart = string | { type: 'handle' | 'link' | 'hashtag'; content: string }

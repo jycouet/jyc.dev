@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createBSkyIntent } from '$lib'
   import og from '$lib/assets/og-squirrel.png'
   import Avatar from '$lib/components/Avatar.svelte'
   import Og from '$lib/components/Og.svelte'
@@ -40,14 +41,6 @@
       // score = Math.round(((postsCount ?? 0) * 3 + normalizedFollows) / followersFactor)
     })
   })
-
-  // TODO: fix this one day!
-  // https://github.com/bluesky-social/social-app/issues/6133
-  function createBSkyIntent(msg: string[]) {
-    // If I'm on windows it should be <br>, if not it should be \n
-    const lineBreak = navigator.userAgent.toLowerCase().includes('windows') ? '<br>' : '\n'
-    return `https://bsky.app/intent/compose?text=${encodeURIComponent(msg.join(lineBreak))}`
-  }
 
   let hrefShare = $derived(
     createBSkyIntent([
