@@ -25,8 +25,18 @@ export class AgentController {
       return null
     }
 
-    sponsors.push({ handle: 'jyc.dev', avatar: '', displayName: 'jyc' })
-    sponsors.push({ handle: 'elouan.xyz', avatar: '', displayName: 'Elouan Grimm' })
+    sponsors.push({
+      did: 'did:plc:dacfxuonkf2qtqft22sc23tu',
+      handle: 'jyc.dev',
+      avatar: '',
+      displayName: 'jyc',
+    })
+    sponsors.push({
+      did: 'did:plc:iqude6efonai667l3etol7f7',
+      handle: 'elouan.xyz',
+      avatar: '',
+      displayName: 'Elouan Grimm',
+    })
     if (!sponsors.some((s) => s.handle === handle)) {
       return {
         nbFollowers: profile.data.followersCount,

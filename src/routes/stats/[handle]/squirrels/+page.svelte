@@ -59,6 +59,7 @@
   )
 
   const defaultMember = {
+    did: '',
     handle: '',
     avatar: '',
     displayName: '',

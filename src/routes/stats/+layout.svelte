@@ -48,6 +48,7 @@
           notifications.add({
             id: info.items[0].handle,
             bskyProfile: {
+              did: info.items[0].did,
               displayName: info.items[0].displayName,
               handle: info.items[0].handle,
               avatar: info.items[0].avatar,
@@ -104,12 +105,13 @@
       <div class="flex items-center gap-2">
         <a
           target="_blank"
-          href={route(`bsky_profile`, { handle: 'jyc.dev' })}
+          href={route(`bsky_profile`, { did: 'did:plc:dacfxuonkf2qtqft22sc23tu' })}
           class="link link-secondary"
         >
           Follow me</a
         >
         <Avatar
+          did="did:plc:dacfxuonkf2qtqft22sc23tu"
           handle="jyc.dev"
           displayName="jyc"
           avatar="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreifwequnkii37j2xkzjrpbh5cnuqjykocrxb4cfiwu4h7eonwrl3vm@jpeg"

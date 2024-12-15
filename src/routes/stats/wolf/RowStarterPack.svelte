@@ -13,7 +13,7 @@
 
 <td>
   <div class="flex items-center gap-3">
-    <Avatar {...pack.creator} />
+    <Avatar {...pack.creator} did={pack.creator.id} />
     <a
       class="link link-info flex items-center gap-3"
       target="_blank"

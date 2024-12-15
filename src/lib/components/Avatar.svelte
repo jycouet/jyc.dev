@@ -3,6 +3,7 @@
   import { route } from '$lib/ROUTES'
 
   interface Props {
+    did: string
     handle: string
     avatar: string | undefined
     displayName: string
@@ -10,7 +11,7 @@
     linkToSkyzooSquad?: boolean
   }
 
-  let { handle, displayName, avatar, size = 'w-9', linkToSkyzooSquad }: Props = $props()
+  let { handle, displayName, avatar, size = 'w-9', linkToSkyzooSquad, did }: Props = $props()
 
   // Get initials from display name
   // let initials = $derived(
@@ -29,7 +30,7 @@
       <a
         href={linkToSkyzooSquad
           ? route(`/stats/[handle]/squirrels`, { handle })
-          : route(`bsky_profile`, { handle })}
+          : route(`bsky_profile`, { did })}
         class="tooltip"
         data-tip={displayName}
         target="_blank"

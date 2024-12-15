@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
 
+  import { route } from '$lib/ROUTES'
   import { notifications } from '$lib/stores/notifications'
 
   import Avatar from './Avatar.svelte'
@@ -14,7 +15,7 @@
         <a
           target="_blank"
           class="link link-accent"
-          href={`https://bsky.app/profile/${notification.bskyProfile.handle}`}
+          href={route(`bsky_profile`, { did: notification.bskyProfile.did })}
         >
           {notification.bskyProfile.displayName}
         </a>

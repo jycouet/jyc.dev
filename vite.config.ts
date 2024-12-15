@@ -26,10 +26,13 @@ export default defineConfig({
       },
       LINKS: {
         bsky_profile: {
-          href: 'https://bsky.app/profile/[handle]',
+          href: 'https://bsky.app/profile/[did]',
         },
         bsky_hashtag: {
           href: 'https://bsky.app/hashtag/[hashtag]',
+        },
+        bsky_post: {
+          href: 'https://bsky.app/profile/[did]/post/[rkey]',
         },
         bsky_starter_pack: {
           href: 'https://bsky.app/starter-pack/[creator_handle]/[rkey]',
@@ -69,6 +72,7 @@ export default defineConfig({
             .filter((c) => c !== undefined)
             .map((sponsor) => {
               return `  {
+    did: '${sponsor.data.did}',
     handle: '${sponsor.data.handle}',
     avatar:
       '${sponsor.data.avatar}',

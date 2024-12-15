@@ -64,7 +64,7 @@
       <a
         href={$LSContext.linkToSkyzooStats
           ? route('/stats/[handle]', { handle: profile.handle ?? '' })
-          : route('bsky_profile', { handle: profile.handle ?? '' })}
+          : route('bsky_profile', { did: profile.did ?? '' })}
         target="_blank"
         class="card card-compact relative bg-base-200 transition-all hover:scale-105 hover:shadow-lg"
       >

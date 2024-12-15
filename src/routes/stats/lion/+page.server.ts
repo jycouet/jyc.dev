@@ -13,6 +13,7 @@ export const load = (async () => {
 
   return {
     topProfiles: topProfiles.map((p, i) => ({
+      did: p.did,
       displayName: p.displayName,
       handle: p.handle,
       avatar: p.avatar,

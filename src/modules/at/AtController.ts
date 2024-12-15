@@ -428,6 +428,7 @@ export class AtController {
 
     type Squad = {
       pos_bsky: number
+      did: string
       handle: string
       displayName: string
       avatar: string
@@ -442,6 +443,7 @@ export class AtController {
 
       return {
         pos_bsky: record.pos_bsky!,
+        did: profile.data.did,
         handle: profile.data.handle,
         displayName: profile.data.displayName || profile.data.handle,
         avatar: profile.data.avatar ?? '',
@@ -536,6 +538,7 @@ export type LatestGlobalStats = {
   }[]
   lastValue: RecordPlcStats | undefined
   lastProfiles: {
+    did: string
     handle: string
     displayName: string
     avatar: string
@@ -588,6 +591,7 @@ export const calcLatestGlobalStats = async () => {
       dailyStats,
       lastValue: lastValues[0],
       lastProfiles: validProfiles.map((profile) => ({
+        did: profile.data.did,
         handle: profile.data.handle,
         displayName: profile.data.displayName || profile.data.handle,
         avatar: profile.data.avatar ?? '',

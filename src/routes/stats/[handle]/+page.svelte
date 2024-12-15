@@ -255,7 +255,7 @@
     }
 
     if (part.type === 'handle') {
-      return ` <a href="${route(`bsky_profile`, { handle: part.content })}" 
+      return ` <a href="${route(`bsky_profile`, { did: part.content })}" 
         class="text-bsky hover:underline" 
         target="_blank">@${part.content}</a> `
     }

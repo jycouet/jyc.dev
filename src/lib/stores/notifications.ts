@@ -6,6 +6,7 @@ export type Notification = {
     displayName: string
     handle: string
     avatar: string
+    did: string
   }
   emoji: string
 }
