@@ -23,6 +23,14 @@ export default defineConfig({
             },
           },
         },
+        '/stats/turtle': {
+          explicit_search_params: {
+            postUrl: {
+              required: false,
+              type: 'string',
+            },
+          },
+        },
       },
       LINKS: {
         bsky_profile: {

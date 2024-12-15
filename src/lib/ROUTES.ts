@@ -33,7 +33,9 @@ const PAGES = {
     return `/stats/${params.handle}/squirrels`
   },
   "/stats/lion": `/stats/lion`,
-  "/stats/turtle": `/stats/turtle`,
+  "/stats/turtle": (params?: { postUrl?: (string) }) => {
+    return `/stats/turtle${appendSp({ postUrl: params?.postUrl })}`
+  },
   "/stats/whale": `/stats/whale`,
   "/stats/wolf": `/stats/wolf`,
   "/thumb-meta": `/thumb-meta`,
@@ -187,5 +189,5 @@ export type KIT_ROUTES = {
   SERVERS: { 'GET /api/healthz': never, 'GET /stats/plc/[did]': 'did', 'GET /stats/plc/[pos=int]': 'pos', 'GET /stats/plc/at/last': never, '_checkAndUpdatePlcRecord /stats/plc/check': never, 'GET /stats/plc/check': never, 'GET /stats/plc/check/top': never, 'GET /stats/plc/last': never, 'GET /stats/plc/sync': never }
   ACTIONS: { 'login /stats/login': never }
   LINKS: { 'bsky_profile': 'did', 'bsky_hashtag': 'hashtag', 'bsky_post': 'did' | 'rkey', 'bsky_starter_pack': 'creator_handle' | 'rkey' }
-  Params: { link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, name: never, handle: never, skip_follow: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
+  Params: { link_under_blog: never, pds: never, repo: never, collection: never, rkey: never, name: never, handle: never, skip_follow: never, postUrl: never, videoId: never, did: never, pos: never, hashtag: never, creator_handle: never }
 }

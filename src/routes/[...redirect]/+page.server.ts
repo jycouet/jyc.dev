@@ -9,8 +9,13 @@ export const load = (async ({ params, url }) => {
     const videoId = url.searchParams.get('v')
     redirect(302, route(`/thumb-meta/[videoId]`, { videoId: videoId ?? '' }))
   } else if (params.redirect.includes('bsky.app')) {
-    const handle = params.redirect.split('/').pop()
-    redirect(302, route(`/stats/[handle]`, { handle: handle ?? '' }))
+    console.log(`params.redirect`, params.redirect)
+    if (params.redirect.includes('/post/')) {
+      redirect(302, route(`/stats/turtle`, { postUrl: params.redirect }))
+    } else {
+      const handle = params.redirect.split('/').pop()
+      redirect(302, route(`/stats/[handle]`, { handle: handle ?? '' }))
+    }
   } else {
     if (url.host === 'localhost:5173') {
       // Just for dev purposes
