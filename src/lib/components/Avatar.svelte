@@ -8,10 +8,19 @@
     avatar: string | undefined
     displayName: string
     size?: 'w-9' | 'w-6' | 'w-6 md:w-9' | 'w-20' | 'w-16 md:w-20' | 'w-20 md:w-28'
+    linkToStats?: boolean
     linkToSkyzooSquad?: boolean
   }
 
-  let { handle, displayName, avatar, size = 'w-9', linkToSkyzooSquad, did }: Props = $props()
+  let {
+    handle,
+    displayName,
+    avatar,
+    size = 'w-9',
+    linkToSkyzooSquad,
+    did,
+    linkToStats,
+  }: Props = $props()
 
   // Get initials from display name
   // let initials = $derived(
@@ -28,9 +37,11 @@
   {#if handle}
     <div class="mask mask-hexagon {size}" title={displayName}>
       <a
-        href={linkToSkyzooSquad
-          ? route(`/stats/[handle]/squirrels`, { handle })
-          : route(`bsky_profile`, { did })}
+        href={linkToStats
+          ? route('/stats/[handle]', { handle })
+          : linkToSkyzooSquad
+            ? route(`/stats/[handle]/squirrels`, { handle })
+            : route(`bsky_profile`, { did })}
         class="tooltip"
         data-tip={displayName}
         target="_blank"

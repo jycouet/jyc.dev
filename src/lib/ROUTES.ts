@@ -33,6 +33,7 @@ const PAGES = {
     return `/stats/${params.handle}/squirrels`
   },
   "/stats/lion": `/stats/lion`,
+  "/stats/turtle": `/stats/turtle`,
   "/stats/whale": `/stats/whale`,
   "/stats/wolf": `/stats/wolf`,
   "/thumb-meta": `/thumb-meta`,
@@ -182,7 +183,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/card': never, '/card/[name]': 'name', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/[handle]/squirrels': 'handle', '/stats/lion': never, '/stats/whale': never, '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
+  PAGES: { '/blog': never, '/blog/[link_under_blog]': 'link_under_blog', '/blog/[pds]/[repo]/[collection]/[rkey]': 'pds' | 'repo' | 'collection' | 'rkey', '/card': never, '/card/[name]': 'name', '/sql/admin': never, '/stats': never, '/stats/login': never, '/stats/[handle]': 'handle', '/stats/[handle]/extra': 'handle', '/stats/[handle]/squirrels': 'handle', '/stats/lion': never, '/stats/turtle': never, '/stats/whale': never, '/stats/wolf': never, '/thumb-meta': never, '/thumb-meta/[videoId]': 'videoId' }
   SERVERS: { 'GET /api/healthz': never, 'GET /stats/plc/[did]': 'did', 'GET /stats/plc/[pos=int]': 'pos', 'GET /stats/plc/at/last': never, '_checkAndUpdatePlcRecord /stats/plc/check': never, 'GET /stats/plc/check': never, 'GET /stats/plc/check/top': never, 'GET /stats/plc/last': never, 'GET /stats/plc/sync': never }
   ACTIONS: { 'login /stats/login': never }
   LINKS: { 'bsky_profile': 'did', 'bsky_hashtag': 'hashtag', 'bsky_post': 'did' | 'rkey', 'bsky_starter_pack': 'creator_handle' | 'rkey' }

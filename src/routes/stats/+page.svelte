@@ -310,6 +310,14 @@
       <span>Top followed accounts</span>
       <span class="relative bottom-0 text-xs opacity-40">Update from time to time</span>
     </a>
+
+    <a href={route(`/stats/turtle`)} class="btn btn-info flex h-28 w-full flex-col text-lg">
+      <span class="italic">Turtle 🐢</span>
+      <span>Permalink extractor</span>
+      <span class="relative bottom-0 text-xs opacity-40">
+        Extract the permalink from a post URL
+      </span>
+    </a>
   </div>
 
   <Shortcut binds={['ArrowUp']} run={() => handleKeyNavigation('up')} />
