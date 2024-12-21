@@ -28,19 +28,26 @@
         'Great Svelte developer, author of <a class="link link-secondary" href="https://www.layerchart.com/">layerchart</a>.',
     },
     {
+      name: 'Pouya Saadeghi',
+      avatar:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:rqw7sojnnnhm2n5mggpe3kdv/bafkreiekrwcjdzcs2eqpvvfm3olh4r54lultjmrx42lwfahxihk5evimue@jpeg',
+      description:
+        'Author of <a class="link link-secondary" href="https://daisyui.com/">daisyui</a>, to make a nice and easy WebApp in seconds.',
+    },
+    {
       name: 'Andras Bacsai',
       avatar:
         'https://cdn.bsky.app/img/avatar/plain/did:plc:dxdjdpz5ebvsjzxcm3j7xxsz/bafkreig2aczdsdlhfoiqtc6uhdkdnpiqezrguv5mxoruurig47cvgpjf3m@jpeg',
       description:
         'Author of <a class="link link-secondary" href="https://coolify.io/">coolify</a>, an #OSS project to host your website on your VPS.',
     },
-    {
-      name: 'Domingo',
-      avatar:
-        'https://static-cdn.jtvnw.net/jtv_user_pictures/3cdae7df-600c-4833-8dfe-8d2abc5a3b25-profile_image-70x70.png',
-      description:
-        'French streamer, great show: <a class="link link-secondary" href="https://www.twitch.tv/domingo">POPCORN</a>.',
-    },
+    // {
+    //   name: 'Domingo',
+    //   avatar:
+    //     'https://static-cdn.jtvnw.net/jtv_user_pictures/3cdae7df-600c-4833-8dfe-8d2abc5a3b25-profile_image-70x70.png',
+    //   description:
+    //     'French streamer, great show: <a class="link link-secondary" href="https://www.twitch.tv/domingo">POPCORN</a>.',
+    // },
     {
       name: 'Joy of Code',
       avatar:
