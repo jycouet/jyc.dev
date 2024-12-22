@@ -11,5 +11,14 @@ export const GET: RequestHandler = async ({ params }) => {
 
   const res = await repo(RecordPlc).findFirst({ did })
 
-  return json(res)
+  if (res === undefined) {
+    return new Response('Not found', { status: 404 })
+  }
+
+  return json({
+    did: res.did,
+    pos_atproto: res.pos_atproto,
+    pos_bsky: res.pos_bsky,
+    createdAt: res.createdAt,
+  })
 }

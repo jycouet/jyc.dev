@@ -28,6 +28,17 @@ export const handleLang: Handle = ({ event, resolve }) => {
   })
 }
 
+export const handleCors: Handle = async ({ event, resolve }) => {
+  const response = await resolve(event)
+
+  if (event.url.pathname.startsWith('/stats/plc')) {
+    response.headers.append('Access-Control-Allow-Origin', 'http://localhost:5173')
+    response.headers.append('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  }
+
+  return response
+}
+
 export const handle = sequence(
   handleRedirects,
   handleLang,
@@ -35,5 +46,6 @@ export const handle = sequence(
     ['/posthog/static', { to: 'https://eu-assets.i.posthog.com/static' }],
     ['/posthog', { to: 'https://eu.i.posthog.com' }],
   ]),
+  handleCors,
   handleRemult,
 )
