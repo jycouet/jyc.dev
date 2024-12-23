@@ -83,4 +83,11 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:lyhaxthjezcea3a75kgowvas/bafkreibq3mnxpd26xvz3njgefgzichqunas2xng5yp5zafwzvzhzy575iq@jpeg',
     displayName: 'Books That Burn',
   },
+  {
+    did: 'did:plc:ytswaq6qa342ax2wqflasumh',
+    handle: 'sea-level.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:ytswaq6qa342ax2wqflasumh/bafkreian2dgt5ffikfvrl5ss2sfis5mi6km52lirpzqiot35oonwyunjlq@jpeg',
+    displayName: '@Sea-level',
+  },
 ]
