@@ -1,13 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
-  "packages": ["nodejs@22"],
+  "packages": ["nodejs@22", "postgresql@latest"],
   "env": {
-    "DEVBOX_COREPACK_ENABLED": "true"
+    "DEVBOX_COREPACK_ENABLED": "true",
+    "PGPORT": "5433"
   },
   "shell": {
-    "init_hook": ["pnpm i"],
+    "init_hook": [
+      "test -f .devbox/virtenv/postgresql/data/PG_VERSION && test -d .devbox/virtenv/postgresql/data/base || initdb",
+      "[ ! -f .env.local ] && cp .env.example .env.local || true",
+      "pnpm i"
+    ],
     "scripts": {
-      "test": ["echo \"Error: no test specified\" && exit 1"]
+      "start": "devbox services up --process-compose-file ./config/devbox/process-compose.yaml"
     }
   }
 }

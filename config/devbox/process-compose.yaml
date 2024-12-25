@@ -1,0 +1,24 @@
+version: "0.5"
+is_strict: true
+processes:
+  init_db:
+    namespace: init
+    command: |
+      sh config/devbox/init-db.sh
+    is_tty: true
+    depends_on:
+      postgresql:
+        condition: process_healthy
+  dev_website:
+    command: |
+      pnpm dev
+    is_tty: true
+    readiness_probe:
+      http_get:
+        host: localhost
+        scheme: http
+        path: "/"
+        port: 5173
+    depends_on:
+      init_db:
+        condition: process_completed_successfully

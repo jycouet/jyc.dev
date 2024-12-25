@@ -39,3 +39,16 @@ JSON files. Once you want to switch to postgress, add the following environment 
 # something like this:
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/jyc.dev
 ```
+
+### Local alternative
+
+1. Install [Devbox](https://github.com/jetpack-io/devbox)
+    ```bash
+    curl -fsSL https://get.jetify.com/devbox | bash
+    ```
+1. Clone project & start services
+    ```bash
+    git clone git@github.com:jycouet/jyc.dev.git
+    cd jyc.dev
+    devbox services up
+    ```
