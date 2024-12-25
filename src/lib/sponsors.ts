@@ -97,4 +97,11 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:7sagqfh4v4t6zl7bdwbikdc2/bafkreifdvuimj2p35c4bx7garen7pgyzjazi6keawmmjtrwxhsqnuiimc4@jpeg',
     displayName: 'Santosh Yadav | GDE 🅰️ | GitHub ⭐ | MVP',
   },
+  {
+    did: 'did:plc:phxvjc4civo3rgchsn6edmdw',
+    handle: 'heyfriend-1.bsky.social',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:phxvjc4civo3rgchsn6edmdw/bafkreiexuzdblrqakl5vxuinq2m7hadslpcwbanbrza6g5oq5bg2hcew5i@jpeg',
+    displayName: 'Hal',
+  },
 ]
