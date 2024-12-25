@@ -64,6 +64,7 @@ export default defineConfig({
           'srsholmes.com',
           'booksthatburn.com',
           'sea-level.bsky.social',
+          'santoshyadav.dev'
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
