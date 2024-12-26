@@ -12,7 +12,7 @@ fi
 # User does not exist
 if ! psql -d $DB_NAME -c "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'" | grep -q 1; then
   echo "[Postgres] Setting permissions..."
-  psql -d $DB_NAME -v ON_ERROR_STOP=1 <<EOSQL
+  psql -d $DB_NAME -v ON_ERROR_STOP=1 << EOSQL
     DO \$\$
     BEGIN
         IF EXISTS (SELECT FROM pg_roles WHERE rolname = '$DB_USER') THEN
