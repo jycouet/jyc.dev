@@ -32,14 +32,17 @@ export const handleCors: Handle = async ({ event, resolve }) => {
   const response = await resolve(event)
 
   if (event.url.pathname.startsWith('/stats/plc')) {
-    let allowedOrigins = ['http://localhost:5173', 'https://bsky-client.imlunahey.com']
-    const origin = event.request.headers.get('origin') ?? ''
+    // let allowedOrigins = ['http://localhost:5173', 'https://bsky-client.imlunahey.com']
+    // const origin = event.request.headers.get('origin') ?? ''
 
-    if (allowedOrigins.includes(origin)) {
-      response.headers.append('Access-Control-Allow-Origin', origin)
-      response.headers.append('Access-Control-Allow-Methods', 'GET, OPTIONS')
-      response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    }
+    // if (allowedOrigins.includes(origin)) {
+    //   response.headers.append('Access-Control-Allow-Origin', origin)
+    //   response.headers.append('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    //   response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    // }
+    response.headers.append('Access-Control-Allow-Origin', '*')
+    response.headers.append('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   }
 
   return response
