@@ -59,21 +59,21 @@ export const sponsors = [
     did: 'did:plc:ocsbmyulc2grbq3esflddyj6',
     handle: 'rahaeli.bsky.social',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:ocsbmyulc2grbq3esflddyj6/bafkreiglg5q2bvpj66aagiabddm3m2graclqrvn3ahq4ieasl7cqp7fmme@jpeg',
-    displayName: 'rahaeli ',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:ocsbmyulc2grbq3esflddyj6/bafkreietrmtnvblcfv3w43rdtk4courp2vbgxdejoekioczl2c5bslgs3e@jpeg',
+    displayName: 'rahaeli',
   },
   {
     did: 'did:plc:n5epqyr476ldiu5aywhtnjul',
     handle: 'aunticles.bsky.social',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreidek7h5vbwdh2xacvy7vjtsluhb5iturrji3q42ugbv2i65tob56e@jpeg',
-    displayName: 'Aunt🎄tinytim🎄icles',
+    displayName: 'Aunticles',
   },
   {
     did: 'did:plc:x476ra5ygaolra5oggenmcsc',
     handle: 'srsholmes.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreiaofvuqsqtsxwm6dx7ykvlpx7gcmnl5vwjmnqfx5z62onbgjicgca@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreibtzqijcothmpo227hpzhkt64zvfnq5r5hh26myfqwfk6emigu6pe@jpeg',
     displayName: 'Simon Holmes',
   },
   {

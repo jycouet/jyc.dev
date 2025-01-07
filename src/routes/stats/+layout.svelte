@@ -114,7 +114,7 @@
           did="did:plc:dacfxuonkf2qtqft22sc23tu"
           handle="jyc.dev"
           displayName="jyc"
-          avatar="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreigzfugomncmscljpivtkhuupmreoqkkg55c2egdetohj6v4cupbea@jpeg"
+          avatar="https://cdn.bsky.app/img/avatar/plain/did:plc:dacfxuonkf2qtqft22sc23tu/bafkreiazc3bhbehq5j6wtrretqjlouat672wno2tdetekhpfygh6xzsjeq@jpeg"
           size="w-6"
         />
         Support me:
