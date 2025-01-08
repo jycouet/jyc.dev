@@ -17,7 +17,7 @@ export class LogHandleStats {
   @Fields.updatedAt({ includeInApi: Roles.admin })
   updatedAt = new Date()
 
-  @Fields.string({ required: true, includeInApi: Roles.admin })
+  @Fields.string({ required: true })
   did!: string
 
   @Relations.toOne<LogHandleStats, BSkyty>(() => BSkyty, { fields: { id: 'did' } })
