@@ -32,6 +32,9 @@ export const handleCors: Handle = async ({ event, resolve }) => {
   const response = await resolve(event)
 
   if (event.url.pathname.startsWith('/stats/plc')) {
+    if (event.request.method === 'OPTIONS') {
+      return new Response('ok, no issue with OPTIONS')
+    }
     // let allowedOrigins = ['http://localhost:5173', 'https://bsky-client.imlunahey.com']
     // const origin = event.request.headers.get('origin') ?? ''
 
