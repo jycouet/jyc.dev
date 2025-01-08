@@ -41,7 +41,7 @@ export const handleCors: Handle = async ({ event, resolve }) => {
     //   response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     // }
     response.headers.append('Access-Control-Allow-Origin', '*')
-    response.headers.append('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    response.headers.append('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   }
 
