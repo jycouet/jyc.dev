@@ -37,7 +37,7 @@
     {
       name: 'Andras Bacsai',
       avatar:
-        'https://cdn.bsky.app/img/avatar/plain/did:plc:dxdjdpz5ebvsjzxcm3j7xxsz/bafkreig2aczdsdlhfoiqtc6uhdkdnpiqezrguv5mxoruurig47cvgpjf3m@jpeg',
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:dxdjdpz5ebvsjzxcm3j7xxsz/bafkreibepjq3vaoec3ayd6mraw2dqpwtsthxjtbpf67skh2t22jqlnn6tq@jpeg',
       description:
         'Author of <a class="link link-secondary" href="https://coolify.io/">coolify</a>, an #OSS project to host your website on your VPS.',
     },
