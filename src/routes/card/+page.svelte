@@ -41,13 +41,13 @@
       description:
         'Author of <a class="link link-secondary" href="https://coolify.io/">coolify</a>, an #OSS project to host your website on your VPS.',
     },
-    // {
-    //   name: 'Domingo',
-    //   avatar:
-    //     'https://static-cdn.jtvnw.net/jtv_user_pictures/3cdae7df-600c-4833-8dfe-8d2abc5a3b25-profile_image-70x70.png',
-    //   description:
-    //     'French streamer, great show: <a class="link link-secondary" href="https://www.twitch.tv/domingo">POPCORN</a>.',
-    // },
+    {
+      name: 'Domingo',
+      avatar:
+        'https://static-cdn.jtvnw.net/jtv_user_pictures/3cdae7df-600c-4833-8dfe-8d2abc5a3b25-profile_image-70x70.png',
+      description:
+        'French streamer, great show: <a class="link link-secondary" href="https://www.twitch.tv/domingo">POPCORN</a>.',
+    },
     {
       name: 'Joy of Code',
       avatar:
