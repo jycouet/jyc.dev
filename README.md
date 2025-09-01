@@ -1,6 +1,6 @@
 # skyzoo.blue & jyc.dev
 
-👋 Thank you for passing by !
+👋 Thank you for passing by!
 
 ## 📣 Special Shoutout
 
