@@ -104,4 +104,11 @@ export const sponsors = [
       'https://cdn.bsky.app/img/avatar/plain/did:plc:phxvjc4civo3rgchsn6edmdw/bafkreiexuzdblrqakl5vxuinq2m7hadslpcwbanbrza6g5oq5bg2hcew5i@jpeg',
     displayName: 'Hal',
   },
+  {
+    did: 'did:plc:btps3tyqb4pk6r337qglu4nz',
+    handle: 'hyunb.in',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:btps3tyqb4pk6r337qglu4nz/bafkreieugd6rvgvso6rducxyruspgvecfhejhemtt54k266skayukd7ruy@jpeg',
+    displayName: '현빈 | Hyunbin',
+  },
 ]
