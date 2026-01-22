@@ -66,6 +66,7 @@ export default defineConfig({
           'sea-level.bsky.social',
           'santoshyadav.dev',
           'heyfriend-1.bsky.social',
+          'hyunb.in'
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
