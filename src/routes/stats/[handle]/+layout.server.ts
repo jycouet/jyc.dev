@@ -6,7 +6,7 @@ import { Log } from '@kitql/helpers'
 
 import { getLabels, getProfile, has_NoUnauthenticated } from '$modules/at/agentHelper'
 import { BSkyty } from '$modules/at/BSkyty'
-import { listRecords, listRecordsAll } from '$modules/at/helper'
+import { describeRepo, listRecords, listRecordsAll } from '$modules/at/helper'
 import { ListItem } from '$modules/at/ListItem'
 import { RecordPlc } from '$modules/at/RecordPlc'
 import { StarterPack } from '$modules/at/StarterPack'
@@ -68,22 +68,38 @@ export const load = (async (event) => {
       pos_bsky = recordPlc?.pos_bsky ?? null
     }
 
-    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto || !bskyty.mushroom) {
-      const didResolver = new DidResolver({})
-      const didDocument = await didResolver.resolve(bskyty.id)
+    // Resolve DID once for collections count + other data
+    const didResolver = new DidResolver({})
+    const didDocument = await didResolver.resolve(bskyty.id)
+    const pds = didDocument ? getPds(didDocument) : undefined
 
-      // Extract and log the mushroom name from the PDS endpoint
-      const pdsEndpoint = didDocument?.service?.find(
-        (s) => s.id === '#atproto_pds',
-      )?.serviceEndpoint      
-      if (pdsEndpoint && typeof pdsEndpoint === 'string' && pdsEndpoint.includes('.bsky.')) {
-        mushroom = new URL(pdsEndpoint).hostname.split('.')[0]
-      } else {
-        mushroom = pdsEndpoint
-      }
-      if (didDocument) {
-        const pds = getPds(didDocument)
-        if (pds) {
+    // Get unique apps from collections (first 2 segments, e.g. "app.bsky")
+    let appsCount = 0
+    if (pds) {
+      const repoDesc = await describeRepo(pds, profile.data.did)
+      const apps = [...new Set(
+        (repoDesc?.collections ?? []).map((c) => c.split('.').slice(0, 2).reverse().join('.')),
+      )]
+      appsCount = apps.length
+      // log.info(`${profile.data.handle} apps:`, apps)
+    }
+
+    // Extract mushroom name from PDS endpoint (always, as PDS can change)
+    const pdsEndpoint = didDocument?.service?.find(
+      (s) => s.id === '#atproto_pds',
+    )?.serviceEndpoint
+    if (pdsEndpoint && typeof pdsEndpoint === 'string' && pdsEndpoint.includes('.bsky.')) {
+      mushroom = new URL(pdsEndpoint).hostname.split('.')[0]
+    } else {
+      mushroom = pdsEndpoint
+    }
+
+    if (mushroom !== bskyty.mushroom) {
+      bskyty = await repo(BSkyty).update(bskyty.id, { mushroom })
+    }
+
+    if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto) {
+      if (pds) {
           const firstPosts = await listRecords(pds, bskyty.id, 'app.bsky.feed.post', {
             limit: 100,
             reverse: true,
@@ -153,7 +169,6 @@ export const load = (async (event) => {
           //     deltaDays: d.deltaDays,
           //   })),
           // })
-        }
       }
     }
 
@@ -171,6 +186,7 @@ export const load = (async (event) => {
       followersCount: profile.data.followersCount,
       followsCount: profile.data.followsCount,
       postsCount: profile.data.postsCount,
+      appsCount,
     }
   } catch (error) {
     const notValidError = ['Profile not found', 'Error: actor must be a valid did or a handle']

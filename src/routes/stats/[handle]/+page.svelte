@@ -428,6 +428,11 @@
                     comment="Started to be active here (custom algo 🤯)"
                   />
                   <JsonStyle
+                    key="apps"
+                    value={`${data.appsCount ?? 0}`}
+                    comment="Number of <a class='link link-info' href='https://atproto.com/' target='_blank'>atproto</a> apps used"
+                  />
+                  <JsonStyle
                     key="pos_atproto"
                     value={pos_atproto}
                     comment="The position of arrival in At Protocol (<a class='link link-info' href='https://whtwnd.com/jyc.dev/entries/Exploring%20Bluesky%20Numbers' target='_blank'>info</a>)"
