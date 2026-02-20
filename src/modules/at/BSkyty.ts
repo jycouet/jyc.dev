@@ -69,4 +69,7 @@ export class BSkyty {
 
   @Fields.string({ includeInApi: Roles.admin, allowNull: true })
   mushroom?: string | null = null
+
+  @Fields.number({ includeInApi: Roles.admin })
+  appsCount = -1
 }

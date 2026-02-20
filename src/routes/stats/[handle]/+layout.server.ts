@@ -49,7 +49,7 @@ export const load = (async (event) => {
         followsCount: profile.data.followsCount,
         postsCount: profile.data.postsCount,
       },
-    })
+    })    
 
     // Don't await this
     _checkAndUpdatePlcRecord(new Date(), profile.data.did)
@@ -94,10 +94,11 @@ export const load = (async (event) => {
       mushroom = pdsEndpoint
     }
 
-    if (mushroom !== bskyty.mushroom) {
-      bskyty = await repo(BSkyty).update(bskyty.id, { mushroom })
+    const toUpdate = {
+      mushroom,
+      appsCount
     }
-
+    
     if (!bskyty.startedToBeActiveOn || !bskyty.pos_atproto) {
       if (pds) {
           const firstPosts = await listRecords(pds, bskyty.id, 'app.bsky.feed.post', {
@@ -154,11 +155,11 @@ export const load = (async (event) => {
 
           // Update the BSkyty record with the start date
           bskyty = await repo(BSkyty).update(bskyty.id, {
+            ...toUpdate,
             createdAt,
             startedToBeActiveOn,
             pos_atproto,
             pos_bsky,
-            mushroom,
           })
 
           // console.log({
@@ -169,6 +170,9 @@ export const load = (async (event) => {
           //     deltaDays: d.deltaDays,
           //   })),
           // })
+      }
+      else {
+        bskyty = await repo(BSkyty).update(bskyty.id, toUpdate)
       }
     }
 
