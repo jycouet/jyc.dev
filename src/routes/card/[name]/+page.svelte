@@ -4,9 +4,8 @@
 
   import { page } from '$app/stores'
 
-  import Bluesky from '$lib/icons/Bluesky.svelte'
-
-  import { myLinks } from '../myLinks'
+  
+import { myLinks } from '../myLinks'
 
   const myLink = myLinks.find((link) => link.name === $page.params.name) ?? {
     name: 'vcard',

@@ -69,7 +69,7 @@
 
 <Og
   title={`${data.displayName} | Squirrel Squad`}
-  description={`Here you'll find your Bluesky neighbors, users who registered around the same time as you!`}
+  description="Here you'll find your Bluesky neighbors, users who registered around the same time as you!"
   {og}
 />
 

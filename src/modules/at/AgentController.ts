@@ -1,7 +1,7 @@
 import { Agent } from '@atproto/api'
 import type { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
-import { BackendMethod, repo, SqlDatabase } from 'remult'
+import { BackendMethod, repo } from 'remult'
 import { green, Log } from '@kitql/helpers'
 
 import { sponsors } from '$lib/sponsors'

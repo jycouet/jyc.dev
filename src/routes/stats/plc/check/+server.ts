@@ -1,4 +1,4 @@
-import { repo, SqlDatabase } from 'remult'
+import { repo } from 'remult'
 import { Log } from '@kitql/helpers'
 
 import {
