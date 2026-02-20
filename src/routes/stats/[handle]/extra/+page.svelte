@@ -64,7 +64,7 @@
   const description = `Assigns you a Bluesky animal based on your recent activity`
 </script>
 
-<Og title={`Sky Zoo - Stats`} {description} {og} />
+<Og title="Sky Zoo - Stats" {description} {og} />
 
 <div class="card bg-base-300 p-4">
   <div class="flex items-start justify-between">

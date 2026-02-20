@@ -9,7 +9,7 @@ import { Roles } from '$modules/auth/Roles'
   },
 })
 export class LogHandleFollow {
-  @Fields.cuid()
+  @Fields.id()
   id!: string
 
   @Fields.updatedAt()

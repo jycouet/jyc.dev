@@ -3,14 +3,14 @@ export const sponsors = [
     did: 'did:plc:bm3dt7cylgwkmn3t5326ow2l',
     handle: 'tigur.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreihjlhxxdrxf2i7pinowdlgpps4nu2gwab7yve335txwng434iooyi@jpeg',
-    displayName: 'TheTiGuR, aka Chris Simiskey ',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:bm3dt7cylgwkmn3t5326ow2l/bafkreia6ahw5jjl6xhp3fmpzulwh2eievob65rdxkafuw4azfzmcwbncay@jpeg',
+    displayName: 'TheTiGuR, aka Chris Simiskey',
   },
   {
     did: 'did:plc:k6acu4chiwkixvdedcmdgmal',
     handle: 'imlunahey.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreihwjqusqk5wyahldrx4spchtozxce6vpd47p2wyfccg2pvhrc3hya@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:k6acu4chiwkixvdedcmdgmal/bafkreiefeexuyxlj3gndizkmftpvpg2euztggw3lynwpmejtdugqis4dc4@jpeg',
     displayName: 'luna',
   },
   {
@@ -29,7 +29,7 @@ export const sponsors = [
   },
   {
     did: 'did:plc:5wlpm2j3d6can6quf5hotdcc',
-    handle: 'robertlin.bsky.social',
+    handle: 'robertl.in',
     avatar:
       'https://cdn.bsky.app/img/avatar/plain/did:plc:5wlpm2j3d6can6quf5hotdcc/bafkreiefb45p47kfokpk45bt3tncrpi7fzkzkb66vq6vh5zryou2nmjaqe@jpeg',
     displayName: 'Robert Lin',
@@ -45,14 +45,14 @@ export const sponsors = [
     did: 'did:plc:kr5az4i372zxvoy6xc7kflvq',
     handle: 'adaszpilka.art',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreidtryqcrtutlkegtns3ebk4wfwicmr53t5hbpywxrauxvkbuowh3y@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:kr5az4i372zxvoy6xc7kflvq/bafkreibtwiztbk5j3nejeirylrchccvihpfpp6oruzx5p6ayycsmfrqgje@jpeg',
     displayName: 'Ada Szpilka',
   },
   {
     did: 'did:plc:iuj7k3l2iw3ibquwsoudc72o',
     handle: 'fettstorch.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreieapcv2agyidn6asopfppksjj3tjnueb5727wnkckmm3gdlljztae@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:iuj7k3l2iw3ibquwsoudc72o/bafkreig547zp23clqcyvyqutv2fiehg3rd2jx2pc2vogm5bfkyoxvbolua@jpeg',
     displayName: 'Julian',
   },
   {
@@ -66,14 +66,14 @@ export const sponsors = [
     did: 'did:plc:n5epqyr476ldiu5aywhtnjul',
     handle: 'aunticles.bsky.social',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreidek7h5vbwdh2xacvy7vjtsluhb5iturrji3q42ugbv2i65tob56e@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:n5epqyr476ldiu5aywhtnjul/bafkreiexsbohxzude54qetuhnw5p7pcomnvi75ubw6fsa53yfvrqwf3pcu@jpeg',
     displayName: 'Aunticles',
   },
   {
     did: 'did:plc:x476ra5ygaolra5oggenmcsc',
     handle: 'srsholmes.com',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreibtzqijcothmpo227hpzhkt64zvfnq5r5hh26myfqwfk6emigu6pe@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:x476ra5ygaolra5oggenmcsc/bafkreigrnsjnizbab5jlhrk5p3sas66vfacmdt4gq7mhl7xpvsto5h6ooi@jpeg',
     displayName: 'Simon Holmes',
   },
   {
@@ -94,14 +94,14 @@ export const sponsors = [
     did: 'did:plc:7sagqfh4v4t6zl7bdwbikdc2',
     handle: 'santoshyadav.dev',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:7sagqfh4v4t6zl7bdwbikdc2/bafkreifdvuimj2p35c4bx7garen7pgyzjazi6keawmmjtrwxhsqnuiimc4@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:7sagqfh4v4t6zl7bdwbikdc2/bafkreic6ofesvg2zvordbfb7orsicis3obtq444j6arky6ewzc7amj3teu@jpeg',
     displayName: 'Santosh Yadav | GDE 🅰️ | GitHub ⭐ | MVP',
   },
   {
     did: 'did:plc:phxvjc4civo3rgchsn6edmdw',
     handle: 'heyfriend-1.bsky.social',
     avatar:
-      'https://cdn.bsky.app/img/avatar/plain/did:plc:phxvjc4civo3rgchsn6edmdw/bafkreiexuzdblrqakl5vxuinq2m7hadslpcwbanbrza6g5oq5bg2hcew5i@jpeg',
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:phxvjc4civo3rgchsn6edmdw/bafkreifdpimhn52vpkl5gkpew5zhvtg3cd3nwigpj3hjovduhmdgvdinfm@jpeg',
     displayName: 'Hal',
   },
   {

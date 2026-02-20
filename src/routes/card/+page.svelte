@@ -1,10 +1,6 @@
 <script lang="ts">
-  import Bluesky from '$lib/icons/Bluesky.svelte'
-  import DynamicProcess from '$lib/icons/DynamicProcess.svelte'
   import Github from '$lib/icons/Github.svelte'
   import KoFi from '$lib/icons/KoFi.svelte'
-  import Linkedin from '$lib/icons/Linkedin.svelte'
-  import Youtube from '$lib/icons/Youtube.svelte'
   import { route } from '$lib/ROUTES'
 
   import type { PageData } from './$types'

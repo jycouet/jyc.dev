@@ -22,7 +22,7 @@ export async function retries<T>(
     try {
       const result = await fn()
       return result
-    } catch (error) {
+    } catch (error) {      
       if (i >= maxAttempts - 1) {
         if (withLog) {
           log.error(options?.msgError ?? 'Error')
