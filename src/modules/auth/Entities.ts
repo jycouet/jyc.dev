@@ -11,7 +11,7 @@ import { Roles } from '$modules/auth/Roles'
   },
 })
 export class AppUser {
-  @Fields.cuid({ caption: 'did' })
+  @Fields.id({ caption: 'did' })
   id!: string
 
   @Fields.createdAt({ includeInApi: Roles.admin })

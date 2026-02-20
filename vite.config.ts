@@ -70,7 +70,7 @@ export default defineConfig({
         ]
         const sponsorsData = await Promise.all(
           sponsors.map(async (handle) => {
-            try {
+            try {              
               return await getProfile(handle)
             } catch (error) {
               console.error(error)

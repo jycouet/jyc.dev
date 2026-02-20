@@ -11,7 +11,7 @@ import { Roles } from '$modules/auth/Roles'
   },
 })
 export class LogHandleStats {
-  @Fields.cuid({ includeInApi: Roles.admin })
+  @Fields.id({ includeInApi: Roles.admin })
   id!: string
 
   @Fields.updatedAt({ includeInApi: Roles.admin })
