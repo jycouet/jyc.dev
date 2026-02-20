@@ -296,7 +296,7 @@
   // Add this function near the other helper functions
   function getHandleComment(handle: string): string {
     if (handle.endsWith('.dev')) {
-      return 'Cool, you are a nerdy .dev too? 🤓'
+      return 'Cool, you are a nerdy .dev too? 🧑‍💻'
     }
     if (handle.endsWith('.bsky.social')) {
       return '<i>Pro tip: you can have your own domain as handle! 🎯</i>'
@@ -438,11 +438,19 @@
                     comment="Arrived in bsky in position... Welcome!"
                   />
                   {#if data.mushroom}
-                    <JsonStyle
-                      key="mushroom"
-                      value={data.mushroom}
-                      comment="Server name or mushroom name (<a class='link link-info' href='https://bsky.app/profile/jay.bsky.team/post/3lb6fa7sjzc2p' target='_blank'>source</a>)"
-                    />
+                    {#if data.mushroom.includes(".")}
+                      <JsonStyle
+                        key="PDS"
+                        value={data.mushroom}
+                        comment="Looks like you started your own adventure 🎉"
+                      />
+                    {:else}
+                      <JsonStyle
+                        key="mushroom"
+                        value={data.mushroom}
+                        comment="Server name or mushroom name (<a class='link link-info' href='https://bsky.app/profile/jay.bsky.team/post/3lb6fa7sjzc2p' target='_blank'>source</a>)"
+                      />
+                    {/if}
                   {/if}
                 </div>
                 <div>&#125;</div>

@@ -75,9 +75,11 @@ export const load = (async (event) => {
       // Extract and log the mushroom name from the PDS endpoint
       const pdsEndpoint = didDocument?.service?.find(
         (s) => s.id === '#atproto_pds',
-      )?.serviceEndpoint
-      if (pdsEndpoint && typeof pdsEndpoint === 'string') {
+      )?.serviceEndpoint      
+      if (pdsEndpoint && typeof pdsEndpoint === 'string' && pdsEndpoint.includes('.bsky.')) {
         mushroom = new URL(pdsEndpoint).hostname.split('.')[0]
+      } else {
+        mushroom = pdsEndpoint
       }
       if (didDocument) {
         const pds = getPds(didDocument)
