@@ -28,6 +28,13 @@ export const sponsors = [
     displayName: 'patak',
   },
   {
+    did: 'did:plc:5wlpm2j3d6can6quf5hotdcc',
+    handle: 'robertl.in',
+    avatar:
+      'https://cdn.bsky.app/img/avatar/plain/did:plc:5wlpm2j3d6can6quf5hotdcc/bafkreiefb45p47kfokpk45bt3tncrpi7fzkzkb66vq6vh5zryou2nmjaqe@jpeg',
+    displayName: 'Robert Lin',
+  },
+  {
     did: 'did:plc:b7du2x5ynpuiatjib4qfanmc',
     handle: 'eomasters.org',
     avatar:

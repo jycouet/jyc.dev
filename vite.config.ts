@@ -55,7 +55,7 @@ export default defineConfig({
           'imlunahey.com',
           'harry-lewiston.bsky.social',
           'patak.dev',
-          'robertlin.bsky.social',
+          'robertl.in',
           'eomasters.org',
           'adaszpilka.art',
           'fettstorch.com',
@@ -73,7 +73,7 @@ export default defineConfig({
             try {              
               return await getProfile(handle)
             } catch (error) {
-              console.error(error)
+              console.error(`Failed to get profile for "${handle}":`, error)
             }
           }),
         )
