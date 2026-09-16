@@ -120,10 +120,8 @@
       <div class="card-body gap-4">
         <h2 class="text-2xl font-bold">Sponsor me</h2>
         <div class="m-4 mt-8 flex w-full justify-around">
-          <Github size={64} />
-          <!-- https://github.com/sponsors/jycouet -->
-          <KoFi size={64} />
-          <!-- https://ko-fi.com/E1E416BE51 -->
+          <a href="https://github.com/sponsors/jycouet" aria-label="Sponsor on GitHub"><Github size={64} /></a>
+          <a href="https://ko-fi.com/E1E416BE51" aria-label="Support on Ko-fi"><KoFi size={64} /></a>
         </div>
       </div>
     </div>
