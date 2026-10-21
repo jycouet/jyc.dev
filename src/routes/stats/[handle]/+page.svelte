@@ -440,7 +440,9 @@
                   <JsonStyle
                     key="pos_bsky"
                     value={pos_bsky}
-                    comment="Arrived in bsky in position... Welcome!"
+                    comment={pos_bsky
+                      ? 'Arrived in bsky in position... Welcome!'
+                      : 'Sorry, positions are tracked up to 35M'}
                   />
                   {#if data.mushroom}
                     {#if data.mushroom.includes(".")}
