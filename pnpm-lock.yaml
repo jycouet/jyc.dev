@@ -29,6 +29,9 @@ importers:
       '@kitql/internals':
         specifier: 0.9.5
         version: 0.9.5
+      '@kitql/postgres':
+        specifier: ^0.2.2
+        version: 0.2.2
       '@layerstack/utils':
         specifier: ^0.0.5
         version: 0.0.5
@@ -560,6 +563,10 @@ packages:
     resolution: {integrity: sha512-8Om4jxF3XLTrpCkrZ8q6kHco4o6u/zKisA7XjLdiUDeSX7VSprlq6fnG2xayrbrc1He+pHQkgj2cHqqUvEHTGg==}
     engines: {node: ^16.14 || >=18}
 
+  '@kitql/helpers@0.8.15':
+    resolution: {integrity: sha512-MAmVehlHoJanT0uqbZP08960P066uuu4GyKcsSXt3YxoBoVJNOvBY9cDNihWDtWCPG34FzGsXI1CcceRHKHLrg==}
+    engines: {node: ^16.14 || >=18}
+
   '@kitql/helpers@0.8.9':
     resolution: {integrity: sha512-uDBFBvCYUT4UaZZKv7gJejQvbrOp4YyI1S0Z92DPiMbyLq0DPDXz3Lt2ZqUZKlQrinBX+W1TO6w0RudEX6Q6WA==}
     engines: {node: ^16.14 || >=18}
@@ -571,6 +578,11 @@ packages:
   '@kitql/internals@0.9.5':
     resolution: {integrity: sha512-HkqjpT2BUwINmMuZQUjjDNEAGKrOaS8vR8xEEdhkJl4w/5BgOzgSpRlojilH9liNcfGtdz5HHbRoXN91VLf0Ng==}
     engines: {node: ^16.14 || >=18}
+
+  '@kitql/postgres@0.2.2':
+    resolution: {integrity: sha512-61T1lXXBWNjE0vAKM/jZYoKTiTaNwTSS1bJ2yCdYn1BcfSyTmI5yKSX/OzeIVVQTlQUVSomrCdjLQu4v7ltqdA==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@layerstack/svelte-actions@0.0.7':
     resolution: {integrity: sha512-PYG4oocNQxuUKQkhQvrB+nh4SGGzVr2KlqGS8wivXC4lF78BpOnsZfLxv657oVBBE+u3Cx6q9NRq/AG1A7ZiIw==}
@@ -3669,6 +3681,10 @@ snapshots:
     dependencies:
       esm-env: 1.2.2
 
+  '@kitql/helpers@0.8.15':
+    dependencies:
+      esm-env: 1.2.2
+
   '@kitql/helpers@0.8.9':
     dependencies:
       esm-env: 1.0.0
@@ -3686,6 +3702,10 @@ snapshots:
       '@kitql/helpers': 0.8.9
       recast: 0.23.6
       svelte: 4.2.1
+
+  '@kitql/postgres@0.2.2':
+    dependencies:
+      '@kitql/helpers': 0.8.15
 
   '@layerstack/svelte-actions@0.0.7':
     dependencies:

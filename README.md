@@ -33,24 +33,11 @@ pnpm dev
 ```
 
 Note that you don't need a local Postgres database to run the app, by default it will fallback to
-JSON files. Once you want to switch to postgress, add the following environment variables:
+JSON files. Once you want to switch to Postgres:
 
 ```bash
-# something like this:
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/jyc.dev
+pnpm db:start # local Postgres on 5437 (@kitql/postgres, no install needed), keep it running
+pnpm db:init  # create the jyc_dev db
+# then in .env
+DATABASE_URL=postgres://postgres:postgres@localhost:5437/jyc_dev
 ```
-
-### Devbox alternative
-
-[![Built with Devbox](https://www.jetify.com/img/devbox/shield_galaxy.svg)](https://www.jetify.com/devbox/docs/contributor-quickstart/)
-
-1. Install [Devbox](https://github.com/jetpack-io/devbox)
-   ```bash
-   curl -fsSL https://get.jetify.com/devbox | bash
-   ```
-1. Clone project & start services
-   ```bash
-   git clone git@github.com:jycouet/jyc.dev.git
-   cd jyc.dev
-   devbox run start
-   ```
