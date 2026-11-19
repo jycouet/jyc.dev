@@ -537,12 +537,6 @@ export type LatestGlobalStats = {
     $count: number
   }[]
   lastValue: RecordPlcStats | undefined
-  lastProfiles: {
-    did: string
-    handle: string
-    displayName: string
-    avatar: string
-  }[]
   lastHourSpeedPerSecond: number
 }
 
@@ -565,7 +559,7 @@ export const calcLatestGlobalStats = async () => {
 
     const lastValues = await repo(RecordPlcStats).find({
       where: { pos_bsky: { '!=': null } },
-      limit: 5,
+      limit: 1,
     })
 
     const lastHour = await repo(RecordPlcStats).count({
@@ -573,29 +567,9 @@ export const calcLatestGlobalStats = async () => {
       pos_bsky: { '!=': null },
     })
 
-    const profiles = await Promise.all(
-      lastValues.map(async (value) => {
-        const profile = await getProfile(value.did)
-        if (!profile) return null
-        return profile
-      }),
-    )
-    // console.info(
-    //   `profiles`,
-    //   profiles.map((p) => p?.data),
-    // )
-
-    const validProfiles = profiles.filter((p): p is NonNullable<typeof p> => p !== null)
-
     const toRet: LatestGlobalStats = {
       dailyStats,
       lastValue: lastValues[0],
-      lastProfiles: validProfiles.map((profile) => ({
-        did: profile.data.did,
-        handle: profile.data.handle,
-        displayName: profile.data.displayName || profile.data.handle,
-        avatar: profile.data.avatar ?? '',
-      })),
       lastHourSpeedPerSecond: lastHour / (60 * 60),
     }
 
