@@ -108,8 +108,8 @@ importers:
         specifier: ^1.5.4
         version: 1.5.4
       remult:
-        specifier: 3.3.6
-        version: 3.3.6
+        specifier: 3.4.2
+        version: 3.4.2
       remult-kit:
         specifier: 0.0.3
         version: 0.0.3(pg@8.13.1)
@@ -2627,8 +2627,8 @@ packages:
     resolution: {integrity: sha512-us03CRLuWLPG2HTC20KkCYF/riGAz1kBwNbrMOjbj4qAxhykIEZuzO9zrSuG0WRvkKoO/vTgoqdufCE1Zrm4Xw==}
     hasBin: true
 
-  remult@3.3.6:
-    resolution: {integrity: sha512-t8uXSYVtqZJ8CR0Bqs3UkMOgDuXwkSybmQc8yRxescFtxz1h9jYCBY8k7AKlpaihvaWGonpbP82/QNLLEF7WLQ==}
+  remult@3.4.2:
+    resolution: {integrity: sha512-5LgLLmi4m+Vv5x6TQRKmr9Z2IHTV1l5YjQ4YKRtyhXKeKv0JKekfJtUoCbXZaoQiNXtpmMtPaRGkyRcp1PerJg==}
 
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -5736,7 +5736,7 @@ snapshots:
       - supports-color
       - tedious
 
-  remult@3.3.6:
+  remult@3.4.2:
     dependencies:
       tslib: 2.6.2
 
