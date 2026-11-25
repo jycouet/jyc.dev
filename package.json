@@ -58,7 +58,7 @@
     "posthog-node": "4.2.1",
     "prettier": "^3.8.1",
     "qrcode": "^1.5.4",
-    "remult": "3.3.6",
+    "remult": "3.4.2",
     "remult-kit": "0.0.3",
     "svelte": "5.1.9",
     "svelte-check": "4.0.5",
